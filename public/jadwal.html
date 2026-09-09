@@ -1,0 +1,1699 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Atur dan cek jadwal latihan mengemudi Anda di Panca Sari Jaya Driving School Tangerang secara online. Pilih tanggal, jam, dan instruktur dengan mudah.">
+    <meta name="keywords" content="jadwal kursus mengemudi, jadwal latihan mengemudi, belajar setir mobil tangerang, panca sari jaya, booking jadwal mengemudi, les mobil tangerang">
+    <title>Atur Jadwal Latihan Online | Kursus Mengemudi Panca Sari Jaya Tangerang</title>
+    <link rel="canonical" href="https://pancasarijaya.com/jadwal.html">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" sizes="48x48" href="/images/favicon-48.png?v=5">
+    <link rel="icon" type="image/png" sizes="96x96" href="/images/favicon-96.png?v=5">
+    <link rel="icon" type="image/png" sizes="192x192" href="/images/favicon-192.png?v=5">
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" sizes="192x192" href="/images/favicon-192.png?v=5">
+
+    <!-- Open Graph / Social Sharing -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://pancasarijaya.com/jadwal.html">
+    <meta property="og:title" content="Atur Jadwal Latihan Online | Kursus Mengemudi Panca Sari Jaya">
+    <meta property="og:description" content="Atur dan cek jadwal latihan mengemudi Anda di Panca Sari Jaya Driving School Tangerang secara online. Pilih tanggal, jam, dan instruktur dengan mudah.">
+    <meta property="og:image" content="https://pancasarijaya.com/images/logo-psj.png?v=3">
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "LocalBusiness",
+        "name": "Panca Sari Jaya Driving Course",
+        "description": "Kursus mengemudi mobil terpercaya di Tangerang dengan instruktur berpengalaman, jadwal fleksibel, dan armada modern.",
+        "url": "https://pancasarijaya.com",
+        "logo": "https://pancasarijaya.com/images/logo-psj.png",
+        "telephone": "+6281385359897",
+        "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Tangerang",
+            "addressRegion": "Banten",
+            "addressCountry": "ID"
+        },
+        "hasOfferCatalog": {
+            "@type": "OfferCatalog",
+            "name": "Paket Kursus Mengemudi",
+            "itemListElement": [
+                {
+                    "@type": "Offer",
+                    "itemOffered": {
+                        "@type": "Course",
+                        "name": "Kursus Mengemudi Mobil Manual & Matic",
+                        "description": "Belajar mengemudi mobil manual dan matic dengan instruktur profesional di Tangerang",
+                        "provider": {
+                            "@type": "Organization",
+                            "name": "Panca Sari Jaya Driving Course"
+                        }
+                    }
+                }
+            ]
+        }
+    }
+    </script>
+
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="css/landing.min.css?v=4.1.0">
+    <link rel="stylesheet" href="css/jadwal.css?v=2.1.0">
+
+    <style>
+        /* Card Tambah Paket Baru Modern */
+        .tambah-paket-card {
+            background: #ffffff !important;
+            border: 2px solid #2563eb !important;
+            border-radius: 16px !important;
+            padding: 24px 28px !important;
+            box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.1), 0 8px 10px -6px rgba(37, 99, 235, 0.04) !important;
+            margin-bottom: 24px !important;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tambah-paket-banner {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding-bottom: 18px;
+            border-bottom: 1.5px solid #e2e8f0;
+            margin-bottom: 20px;
+        }
+
+        .tambah-paket-icon-box {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            color: #1d4ed8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            flex-shrink: 0;
+            border: 1px solid #bfdbfe;
+        }
+
+        .tambah-paket-banner-text h3 {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: #0f172a;
+            margin: 0 0 4px 0;
+        }
+
+        .tambah-paket-banner-text p {
+            font-size: 0.88rem;
+            color: #475569;
+            margin: 0;
+            line-height: 1.5;
+        }
+
+        .tp-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .tp-field label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 8px;
+        }
+
+        .tp-select {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-family: inherit;
+            color: #0f172a;
+            background: #ffffff;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            box-sizing: border-box;
+        }
+
+        .tp-select:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+        }
+
+        /* Metode Latihan Modern Segmented Radio */
+        .tp-method-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .tp-method-card {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 14px;
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+
+        .tp-method-card:hover {
+            border-color: #cbd5e1;
+            background: #f1f5f9;
+        }
+
+        .tp-method-card.active {
+            border-color: #2563eb !important;
+            background: #eff6ff !important;
+        }
+
+        .tp-method-card input[type="radio"] {
+            accent-color: #2563eb;
+            width: 18px;
+            height: 18px;
+            margin: 0;
+            cursor: pointer;
+        }
+
+        .tp-method-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .tp-method-desc {
+            font-size: 0.72rem;
+            color: #64748b;
+            margin-top: 2px;
+        }
+
+        .tp-textarea {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 0.9rem;
+            resize: vertical;
+            outline: none;
+            box-sizing: border-box;
+        }
+
+        .tp-textarea:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+        }
+
+        /* Ringkasan Biaya Box */
+        .tp-summary-box {
+            background: #f8fafc;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-top: 20px;
+        }
+
+        .tp-summary-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: #475569;
+            margin-bottom: 6px;
+        }
+
+        .tp-summary-row strong {
+            color: #0f172a;
+        }
+
+        .tp-summary-total {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1.5px dashed #cbd5e1;
+            padding-top: 10px;
+            margin-top: 10px;
+        }
+
+        .tp-summary-total span {
+            font-weight: 700;
+            color: #0f172a;
+            font-size: 0.92rem;
+        }
+
+        .tp-summary-total strong {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: #15803d;
+        }
+
+        /* Tombol Bayar */
+        .btn-tp-submit {
+            background: linear-gradient(135deg, #1565c0 0%, #0d47a1 100%) !important;
+            color: #ffffff !important;
+            border: none !important;
+            padding: 14px 24px !important;
+            border-radius: 10px !important;
+            font-weight: 700 !important;
+            font-size: 0.95rem !important;
+            cursor: pointer !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 10px !important;
+            box-shadow: 0 4px 14px rgba(21, 101, 192, 0.35) !important;
+            transition: all 0.2s ease !important;
+            width: 100% !important;
+            margin-top: 18px !important;
+        }
+
+        .btn-tp-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(21, 101, 192, 0.45) !important;
+        }
+
+        /* Profil Siswa Banner & Buttons */
+        .selesai-strip {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-left: 4px solid #16a34a;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-top: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.85rem;
+            color: #166534;
+        }
+
+        .selesai-strip i {
+            font-size: 1.3rem;
+            color: #16a34a;
+            flex-shrink: 0;
+        }
+
+        .btn-tambah-paket-toggle {
+            background: #eff6ff !important;
+            color: #1d4ed8 !important;
+            border: 1.5px solid #bfdbfe !important;
+            padding: 8px 16px !important;
+            border-radius: 8px !important;
+            font-size: 0.85rem !important;
+            font-weight: 600 !important;
+            cursor: pointer !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 6px !important;
+            transition: all 0.2s ease !important;
+        }
+
+        .btn-tambah-paket-toggle:hover {
+            background: #dbeafe !important;
+            border-color: #93c5fd !important;
+        }
+
+        @media (max-width: 768px) {
+            .tp-grid {
+                grid-template-columns: 1fr !important;
+                gap: 14px !important;
+            }
+            .tp-method-grid {
+                grid-template-columns: 1fr !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Page Transition Overlay -->
+    <div class="page-transition fade-in" id="pageTransition"></div>
+
+    <!-- NAVBAR -->
+    <nav class="navbar scrolled" id="navbar">
+        <div class="nav-container">
+            <a href="/" class="nav-logo">
+                <img src="/images/logo-psj.webp?v=3" alt="PSJ Logo" class="nav-logo-img" width="160" height="40">
+                <span>Panca Sari Jaya</span>
+            </a>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="/" class="nav-link">Beranda</a></li>
+                <li><a href="/jadwal.html" class="nav-link active">Jadwal</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="jadwal-page">
+        <div class="jadwal-container">
+            <a href="/" class="back-link"><i class="fas fa-arrow-left"></i> Kembali ke Beranda</a>
+
+            <div class="jadwal-header">
+                <h1><i class="fas fa-calendar-alt" style="color:var(--primary)"></i> Jadwal Latihan</h1>
+                <p>Masukkan nomor WhatsApp untuk melihat & mengatur jadwal latihan Anda</p>
+            </div>
+
+            <!-- Search / Login -->
+            <div class="jadwal-login-card">
+                <h3><i class="fab fa-whatsapp" style="color:#25D366"></i> Masukkan No. WhatsApp Anda</h3>
+                <div class="search-row">
+                    <input type="tel" id="inputPhone" placeholder="Contoh: 08xxxxxxxxxx"
+                        inputmode="numeric" pattern="[0-9]*" autocomplete="tel"
+                        oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                        onkeydown="if(event.key==='Enter')cekJadwal()">
+                    <button onclick="cekJadwal()"><i class="fas fa-search"></i> Cek Jadwal</button>
+                </div>
+            </div>
+
+            <!-- Booking Calendar -->
+            <div class="calendar-card" id="calendarCard">
+                <h3><i class="fas fa-calendar" style="color:var(--primary)"></i> Kalender Booking</h3>
+                <div class="calendar-nav">
+                    <button onclick="changeMonth(-1)"><i class="fas fa-chevron-left"></i> Prev</button>
+                    <span class="month-label" id="monthLabel"></span>
+                    <button onclick="changeMonth(1)">Next <i class="fas fa-chevron-right"></i></button>
+                </div>
+                <div class="calendar-grid" id="calendarGrid"></div>
+            </div>
+
+            <!-- Siswa Info -->
+            <div class="siswa-info-card" id="siswaInfoCard">
+                <div class="siswa-info-grid" id="siswaInfoGrid"></div>
+            </div>
+
+            <!-- Tambah Paket Baru Card (shown when package sessions are complete or toggled) -->
+            <div class="tambah-paket-card" id="tambahPaketCard" style="display:none;">
+                <div class="tambah-paket-banner">
+                    <div class="tambah-paket-icon-box">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <div class="tambah-paket-banner-text">
+                        <h3>Paket Latihan Selesai! 🎉</h3>
+                        <p>Selamat atas kelulusan sesi latihan Anda! Ingin melancarkan kemampuan mengemudi lebih lanjut atau menambah SIM? Pilih paket baru di bawah ini tanpa perlu daftar ulang.</p>
+                    </div>
+                </div>
+
+                <div class="tambah-paket-form">
+                    <div class="tp-grid">
+                        <!-- Pilih Paket -->
+                        <div class="tp-field">
+                            <label for="newPaketId"><i class="fas fa-box-open" style="color:#2563eb;"></i> Pilih Paket Baru</label>
+                            <select id="newPaketId" class="tp-select" onchange="updateTambahPaketSummary()">
+                                <option value="">-- Pilih Paket Kursus --</option>
+                                <optgroup label="Paket Manual">
+                                    <option value="manual-10">Manual - 10x Pertemuan (Rp 1.200.000)</option>
+                                    <option value="manual-8">Manual - 8x Pertemuan (Rp 1.000.000)</option>
+                                    <option value="manual-6">Manual - 6x Pertemuan (Rp 800.000)</option>
+                                </optgroup>
+                                <optgroup label="Paket Matic">
+                                    <option value="matic-5">Matic - 5x Pertemuan (Rp 1.500.000)</option>
+                                    <option value="matic-4">Matic - 4x Pertemuan (Rp 1.300.000)</option>
+                                    <option value="matic-3">Matic - 3x Pertemuan (Rp 1.000.000)</option>
+                                </optgroup>
+                                <optgroup label="Paket Kombinasi (Manual + Matic)">
+                                    <option value="kombinasi-5">Kombinasi - 5x Pertemuan (Rp 1.500.000)</option>
+                                    <option value="kombinasi-7">Kombinasi - 7x Pertemuan (Rp 2.000.000)</option>
+                                </optgroup>
+                                <optgroup label="Paket + Pengurusan SIM">
+                                    <option value="manual-10-sim">Manual 10x + SIM (Rp 1.800.000)</option>
+                                    <option value="manual-8-sim">Manual 8x + SIM (Rp 1.600.000)</option>
+                                    <option value="matic-5-sim">Matic 5x + SIM (Rp 2.100.000)</option>
+                                    <option value="matic-4-sim">Matic 4x + SIM (Rp 1.900.000)</option>
+                                    <option value="matic-3-sim">Matic 3x + SIM (Rp 1.600.000)</option>
+                                    <option value="kombinasi-5-sim">Kombinasi 5x + SIM (Rp 2.100.000)</option>
+                                    <option value="kombinasi-7-sim">Kombinasi 7x + SIM (Rp 2.600.000)</option>
+                                </optgroup>
+                                <optgroup label="Paket Private">
+                                    <option value="private-1">Private - Per Pertemuan (Rp 350.000)</option>
+                                </optgroup>
+                            </select>
+                        </div>
+
+                        <!-- Metode Latihan -->
+                        <div class="tp-field">
+                            <label><i class="fas fa-map-marker-alt" style="color:#2563eb;"></i> Metode Latihan</label>
+                            <div class="tp-method-grid">
+                                <label class="tp-method-card active" id="labelOutlet">
+                                    <input type="radio" name="newTipeLayanan" value="outlet" checked onchange="onMethodChange(this)">
+                                    <div class="tp-method-content">
+                                        <div class="tp-method-title"><i class="fas fa-store"></i> Datang ke Outlet</div>
+                                        <div class="tp-method-desc">Latihan dari kantor PSJ</div>
+                                    </div>
+                                </label>
+                                <label class="tp-method-card" id="labelPenjemputan">
+                                    <input type="radio" name="newTipeLayanan" value="penjemputan" onchange="onMethodChange(this)">
+                                    <div class="tp-method-content">
+                                        <div class="tp-method-title"><i class="fas fa-car-side"></i> Penjemputan</div>
+                                        <div class="tp-method-desc">+Rp 150.000 / sesi</div>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Alamat Penjemputan (Conditional) -->
+                    <div class="tp-field" id="newAlamatGroup" style="display:none; margin-top:16px;">
+                        <label for="newAlamat"><i class="fas fa-home" style="color:#f57c00;"></i> Alamat Lengkap Penjemputan <span style="color:#dc2626;">*</span></label>
+                        <textarea id="newAlamat" placeholder="Masukkan alamat lengkap rumah atau lokasi penjemputan Anda..." rows="2" class="tp-textarea"></textarea>
+                    </div>
+
+                    <!-- Live Ringkasan Biaya Box -->
+                    <div class="tp-summary-box" id="tpSummaryBox">
+                        <div class="tp-summary-row">
+                            <span>Paket Kursus yang Dipilih:</span>
+                            <strong id="summaryPaketNama">Belum dipilih</strong>
+                        </div>
+                        <div class="tp-summary-row">
+                            <span>Metode Latihan:</span>
+                            <strong id="summaryMetode">Datang ke Outlet</strong>
+                        </div>
+                        <div class="tp-summary-row" id="summaryPickupRow" style="display:none;">
+                            <span>Biaya Tambahan Penjemputan:</span>
+                            <strong style="color:#f57c00;">+ Rp 150.000</strong>
+                        </div>
+                        <div class="tp-summary-total">
+                            <span>Total Pembayaran:</span>
+                            <strong id="summaryTotalHarga">Rp 0</strong>
+                        </div>
+                    </div>
+
+                    <!-- Action Button -->
+                    <div class="tp-actions">
+                        <button type="button" class="btn-tp-submit" onclick="submitTambahPaket()">
+                            <i class="fas fa-credit-card"></i> Pilih Paket & Lanjut ke Pembayaran QRIS
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Schedule Section -->
+            <div class="schedule-section" id="scheduleSection">
+                <div class="section-title-bar">
+                    <h2><i class="fas fa-list-alt" style="color:var(--primary)"></i> Daftar Jadwal</h2>
+                    <button class="btn-tambah-jadwal" onclick="toggleRequestForm()">
+                        <i class="fas fa-plus"></i> Buat Jadwal Baru
+                    </button>
+                </div>
+
+                <!-- Request Form -->
+                <div class="request-form-card" id="requestFormCard">
+                    <h3><i class="fas fa-calendar-plus" style="color:var(--accent)"></i> Buat Jadwal Latihan Baru</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label><i class="fas fa-calendar-day"></i> Tanggal</label>
+                            <input type="date" id="reqTanggal" onchange="filterAvailableSlots()">
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-clock"></i> Jam Mulai</label>
+                            <select id="reqJam" onchange="filterAvailableSlots()">
+                                <option value="">Pilih tanggal dulu</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group" style="width: 100%;">
+                            <label><i class="fas fa-user-tie"></i> Pilih Instruktur</label>
+                            <select id="reqInstruktur" onchange="filterAvailableSlots()" required>
+                                <option value="">-- Pilih Instruktur --</option>
+                            </select>
+                        </div>
+                    </div>
+                    <!-- Transmisi selection for Combination Package (Hidden by default) -->
+                    <div class="form-row" id="reqTransmisiRow" style="display: none;">
+                        <div class="form-group" style="width: 100%;">
+                            <label><i class="fas fa-cogs"></i> Transmisi Latihan</label>
+                            <select id="reqTransmisi">
+                                <option value="Manual">Manual</option>
+                                <option value="Matic">Matic</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button class="btn-submit-jadwal" onclick="submitJadwal()">
+                            <i class="fas fa-paper-plane"></i> Buat Jadwal
+                        </button>
+                        <button class="btn-cancel" onclick="toggleRequestForm()">Batal</button>
+                    </div>
+                </div>
+
+                <!-- Jadwal List -->
+                <div class="jadwal-list" id="jadwalList">
+                    <div class="jadwal-empty">
+                        <i class="fas fa-calendar-times"></i>
+                        <h4>Belum ada jadwal</h4>
+                        <p>Klik "Buat Jadwal Baru" untuk mulai</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SEO Static Content Section (crawlable by Google) -->
+            <section class="seo-content-section">
+                <h2>Atur Jadwal Latihan Mengemudi Online di Panca Sari Jaya</h2>
+                <p>Panca Sari Jaya Driving Course menyediakan sistem penjadwalan latihan mengemudi online yang mudah dan fleksibel. Cukup masukkan nomor WhatsApp Anda untuk melihat jadwal latihan yang sudah dibooking, membuat jadwal baru, atau melakukan reschedule kapan saja.</p>
+                <p>Kami melayani kursus mengemudi mobil manual dan matic di area Tangerang (Bintaro, Pamulang, Ciledug, Graha Raya, Tangerang Kota, BSD, Cisauk, Karawaci) dengan instruktur berpengalaman dan armada yang terawat.</p>
+
+                <div class="seo-features-grid">
+                    <div class="seo-feature-item">
+                        <i class="fas fa-calendar-check"></i>
+                        <div>
+                            <h4>Booking Online 24 Jam</h4>
+                            <p>Pilih tanggal dan jam latihan yang tersedia langsung dari kalender interaktif.</p>
+                        </div>
+                    </div>
+                    <div class="seo-feature-item">
+                        <i class="fas fa-user-tie"></i>
+                        <div>
+                            <h4>Pilih Instruktur Favorit</h4>
+                            <p>Lihat ketersediaan instruktur dan pilih sesuai preferensi Anda.</p>
+                        </div>
+                    </div>
+                    <div class="seo-feature-item">
+                        <i class="fas fa-sync-alt"></i>
+                        <div>
+                            <h4>Reschedule Mudah</h4>
+                            <p>Ubah jadwal latihan Anda kapan saja tanpa perlu menghubungi admin.</p>
+                        </div>
+                    </div>
+                    <div class="seo-feature-item">
+                        <i class="fab fa-whatsapp"></i>
+                        <div>
+                            <h4>Notifikasi WhatsApp</h4>
+                            <p>Terima konfirmasi dan pengingat jadwal otomatis via WhatsApp.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast-msg" id="toastMsg"></div>
+
+    <!-- Reschedule Modal -->
+    <div class="modal-overlay" id="rescheduleModal">
+        <div class="modal-box">
+            <h3><i class="fas fa-calendar-alt" style="color:var(--primary)"></i> Reschedule Jadwal</h3>
+            <input type="hidden" id="rescheduleJadwalId">
+            <label>Tanggal Baru</label>
+            <input type="date" id="rescheduleTanggal" onchange="filterRescheduleSlots()">
+            <label>Jam Baru</label>
+            <select id="rescheduleJam">
+                <option value="">Pilih tanggal dulu</option>
+            </select>
+            <div class="modal-actions">
+                <button class="btn-modal-cancel" onclick="closeRescheduleModal()">Batal</button>
+                <button class="btn-confirm" onclick="submitReschedule()"><i class="fas fa-check"></i> Simpan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirm Cancel Modal -->
+    <div class="modal-overlay" id="cancelModal">
+        <div class="modal-box">
+            <h3><i class="fas fa-exclamation-triangle" style="color:#c0392b"></i> Batalkan Jadwal</h3>
+            <p style="color:var(--text-body);margin-bottom:20px;">Apakah Anda yakin ingin membatalkan jadwal ini? Aksi ini tidak dapat dibatalkan.</p>
+            <input type="hidden" id="cancelJadwalId">
+            <div class="modal-actions">
+                <button class="btn-modal-cancel" onclick="closeCancelModal()">Tidak</button>
+                <button class="btn-confirm" style="background:#c0392b;" onclick="submitCancel()"><i class="fas fa-times"></i> Ya, Batalkan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tambah Paket QRIS Modal -->
+    <div class="modal-overlay" id="tambahPaketQrisModal">
+        <div class="modal-box" style="max-width: 440px; padding: 24px;">
+            <div id="tambahPaketQrisContent">
+                <!-- Injected via showTambahPaketQris() -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function escapeHtml(text) {
+            if (!text) return '';
+            const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+            return String(text).replace(/[&<>"']/g, m => map[m]);
+        }
+
+        let currentPhone = '';
+        let siswaData = null;
+        let calendarMonth = new Date().getMonth();
+        let calendarYear = new Date().getFullYear();
+        let bookedSlots = [];
+
+        (function() {
+            const phoneEl = document.getElementById('inputPhone');
+            if (phoneEl) {
+                ['input', 'paste'].forEach(evt => {
+                    phoneEl.addEventListener(evt, () => {
+                        setTimeout(() => {
+                            phoneEl.value = phoneEl.value.replace(/[^0-9]/g, '');
+                        }, 0);
+                    });
+                });
+            }
+
+            const params = new URLSearchParams(window.location.search);
+            const phone = params.get('phone');
+            if (phone) {
+                const cleanPhone = phone.replace(/[^0-9]/g, '');
+                if (phoneEl) phoneEl.value = cleanPhone;
+                setTimeout(() => cekJadwal(), 500);
+            }
+            // Load calendar on page load
+            loadBookedSlots();
+        })();
+
+        // ============================================
+        // CALENDAR
+        // ============================================
+        async function loadBookedSlots() {
+            try {
+                const res = await fetch('/api/jadwal/booked-slots');
+                const json = await res.json();
+                if (json.success) {
+                    bookedSlots = json.data;
+                }
+            } catch (e) {
+                console.error('Failed to load booked slots:', e);
+            }
+            renderCalendar();
+        }
+
+        function changeMonth(delta) {
+            calendarMonth += delta;
+            if (calendarMonth > 11) { calendarMonth = 0; calendarYear++; }
+            if (calendarMonth < 0) { calendarMonth = 11; calendarYear--; }
+            renderCalendar();
+        }
+
+        function renderCalendar() {
+            const monthNames = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+                'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+            const dayNames = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
+
+            document.getElementById('monthLabel').textContent = `${monthNames[calendarMonth]} ${calendarYear}`;
+
+            const grid = document.getElementById('calendarGrid');
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            const firstDay = new Date(calendarYear, calendarMonth, 1).getDay();
+            const daysInMonth = new Date(calendarYear, calendarMonth + 1, 0).getDate();
+
+            // Group booked slots by date
+            const bookedByDate = {};
+            bookedSlots.forEach(slot => {
+                const d = slot.tanggal.split('T')[0];
+                if (!bookedByDate[d]) bookedByDate[d] = [];
+                bookedByDate[d].push(slot);
+            });
+
+            let html = '';
+            // Day headers
+            dayNames.forEach(d => {
+                html += `<div class="calendar-day-header">${d}</div>`;
+            });
+
+            // Empty cells before first day
+            for (let i = 0; i < firstDay; i++) {
+                html += '<div class="calendar-day empty"></div>';
+            }
+
+            // Day cells
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dateObj = new Date(calendarYear, calendarMonth, day);
+                const dateStr = `${calendarYear}-${String(calendarMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+
+                const isPast = dateObj < today;
+                const isToday = dateObj.getTime() === today.getTime();
+                const dayBookings = bookedByDate[dateStr] || [];
+                const hasBookings = dayBookings.length > 0;
+
+                let classes = 'calendar-day';
+                if (isPast) classes += ' past';
+                if (isToday) classes += ' today';
+                if (hasBookings) classes += ' booked';
+
+                let slotsHtml = '';
+                if (hasBookings) {
+                    slotsHtml += `<span class="booked-slot booked-full"><i class="fas fa-user"></i> ${dayBookings.length} Sesi Booked</span>`;
+                    const showSlots = dayBookings.slice(0, 2);
+                    showSlots.forEach(s => {
+                        const rawInstName = s.instruktur_nama || s.nama_instruktur || 'Instruktur';
+                        // Hapus awalan "Mas ", "Pak ", "Mbak " agar menampilkan nama asli (contoh: "Danang", "Ivan")
+                        const cleanInstName = rawInstName.replace(/^(mas|pak|mbak|bu)\s+/i, '').trim();
+                        const instName = cleanInstName.split(' ')[0] || rawInstName;
+                        const timeStart = s.jam_mulai ? s.jam_mulai.slice(0, 5) : '';
+                        const timeEnd = s.jam_selesai ? s.jam_selesai.slice(0, 5) : '';
+                        slotsHtml += `<span class="booked-slot" title="Siswa: ${escapeHtml(s.nama_lengkap || 'Siswa')} | Instruktur: ${escapeHtml(rawInstName)} | Jam: ${timeStart}-${timeEnd}">${timeStart} - ${escapeHtml(instName)}</span>`;
+                    });
+                    if (dayBookings.length > 2) {
+                        slotsHtml += `<span class="slot-count">+${dayBookings.length - 2} lainnya</span>`;
+                    }
+                } else if (!isPast) {
+                    slotsHtml = `<span class="available-label">Tersedia</span>`;
+                }
+
+                if (dateStr === activeSelectedCalendarDate) {
+                    classes += ' selected-date-active';
+                }
+
+                html += `
+                    <div class="${classes}" ${!isPast ? `onclick="selectCalendarDate('${dateStr}', ${day}, '${monthNames[calendarMonth]}')" style="cursor:pointer;" title="Klik untuk memilih tanggal ${day} ${monthNames[calendarMonth]} ${calendarYear}"` : ''}>
+                        <div class="day-number">${day}</div>
+                        ${slotsHtml}
+                    </div>
+                `;
+            }
+
+            grid.innerHTML = html;
+        }
+
+        let activeSelectedCalendarDate = '';
+
+        function selectCalendarDate(dateStr, dayNum, monthName) {
+            activeSelectedCalendarDate = dateStr;
+            renderCalendar();
+
+            const dateInput = document.getElementById('reqTanggal');
+            if (dateInput) {
+                dateInput.value = dateStr;
+                filterAvailableSlots();
+                dateInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+            if (dayNum && monthName) {
+                showToast(`Tanggal ${dayNum} ${monthName} dipilih! Silakan isi jam & instruktur pada form di bawah.`, 'info');
+            }
+        }
+
+        function showToast(msg, type = 'info') {
+            const toast = document.getElementById('toastMsg');
+            toast.className = `toast-msg ${type} show`;
+            toast.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i> ${escapeHtml(msg)}`;
+            setTimeout(() => toast.classList.remove('show'), 4000);
+        }
+
+        // Filter jam yang sudah di-booking pada tanggal & instruktur tertentu
+        function filterAvailableSlots() {
+            const tanggal = document.getElementById('reqTanggal').value;
+            const instrukturId = document.getElementById('reqInstruktur').value;
+            const selectJam = document.getElementById('reqJam');
+
+            if (!tanggal) {
+                selectJam.innerHTML = '<option value="">Pilih tanggal dulu</option>';
+                return;
+            }
+
+            // Tentukan slot & durasi berdasarkan paket siswa
+            const paketNama = (siswaData?.siswa?.paket || '').toLowerCase();
+            const is2Jam = paketNama.includes('matic') || paketNama.includes('private') || paketNama.includes('kombinasi');
+            const allSlots = is2Jam
+                ? ['08:00', '10:00', '13:00', '15:00']
+                : ['08:00', '09:00', '10:00', '11:00', '13:00', '14:00', '15:00', '16:00'];
+            const durasi = is2Jam ? 2 : 1;
+
+            const dateStr = tanggal;
+            const selectedInstId = instrukturId ? parseInt(instrukturId) : null;
+            const currentSelectedJam = selectJam.value;
+
+            // List ketersediaan slot
+            const available = allSlots.filter(slot => {
+                const [sh] = slot.split(':').map(Number);
+                const candidateStart = sh * 60;
+                const candidateEnd = (sh + durasi) * 60;
+
+                if (selectedInstId) {
+                    // Cek ketersediaan khusus instruktur terpilih
+                    for (const b of bookedSlots) {
+                        const bDate = b.tanggal.split('T')[0];
+                        if (bDate !== dateStr) continue;
+                        if (b.instruktur_id && b.instruktur_id !== selectedInstId) continue;
+
+                        const [bSh, bSm] = (b.jam_mulai || '00:00').split(':').map(Number);
+                        const [bEh, bEm] = (b.jam_selesai || '00:00').split(':').map(Number);
+                        const bStart = bSh * 60 + (bSm || 0);
+                        const bEnd = bEh * 60 + (bEm || 0);
+
+                        if (candidateStart < bEnd && candidateEnd > bStart) {
+                            return false;
+                        }
+                    }
+                    return true;
+                } else {
+                    // Instruktur belum dipilih: tampilkan slot jika minimal ada 1 instruktur aktif yang kosong
+                    const activeInsts = (allInstructorsData || []).map(i => i.id);
+                    if (activeInsts.length === 0) activeInsts.push(1, 2);
+
+                    for (const instId of activeInsts) {
+                        let isBusy = false;
+                        for (const b of bookedSlots) {
+                            const bDate = b.tanggal.split('T')[0];
+                            if (bDate !== dateStr) continue;
+                            if (b.instruktur_id && b.instruktur_id !== instId) continue;
+
+                            const [bSh, bSm] = (b.jam_mulai || '00:00').split(':').map(Number);
+                            const [bEh, bEm] = (b.jam_selesai || '00:00').split(':').map(Number);
+                            const bStart = bSh * 60 + (bSm || 0);
+                            const bEnd = bEh * 60 + (bEm || 0);
+
+                            if (candidateStart < bEnd && candidateEnd > bStart) {
+                                isBusy = true;
+                                break;
+                            }
+                        }
+                        if (!isBusy) return true; // Minimal 1 instruktur tersedia
+                    }
+                    return false;
+                }
+            });
+
+            if (available.length === 0) {
+                selectJam.innerHTML = '<option value="">❌ Semua jadwal penuh pada tanggal ini</option>';
+            } else {
+                selectJam.innerHTML = '<option value="">Pilih Jam Latihan</option>';
+                available.forEach(slot => {
+                    const [h, m] = slot.split(':').map(Number);
+                    const end = `${String(h + durasi).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+                    const isSel = slot === currentSelectedJam ? 'selected' : '';
+                    selectJam.innerHTML += `<option value="${slot}" ${isSel}>${slot} - ${end} (${durasi} jam)</option>`;
+                });
+            }
+
+            // Update status ketersediaan instruktur jika jam sudah dipilih
+            updateInstrukturOptionsForJam();
+        }
+
+        function updateInstrukturOptionsForJam() {
+            const tanggal = document.getElementById('reqTanggal').value;
+            const jam_mulai = document.getElementById('reqJam').value;
+            const selectInst = document.getElementById('reqInstruktur');
+            if (!selectInst || !allInstructorsData || allInstructorsData.length === 0) return;
+
+            const currentInstVal = selectInst.value;
+            selectInst.innerHTML = '<option value="">-- Pilih Instruktur --</option>';
+
+            if (!tanggal || !jam_mulai) {
+                allInstructorsData.forEach(i => {
+                    const isSel = String(i.id) === String(currentInstVal) ? 'selected' : '';
+                    selectInst.innerHTML += `<option value="${i.id}" ${isSel}>${i.nama}</option>`;
+                });
+                return;
+            }
+
+            const paketNama = (siswaData?.siswa?.paket || '').toLowerCase();
+            const is2Jam = paketNama.includes('matic') || paketNama.includes('private') || paketNama.includes('kombinasi');
+            const durasi = is2Jam ? 2 : 1;
+
+            const [sh] = jam_mulai.split(':').map(Number);
+            const candidateStart = sh * 60;
+            const candidateEnd = (sh + durasi) * 60;
+            const dateStr = tanggal;
+
+            allInstructorsData.forEach(i => {
+                let isBusy = false;
+                for (const b of bookedSlots) {
+                    const bDate = b.tanggal.split('T')[0];
+                    if (bDate !== dateStr) continue;
+                    if (b.instruktur_id && b.instruktur_id !== i.id) continue;
+
+                    const [bSh, bSm] = (b.jam_mulai || '00:00').split(':').map(Number);
+                    const [bEh, bEm] = (b.jam_selesai || '00:00').split(':').map(Number);
+                    const bStart = bSh * 60 + (bSm || 0);
+                    const bEnd = bEh * 60 + (bEm || 0);
+
+                    if (candidateStart < bEnd && candidateEnd > bStart) {
+                        isBusy = true;
+                        break;
+                    }
+                }
+
+                const isSel = String(i.id) === String(currentInstVal) ? 'selected' : '';
+                if (isBusy) {
+                    selectInst.innerHTML += `<option value="${i.id}" ${isSel} disabled style="color:#999;">${i.nama} (Penuh di jam ini)</option>`;
+                } else {
+                    selectInst.innerHTML += `<option value="${i.id}" ${isSel}>${i.nama}</option>`;
+                }
+            });
+        }
+
+        async function cekJadwal(silent = false) {
+            let phone = document.getElementById('inputPhone').value.trim().replace(/[^0-9]/g, '');
+            if (!phone) {
+                if (!silent) showToast('Masukkan nomor WhatsApp Anda', 'error');
+                return;
+            }
+
+            currentPhone = phone;
+
+            try {
+                const res = await fetch(`/api/jadwal/siswa-jadwal?no_telepon=${encodeURIComponent(phone)}`);
+                const data = await res.json();
+
+                if (!data.success) {
+                    if (!silent) showToast(data.message, 'error');
+                    document.getElementById('siswaInfoCard').classList.remove('show');
+                    document.getElementById('scheduleSection').classList.remove('show');
+                    return;
+                }
+                siswaData = data.data;
+                renderSiswaInfo(siswaData.siswa);
+                renderJadwal(siswaData.jadwal, siswaData.absensi);
+
+                document.getElementById('siswaInfoCard').classList.add('show');
+
+                // Cek status: jika pending, sembunyikan form booking
+                if (siswaData.siswa.status === 'pending') {
+                    document.getElementById('scheduleSection').classList.remove('show');
+                    if (!silent) showToast('Pembayaran Anda belum dikonfirmasi. Silakan konfirmasi via WhatsApp terlebih dahulu.', 'error');
+
+                    // Tampilkan pesan di jadwal list
+                    document.getElementById('jadwalList').innerHTML = `
+                        <div class="jadwal-empty" style="border:2px dashed #ffcc80;background:#fff8e1;">
+                            <i class="fas fa-exclamation-triangle" style="color:#f57c00;"></i>
+                            <h4 style="color:#e65100;">Pembayaran Belum Dikonfirmasi</h4>
+                            <p>Silakan bayar via QRIS dan konfirmasi melalui WhatsApp ke admin untuk mengaktifkan akun Anda.</p>
+                            <a href="https://api.whatsapp.com/send?phone=6281385359897&text=${encodeURIComponent('Halo Admin Panca Sari Jaya, saya ingin konfirmasi pembayaran. Nama: ' + (siswaData.siswa.nama || '') + ', No. WA: ' + currentPhone)}" 
+                               target="_blank"
+                               style="display:inline-flex;align-items:center;gap:8px;padding:10px 20px;background:#25D366;color:white;border-radius:8px;text-decoration:none;font-weight:600;margin-top:12px;">
+                                <i class="fab fa-whatsapp"></i> Konfirmasi via WhatsApp
+                            </a>
+                        </div>
+                    `;
+
+                    setTimeout(() => {
+                        document.getElementById('siswaInfoCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }, 300);
+                    return;
+                }
+
+                document.getElementById('scheduleSection').classList.add('show');
+                loadInstruktur();
+
+                // Set minimum date ke hari ini
+                const today = new Date().toISOString().split('T')[0];
+                document.getElementById('reqTanggal').min = today;
+                document.getElementById('reqTanggal').value = today;
+                filterAvailableSlots();
+
+                if (!silent) showToast(`Data jadwal ${escapeHtml(siswaData.siswa.nama)} berhasil dimuat!`, 'success');
+
+                // Auto scroll ke section jadwal
+                setTimeout(() => {
+                    document.getElementById('scheduleSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 300);
+
+            } catch (error) {
+                showToast('Gagal memuat data. Coba lagi.', 'error');
+            }
+        }
+
+        function renderSiswaInfo(siswa) {
+            const statusMap = {
+                'aktif': '<span class="status-badge aktif"><i class="fas fa-check-circle"></i> Aktif</span>',
+                'pending': '<span class="status-badge pending"><i class="fas fa-clock"></i> Pending</span>',
+                'selesai': '<span class="status-badge selesai"><i class="fas fa-flag-checkered"></i> Selesai</span>'
+            };
+
+            const isLunas = siswa.status_pembayaran === 'lunas';
+            const bayarBadge = isLunas
+                ? '<span class="status-badge" style="background:#d4edda;color:#155724;"><i class="fas fa-check-circle"></i> Lunas</span>'
+                : '<span class="status-badge" style="background:#fff3cd;color:#856404;"><i class="fas fa-exclamation-circle"></i> Belum Lunas</span>';
+
+            const paketNama = (siswa.paket || '').toLowerCase();
+            const isKombinasiOrPrivate = paketNama.includes('kombinasi') || paketNama.includes('private');
+            const transmisiRow = document.getElementById('reqTransmisiRow');
+            if (transmisiRow) {
+                if (isKombinasiOrPrivate) {
+                    transmisiRow.style.display = 'flex';
+                } else {
+                    transmisiRow.style.display = 'none';
+                }
+            }
+
+            const totalHadir = siswa.total_hadir || 0;
+            const totalSesi = siswa.jumlah_pertemuan || 0;
+            const isComplete = totalSesi > 0 && totalHadir >= totalSesi;
+
+            document.getElementById('siswaInfoGrid').innerHTML = `
+                <div class="info-item">
+                    <label>Nama Lengkap</label>
+                    <span>${escapeHtml(siswa.nama)}</span>
+                </div>
+                <div class="info-item">
+                    <label>No. WhatsApp</label>
+                    <span>${escapeHtml(siswa.no_telepon)}</span>
+                </div>
+                <div class="info-item">
+                    <label>Paket Kursus</label>
+                    <span>${escapeHtml(siswa.paket || '-')}</span>
+                </div>
+                <div class="info-item">
+                    <label>Sesi Latihan</label>
+                    <span>${totalHadir} / ${totalSesi} Sesi</span>
+                </div>
+                <div class="info-item">
+                    <label>Status Kursus</label>
+                    ${statusMap[siswa.status] || statusMap['pending']}
+                </div>
+                <div class="info-item">
+                    <label>Status Pembayaran</label>
+                    ${bayarBadge}
+                </div>
+            `;
+
+            // Hapus banner belum lunas & extra actions lama jika ada
+            const oldBanner = document.getElementById('belumLunasBanner');
+            if (oldBanner) oldBanner.remove();
+            const oldActions = document.getElementById('siswaExtraActions');
+            if (oldActions) oldActions.remove();
+
+            // Tampilkan warning banner jika belum lunas (non-blocking)
+            if (!isLunas && siswa.status !== 'pending') {
+                const bannerDiv = document.createElement('div');
+                bannerDiv.id = 'belumLunasBanner';
+                bannerDiv.className = 'belum-lunas-banner';
+                bannerDiv.innerHTML = `
+                    <div class="banner-text">
+                        <strong><i class="fas fa-exclamation-triangle"></i> Status Pembayaran: Belum Lunas</strong>
+                        Anda tetap dapat membuat jadwal latihan. Silakan bayar via QRIS dan konfirmasi ke admin via WhatsApp agar status Anda diperbarui menjadi lunas.
+                    </div>
+                    <a href="https://api.whatsapp.com/send?phone=6281385359897&text=${encodeURIComponent('Halo Admin Panca Sari Jaya, saya mau konfirmasi pembayaran atas nama ' + (siswa.nama || '') + ' (No. WA: ' + currentPhone + ')')}" 
+                       target="_blank" class="btn-wa-konfirmasi">
+                        <i class="fab fa-whatsapp"></i> Konfirmasi Bayar
+                    </a>
+                `;
+                document.getElementById('siswaInfoCard').appendChild(bannerDiv);
+            }
+
+            // Tampilkan notifikasi jika paket sudah selesai, atau tombol toggle jika masih aktif
+            if (isComplete || siswa.status === 'selesai') {
+                const stripDiv = document.createElement('div');
+                stripDiv.id = 'siswaExtraActions';
+                stripDiv.className = 'selesai-strip';
+                stripDiv.innerHTML = `
+                    <i class="fas fa-check-circle"></i>
+                    <div>
+                        <strong>Sesi Latihan Telah Selesai (${totalHadir}/${totalSesi} Sesi)</strong>
+                        <div style="font-size:0.8rem;color:#15803d;margin-top:2px;">Silakan pilih paket baru pada formulir di bawah ini untuk melanjutkan sesi latihan berikutnya.</div>
+                    </div>
+                `;
+                document.getElementById('siswaInfoCard').appendChild(stripDiv);
+            } else {
+                const actionsDiv = document.createElement('div');
+                actionsDiv.id = 'siswaExtraActions';
+                actionsDiv.style.marginTop = '16px';
+                actionsDiv.style.display = 'flex';
+                actionsDiv.style.justifyContent = 'flex-end';
+                actionsDiv.innerHTML = `
+                    <button type="button" class="btn-tambah-paket-toggle" onclick="toggleTambahPaketCard()">
+                        <i class="fas fa-plus-circle"></i> Tambah / Perpanjang Paket Baru
+                    </button>
+                `;
+                document.getElementById('siswaInfoCard').appendChild(actionsDiv);
+            }
+
+            // Tampilkan / sembunyikan card tambah paket
+            const tambahCard = document.getElementById('tambahPaketCard');
+            if (tambahCard) {
+                if (isComplete || siswa.status === 'selesai') {
+                    tambahCard.style.display = 'block';
+                    if (typeof updateTambahPaketSummary === 'function') {
+                        updateTambahPaketSummary();
+                    }
+                } else {
+                    tambahCard.style.display = 'none';
+                }
+            }
+        }
+        function renderJadwal(jadwalList, absensiList = []) {
+            const container = document.getElementById('jadwalList');
+
+            if (!jadwalList || jadwalList.length === 0) {
+                container.innerHTML = `
+                    <div class="jadwal-empty">
+                        <i class="fas fa-calendar-times"></i>
+                        <h4>Belum ada jadwal</h4>
+                        <p>Klik "Buat Jadwal Baru" untuk mengatur jadwal latihan Anda</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const absensiMap = {};
+            if (absensiList && absensiList.length > 0) {
+                absensiList.forEach(a => {
+                    absensiMap[a.jadwal_id] = a;
+                });
+            }
+
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+            const today = new Date().toISOString().split('T')[0];
+
+            container.innerHTML = jadwalList.map(j => {
+                const tglKey = String(j.tanggal).split('T')[0];
+                const parts = tglKey.split('-');
+                const d = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+                const day = d.getDate();
+                const month = months[d.getMonth()];
+                const isPast = tglKey < today;
+                const isToday = tglKey === today;
+                const absensi = absensiMap[j.id];
+                const statusAbsensi = j.status_absensi || absensi?.status;
+                const isAbsen = !!statusAbsensi;
+                const isCompleted = isPast || isAbsen;
+
+                const actionBtns = !isCompleted ? `
+                    <div class="jadwal-actions">
+                        <button class="btn-reschedule" onclick="openRescheduleModal(${j.id})"><i class="fas fa-calendar-alt"></i> Reschedule</button>
+                        <button class="btn-cancel-jadwal" onclick="openCancelModal(${j.id})"><i class="fas fa-times"></i> Batal</button>
+                    </div>
+                ` : '';
+
+                let statusText = '📋 Akan Datang';
+                if (statusAbsensi === 'hadir') {
+                    statusText = '✅ Selesai (Hadir)';
+                } else if (statusAbsensi === 'tidak hadir') {
+                    statusText = '❌ Selesai (Tidak Hadir)';
+                } else if (statusAbsensi === 'izin') {
+                    statusText = 'ℹ️ Selesai (Izin)';
+                } else if (isPast) {
+                    statusText = '✅ Selesai';
+                } else if (isToday) {
+                    statusText = '📍 Hari Ini (Belum Absen)';
+                }
+
+                return `
+                    <div class="jadwal-card" style="${isCompleted ? 'opacity:0.6;' : ''} ${isToday && !isCompleted ? 'border-left:3px solid var(--accent);' : ''}">
+                        <div class="jadwal-date-box">
+                            <div class="day">${day}</div>
+                            <div class="month">${month} ${d.getFullYear()}</div>
+                        </div>
+                        <div class="jadwal-card-info">
+                            <h4>${statusText}</h4>
+                            <div class="jadwal-card-meta">
+                                <span><i class="fas fa-clock"></i> ${j.jam_mulai.slice(0, 5)} - ${j.jam_selesai.slice(0, 5)}</span>
+                                ${j.transmisi ? `<span><i class="fas fa-cogs"></i> Transmisi: <strong>${escapeHtml(j.transmisi)}</strong></span>` : ''}
+                                ${j.instruktur_nama ? `<span><i class="fas fa-user"></i> ${escapeHtml(j.instruktur_nama)}</span>` : ''}
+                                ${j.nama_kendaraan ? `<span><i class="fas fa-car"></i> ${escapeHtml(j.nama_kendaraan)} (${escapeHtml(j.nomor_polisi)})</span>` : ''}
+                            </div>
+                        </div>
+                        <div class="pertemuan-badge">Ke-${j.pertemuan_ke || '-'}</div>
+                        ${actionBtns}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // ============================================
+        // RESCHEDULE & CANCEL
+        // ============================================
+        function openRescheduleModal(jadwalId) {
+            document.getElementById('rescheduleJadwalId').value = jadwalId;
+            const today = new Date().toISOString().split('T')[0];
+            const dateInput = document.getElementById('rescheduleTanggal');
+            dateInput.min = today;
+            dateInput.value = '';
+            document.getElementById('rescheduleJam').innerHTML = '<option value="">Pilih tanggal dulu</option>';
+            document.getElementById('rescheduleModal').classList.add('active');
+        }
+
+        function closeRescheduleModal() {
+            document.getElementById('rescheduleModal').classList.remove('active');
+        }
+
+        function filterRescheduleSlots() {
+            const tanggal = document.getElementById('rescheduleTanggal').value;
+            const select = document.getElementById('rescheduleJam');
+
+            // Tentukan slot berdasarkan paket siswa
+            const paketNama = (siswaData?.siswa?.paket || '').toLowerCase();
+            const is2Jam = paketNama.includes('matic') || paketNama.includes('private');
+            const allSlots = is2Jam
+                ? ['08:00', '10:00', '13:00', '15:00']
+                : ['08:00', '09:00', '10:00', '11:00', '13:00', '14:00', '15:00', '16:00'];
+            const durasi = is2Jam ? 2 : 1;
+
+            if (!tanggal) {
+                select.innerHTML = '<option value="">Pilih tanggal dulu</option>';
+                return;
+            }
+
+            const bookedTimes = bookedSlots
+                .filter(s => s.tanggal.split('T')[0] === tanggal)
+                .map(s => s.jam_mulai.slice(0, 5));
+
+            const available = allSlots.filter(slot => {
+                const [sh] = slot.split(':').map(Number);
+                for (let i = 0; i < durasi; i++) {
+                    const checkTime = `${String(sh + i).padStart(2, '0')}:00`;
+                    if (bookedTimes.includes(checkTime)) return false;
+                }
+                return true;
+            });
+
+            if (available.length === 0) {
+                select.innerHTML = '<option value="">❌ Semua jam sudah penuh</option>';
+            } else {
+                select.innerHTML = '<option value="">Pilih Jam</option>';
+                available.forEach(slot => {
+                    const [h, m] = slot.split(':').map(Number);
+                    const end = `${String(h + durasi).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+                    select.innerHTML += `<option value="${slot}">${slot} - ${end} (${durasi} jam)</option>`;
+                });
+            }
+        }
+
+        async function submitReschedule() {
+            const jadwal_id = document.getElementById('rescheduleJadwalId').value;
+            const tanggal_baru = document.getElementById('rescheduleTanggal').value;
+            const jam_mulai_baru = document.getElementById('rescheduleJam').value;
+
+            if (!tanggal_baru) { showToast('Pilih tanggal baru', 'error'); return; }
+            if (!jam_mulai_baru) { showToast('Pilih jam baru', 'error'); return; }
+
+            try {
+                const res = await fetch('/api/jadwal/siswa-reschedule', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ jadwal_id, no_telepon: currentPhone, tanggal_baru, jam_mulai_baru })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    showToast(data.message, 'success');
+                    closeRescheduleModal();
+                    cekJadwal(true);
+                    await loadBookedSlots();
+                    filterAvailableSlots();
+                } else {
+                    showToast(data.message, 'error');
+                }
+            } catch (error) {
+                showToast('Gagal reschedule. Coba lagi.', 'error');
+            }
+        }
+
+        function openCancelModal(jadwalId) {
+            document.getElementById('cancelJadwalId').value = jadwalId;
+            document.getElementById('cancelModal').classList.add('active');
+        }
+
+        function closeCancelModal() {
+            document.getElementById('cancelModal').classList.remove('active');
+        }
+
+        async function submitCancel() {
+            const jadwal_id = document.getElementById('cancelJadwalId').value;
+
+            try {
+                const res = await fetch('/api/jadwal/siswa-cancel', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ jadwal_id, no_telepon: currentPhone })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    showToast(data.message, 'success');
+                    closeCancelModal();
+                    cekJadwal(true);
+                    await loadBookedSlots();
+                    filterAvailableSlots();
+                } else {
+                    showToast(data.message, 'error');
+                }
+            } catch (error) {
+                showToast('Gagal membatalkan. Coba lagi.', 'error');
+            }
+        }
+
+        // Load daftar instruktur aktif
+        let allInstructorsData = [];
+        async function loadInstruktur() {
+            try {
+                const res = await fetch('/api/instruktur');
+                const data = await res.json();
+                const select = document.getElementById('reqInstruktur');
+                if (data.success && data.data) {
+                    allInstructorsData = data.data;
+                    if (select) {
+                        select.innerHTML = '<option value="">-- Pilih Instruktur --</option>';
+                        data.data.forEach(i => {
+                            select.innerHTML += `<option value="${i.id}">${i.nama}</option>`;
+                        });
+                    }
+                }
+            } catch (e) {
+                console.log('Load instruktur error (non-fatal):', e.message);
+            }
+        }
+
+        function toggleRequestForm() {
+            const form = document.getElementById('requestFormCard');
+            form.classList.toggle('show');
+        }
+
+        async function submitJadwal() {
+            const tanggal = document.getElementById('reqTanggal').value;
+            const jam_mulai = document.getElementById('reqJam').value;
+            const instruktur_id = document.getElementById('reqInstruktur').value || null;
+
+            const paketNama = (siswaData?.siswa?.paket || '').toLowerCase();
+            const isKombinasiOrPrivate = paketNama.includes('kombinasi') || paketNama.includes('private');
+            const transmisi = isKombinasiOrPrivate ? document.getElementById('reqTransmisi').value : null;
+
+            if (!tanggal) {
+                showToast('Pilih tanggal latihan', 'error');
+                return;
+            }
+            if (!jam_mulai) {
+                showToast('Pilih jam latihan', 'error');
+                return;
+            }
+            if (!instruktur_id) {
+                showToast('Pilih instruktur mengemudi terlebih dahulu', 'error');
+                return;
+            }
+
+            try {
+                const res = await fetch('/api/jadwal/siswa-request', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ no_telepon: currentPhone, tanggal, jam_mulai, instruktur_id, transmisi })
+                });
+
+                const text = await res.text();
+                let data;
+                try {
+                    data = JSON.parse(text);
+                } catch (e) {
+                    console.error('Server response bukan JSON:', text);
+                    showToast('Server error. Coba lagi.', 'error');
+                    return;
+                }
+
+                if (data.success) {
+                    showToast(data.message, 'success');
+                    document.getElementById('requestFormCard').classList.remove('show');
+                    // Refresh jadwal & calendar
+                    cekJadwal(true);
+                    await loadBookedSlots();
+                    filterAvailableSlots();
+                } else {
+                    showToast(data.message, 'error');
+                }
+            } catch (error) {
+                console.error('Jadwal submit error:', error);
+                showToast('Gagal membuat jadwal. Coba lagi.', 'error');
+            }
+        }
+
+        // ============================================
+        // TAMBAH PAKET BARU FUNCTIONS
+        // ============================================
+        function onMethodChange(radio) {
+            const isPenjemputan = radio.value === 'penjemputan';
+            const cardOutlet = document.getElementById('labelOutlet');
+            const cardPenjemputan = document.getElementById('labelPenjemputan');
+            const groupAlamat = document.getElementById('newAlamatGroup');
+
+            if (cardOutlet && cardPenjemputan) {
+                if (isPenjemputan) {
+                    cardOutlet.classList.remove('active');
+                    cardPenjemputan.classList.add('active');
+                } else {
+                    cardOutlet.classList.add('active');
+                    cardPenjemputan.classList.remove('active');
+                }
+            }
+
+            if (groupAlamat) {
+                groupAlamat.style.display = isPenjemputan ? 'block' : 'none';
+            }
+
+            updateTambahPaketSummary();
+        }
+
+        function updateTambahPaketSummary() {
+            const select = document.getElementById('newPaketId');
+            const paketId = select?.value || '';
+            const selectedOpt = select?.options[select.selectedIndex];
+            const hargaMap = {
+                'manual-10': 1200000,
+                'manual-8': 1000000,
+                'manual-6': 800000,
+                'matic-5': 1500000,
+                'matic-4': 1300000,
+                'matic-3': 1000000,
+                'kombinasi-5': 1500000,
+                'kombinasi-7': 2000000,
+                'manual-10-sim': 1800000,
+                'manual-8-sim': 1600000,
+                'matic-5-sim': 2100000,
+                'matic-4-sim': 1900000,
+                'matic-3-sim': 1600000,
+                'kombinasi-5-sim': 2100000,
+                'kombinasi-7-sim': 2600000,
+                'private-1': 350000
+            };
+
+            const isPenjemputan = document.querySelector('input[name="newTipeLayanan"]:checked')?.value === 'penjemputan';
+            const baseHarga = hargaMap[paketId] || 0;
+            const pickupFee = isPenjemputan ? 150000 : 0;
+            const total = baseHarga + pickupFee;
+
+            const summaryPaketNama = document.getElementById('summaryPaketNama');
+            const summaryMetode = document.getElementById('summaryMetode');
+            const summaryPickupRow = document.getElementById('summaryPickupRow');
+            const summaryTotalHarga = document.getElementById('summaryTotalHarga');
+
+            if (summaryPaketNama) {
+                summaryPaketNama.textContent = paketId ? (selectedOpt?.text?.split('(')[0]?.trim() || paketId) : 'Belum dipilih';
+            }
+            if (summaryMetode) {
+                summaryMetode.textContent = isPenjemputan ? 'Penjemputan ke Rumah (+Rp 150.000)' : 'Datang ke Outlet';
+            }
+            if (summaryPickupRow) {
+                summaryPickupRow.style.display = isPenjemputan ? 'flex' : 'none';
+            }
+            if (summaryTotalHarga) {
+                summaryTotalHarga.textContent = total > 0 ? 'Rp ' + total.toLocaleString('id-ID') : 'Rp 0';
+            }
+        }
+
+        function toggleTambahPaketCard() {
+            const card = document.getElementById('tambahPaketCard');
+            if (card) {
+                if (card.style.display === 'none' || !card.style.display) {
+                    card.style.display = 'block';
+                    updateTambahPaketSummary();
+                    card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                } else {
+                    card.style.display = 'none';
+                }
+            }
+        }
+
+        async function submitTambahPaket() {
+            if (!currentPhone) {
+                showToast('Silakan cek jadwal dengan nomor WhatsApp Anda terlebih dahulu', 'error');
+                return;
+            }
+
+            const paket_id = document.getElementById('newPaketId')?.value;
+            const tipe_layanan = document.querySelector('input[name="newTipeLayanan"]:checked')?.value || 'outlet';
+            const alamat = document.getElementById('newAlamat')?.value?.trim() || '';
+
+            if (!paket_id) {
+                showToast('Silakan pilih paket kursus baru terlebih dahulu', 'error');
+                document.getElementById('newPaketId')?.focus();
+                return;
+            }
+
+            if (tipe_layanan === 'penjemputan' && (!alamat || alamat.length < 5)) {
+                showToast('Mohon isi alamat lengkap penjemputan (minimal 5 karakter)', 'error');
+                document.getElementById('newAlamat')?.focus();
+                return;
+            }
+
+            const submitBtn = document.querySelector('#tambahPaketCard .btn-tp-submit') || document.querySelector('#tambahPaketCard button');
+            const origHtml = submitBtn ? submitBtn.innerHTML : '';
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses Pilihan...';
+            }
+
+            try {
+                const res = await fetch('/api/siswa/tambah-paket', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        no_telepon: currentPhone,
+                        paket_id,
+                        tipe_layanan,
+                        alamat
+                    })
+                });
+
+                const data = await res.json();
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = origHtml;
+                }
+
+                if (!data.success) {
+                    showToast(data.message || 'Gagal menambahkan paket baru', 'error');
+                    return;
+                }
+
+                showToast('Paket baru berhasil dipilih!', 'success');
+
+                // Tampilkan popup QRIS pembayaran
+                showTambahPaketQris(data.data);
+
+                // Refresh info siswa & jadwal
+                await cekJadwal(true);
+
+            } catch (err) {
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = origHtml;
+                }
+                console.error('Tambah paket error:', err);
+                showToast('Terjadi kesalahan koneksi. Silakan coba lagi.', 'error');
+            }
+        }
+
+        function showTambahPaketQris(info) {
+            const modal = document.getElementById('tambahPaketQrisModal');
+            const content = document.getElementById('tambahPaketQrisContent');
+            if (!modal || !content) return;
+
+            const isPenjemputan = info.tipe_layanan === 'penjemputan';
+            const waNumber = '6281385359897';
+            const waMessage = encodeURIComponent(
+                `Halo Admin Panca Sari Jaya,\n\nSaya telah menambah paket kursus baru dan melakukan pembayaran via QRIS.\n\n` +
+                `📋 *Detail Penambahan Paket:*\n` +
+                `Nama: ${info.nama_lengkap}\n` +
+                `No. WA: ${info.no_telepon}\n` +
+                `Paket Baru: ${info.nama_paket} (${info.jumlah_pertemuan}x Pertemuan)\n` +
+                `Metode: ${isPenjemputan ? 'Penjemputan ke Rumah' : 'Datang ke Outlet'}\n` +
+                (isPenjemputan ? `Alamat: ${info.alamat}\n` : '') +
+                `Total Pembayaran: ${info.total_harga_formatted}\n\n` +
+                `Mohon konfirmasi pembayaran saya. Terima kasih! 🙏`
+            );
+
+            content.innerHTML = `
+                <h3 style="margin-bottom:6px;font-size:1.15rem;color:#1e1b4b;display:flex;align-items:center;justify-content:center;gap:8px;">
+                    <i class="fas fa-check-circle" style="color:#16a34a;"></i> Paket Berhasil Ditambahkan!
+                </h3>
+                <p style="margin-bottom:14px;font-size:0.8rem;color:#64748b;">
+                    Scan QRIS di bawah ini untuk membayar, lalu kirim bukti konfirmasi ke WhatsApp Admin.
+                </p>
+
+                <div style="background:#f0fdf4;border-radius:10px;padding:12px 14px;margin-bottom:14px;border:1px solid #bbf7d0;text-align:left;">
+                    <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:0.8rem;">
+                        <span style="color:#64748b;">Paket Baru:</span>
+                        <strong style="color:#0f172a;">${escapeHtml(info.nama_paket)}</strong>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:0.8rem;">
+                        <span style="color:#64748b;">Jumlah Sesi:</span>
+                        <strong style="color:#0f172a;">${info.jumlah_pertemuan}x Pertemuan</strong>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:0.8rem;">
+                        <span style="color:#64748b;">Metode Latihan:</span>
+                        <strong style="color:${isPenjemputan ? '#f57c00' : '#1565c0'};">${isPenjemputan ? 'Penjemputan ke Rumah' : 'Datang ke Outlet'}</strong>
+                    </div>
+                    ${isPenjemputan ? `
+                    <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:0.8rem;padding-top:4px;border-top:1px dashed #bbf7d0;">
+                        <span style="color:#64748b;">Biaya Penjemputan:</span>
+                        <strong style="color:#f57c00;">+ Rp 150.000</strong>
+                    </div>
+                    ` : ''}
+                    <div style="display:flex;justify-content:space-between;padding-top:6px;border-top:1.5px solid #86efac;font-size:0.9rem;">
+                        <span style="font-weight:700;color:#1e1b4b;">Total Pembayaran:</span>
+                        <strong style="font-size:1.1rem;color:#16a34a;">${escapeHtml(info.total_harga_formatted)}</strong>
+                    </div>
+                </div>
+
+                <div style="background:#fafafa;border-radius:10px;padding:12px;text-align:center;border:1px solid #e2e8f0;margin-bottom:14px;">
+                    <img src="/images/qris-psj.webp?v=3" alt="QRIS Panca Sari Jaya" 
+                         width="180" height="254"
+                         style="max-width:180px;width:100%;height:auto;border-radius:6px;"
+                         onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                    <div style="display:none;flex-direction:column;align-items:center;gap:6px;padding:16px;">
+                        <i class="fas fa-qrcode" style="font-size:2rem;color:#cbd5e1;"></i>
+                        <span style="font-size:0.8rem;color:#94a3b8;">QRIS belum tersedia</span>
+                    </div>
+                    <div style="font-size:0.75rem;color:#64748b;margin-top:6px;">
+                        <i class="fas fa-shield-alt" style="color:#16a34a;"></i> Scan melalui BCA Mobile, GoPay, OVO, Dana, ShopeePay, dll.
+                    </div>
+                </div>
+
+                <div style="display:flex;flex-direction:column;gap:8px;">
+                    <a href="https://api.whatsapp.com/send?phone=${waNumber}&text=${waMessage}" target="_blank"
+                       class="btn-wa-konfirmasi" style="padding:10px;justify-content:center;font-size:0.85rem;border-radius:8px;">
+                        <i class="fab fa-whatsapp" style="font-size:1.1rem;"></i> Konfirmasi via WhatsApp ke Admin
+                    </a>
+                    <button onclick="closeTambahPaketQris()" style="background:#f1f5f9;color:#475569;border:1px solid #cbd5e1;cursor:pointer;padding:9px;font-size:0.85rem;border-radius:8px;font-weight:600;">
+                        <i class="fas fa-check"></i> Selesai
+                    </button>
+                </div>
+            `;
+            modal.classList.add('active');
+        }
+
+        function closeTambahPaketQris() {
+            const modal = document.getElementById('tambahPaketQrisModal');
+            if (modal) modal.classList.remove('active');
+        }
+    </script>
+    <script>
+        // Smooth page transitions (0.4s fade effect on load and Back button)
+        function triggerFadeIn() {
+            const transition = document.getElementById('pageTransition');
+            if (transition) {
+                transition.classList.add('fade-in');
+                transition.classList.remove('active');
+                setTimeout(() => {
+                    transition.classList.remove('fade-in', 'active');
+                }, 400);
+            }
+        }
+
+        window.addEventListener('pageshow', triggerFadeIn);
+
+        document.addEventListener('DOMContentLoaded', () => {
+            triggerFadeIn();
+
+            document.querySelectorAll('a[href]').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    const href = link.getAttribute('href');
+                    if (href && !href.startsWith('#') && !href.startsWith('http') && !href.startsWith('mailto') && !href.startsWith('tel') && !href.startsWith('javascript')) {
+                        e.preventDefault();
+                        const transition = document.getElementById('pageTransition');
+                        if (transition) transition.classList.add('active');
+                        setTimeout(() => { window.location.href = href; }, 350);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>
