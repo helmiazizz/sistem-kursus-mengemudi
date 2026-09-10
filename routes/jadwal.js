@@ -33,7 +33,11 @@ router.get('/', isAuthenticated, async (req, res) => {
             query += ' WHERE ' + conditions.join(' AND ');
         }
 
-        query += ' ORDER BY j.tanggal DESC, j.jam_mulai ASC';
+        if (siswa_id) {
+            query += ' ORDER BY j.pertemuan_ke ASC, j.tanggal ASC, j.jam_mulai ASC';
+        } else {
+            query += ' ORDER BY j.tanggal DESC, j.jam_mulai ASC';
+        }
 
         const [rows] = await db.query(query, params);
         res.json({ success: true, data: rows });
