@@ -1385,6 +1385,19 @@ async function deleteArmada(id, nama) {
 // ============================================
 let qrCodeInstance = null;
 
+function openUniversalQrModal() {
+    const origin = window.location.origin;
+    const url = `${origin}/absen`;
+
+    document.getElementById('qrModalTitle').innerHTML = '<i class="fas fa-qrcode" style="color:var(--admin-primary);"></i> QR Code Absensi Siswa';
+    document.getElementById('qrTargetName').textContent = 'PANCA SARI JAYA';
+    document.getElementById('qrTargetSub').textContent = 'Scan untuk Absensi Selesai Latihan';
+    document.getElementById('qrUrlText').textContent = url;
+
+    renderQrCode(url);
+    document.getElementById('modalQrCode').classList.add('active');
+}
+
 function openArmadaQr(armadaId, namaMobil, noPolisi) {
     const origin = window.location.origin;
     const url = `${origin}/absen?armada=${encodeURIComponent(armadaId)}&plat=${encodeURIComponent(noPolisi)}`;
