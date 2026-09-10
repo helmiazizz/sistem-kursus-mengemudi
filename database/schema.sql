@@ -110,8 +110,8 @@ CREATE TABLE IF NOT EXISTS absensi (
 -- ============================================
 -- Data Awal: Admin Default
 -- ============================================
--- Password: PancaSari@2026!Jaya (hashed with bcrypt)
--- PENTING: Ganti hash ini setelah deploy pertama kali!
+-- Akun admin awal untuk inisialisasi database
+-- PENTING: Ganti password admin setelah deploy pertama kali!
 INSERT INTO admins (username, password, nama_lengkap) VALUES 
 ('admin', '$2b$10$/xC_PLACEHOLDER_GANTI_SETELAH_DEPLOY', 'Administrator');
 
