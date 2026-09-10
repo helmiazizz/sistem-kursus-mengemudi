@@ -826,16 +826,17 @@
                 <div class="detail-item">
                     <div class="detail-label"><i class="fas fa-clock" style="color:var(--primary);"></i> Jam Latihan</div>
                     <div class="detail-value" id="sessionTime">00:00 - 00:00</div>
-                    <div class="detail-sub" id="sessionTransmisi">Manual / Matic</div>
+                    <div class="detail-sub" id="sessionDuration">Durasi Sesi</div>
                 </div>
                 <div class="detail-item">
                     <div class="detail-label"><i class="fas fa-user-tie" style="color:var(--primary);"></i> Instruktur</div>
                     <div class="detail-value" id="sessionInstructor">-</div>
+                    <div class="detail-sub">Instruktur PSJ</div>
                 </div>
                 <div class="detail-item">
-                    <div class="detail-label"><i class="fas fa-car" style="color:var(--primary);"></i> Kendaraan</div>
-                    <div class="detail-value" id="sessionCar">-</div>
-                    <div class="detail-sub" id="sessionPlate" style="display:none;">-</div>
+                    <div class="detail-label"><i class="fas fa-cogs" style="color:var(--primary);"></i> Transmisi</div>
+                    <div class="detail-value" id="sessionTransmisi">-</div>
+                    <div class="detail-sub">Armada PSJ</div>
                 </div>
             </div>
 
@@ -1093,15 +1094,22 @@
             const tgl = new Date(jadwal.tanggal);
             const dateStr = tgl.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'short' });
             document.getElementById('sessionDate').textContent = dateStr;
-
             const jamMulai = (jadwal.jam_mulai || '').slice(0, 5);
             const jamSelesai = (jadwal.jam_selesai || '').slice(0, 5);
             document.getElementById('sessionTime').textContent = `${jamMulai} - ${jamSelesai} WIB`;
-            document.getElementById('sessionTransmisi').textContent = `Transmisi ${jadwal.transmisi || '-'}`;
+
+            // Hitung durasi jam latihan
+            const [h1, m1] = jamMulai.split(':').map(Number);
+            const [h2, m2] = jamSelesai.split(':').map(Number);
+            const durasiJam = (h2 * 60 + (m2 || 0) - (h1 * 60 + (m1 || 0))) / 60;
+            const durasiEl = document.getElementById('sessionDuration');
+            if (durasiEl) durasiEl.textContent = durasiJam > 0 ? `Durasi ${durasiJam} Jam` : 'WIB';
 
             document.getElementById('sessionInstructor').textContent = jadwal.instruktur_nama || 'Instruktur PSJ';
-            const carName = jadwal.nama_kendaraan || 'Armada PSJ';
-            document.getElementById('sessionCar').textContent = carName;
+
+            // Transmisi (tanpa merk mobil)
+            const transmisiNama = jadwal.transmisi ? (jadwal.transmisi.charAt(0).toUpperCase() + jadwal.transmisi.slice(1).toLowerCase()) : 'Manual';
+            document.getElementById('sessionTransmisi').textContent = transmisiNama;
 
             const statusArea = document.getElementById('sessionStatusArea');
             const btnSubmit = document.getElementById('btnSubmitAbsen');
