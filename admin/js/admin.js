@@ -991,7 +991,7 @@ function renderBookingTable(jadwalList, dateLabel, absensiMap = {}) {
     `;
 
     if (jadwalList.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="8" class="empty-state"><i class="fas fa-calendar-times" style="font-size:1.5rem;opacity:0.3;"></i><h4>Tidak ada jadwal</h4><p>Belum ada booking pada tanggal ini</p></td></tr>';
+        tbody.innerHTML = '<tr><td colspan="9" class="empty-state"><i class="fas fa-calendar-times" style="font-size:1.5rem;opacity:0.3;"></i><h4>Tidak ada jadwal</h4><p>Belum ada booking pada tanggal ini</p></td></tr>';
         return;
     }
 
@@ -1018,9 +1018,13 @@ function renderBookingTable(jadwalList, dateLabel, absensiMap = {}) {
             statusBadge = '<span class="badge badge-pending"><i class="fas fa-clock"></i> Belum Absen</span>';
         }
 
-        const carDisplay = j.transmisi 
-            ? `<span><i class="fas fa-car" style="color:var(--admin-primary-light);"></i> Mobil ${escapeHtml(j.transmisi.charAt(0).toUpperCase() + j.transmisi.slice(1).toLowerCase())}</span>`
-            : (j.nama_kendaraan ? `<span><i class="fas fa-car" style="color:var(--admin-primary-light);"></i> ${escapeHtml(j.nama_kendaraan)}</span>` : '<span style="color:var(--admin-text-muted);font-style:italic;">-</span>');
+        const transmisiBadge = (j.transmisi || '').toLowerCase().includes('matic')
+            ? '<span class="badge" style="background:#f3e8ff;color:#7e22ce;font-weight:700;"><i class="fas fa-bolt"></i> Matic</span>'
+            : '<span class="badge" style="background:#e0f2fe;color:#0369a1;font-weight:700;"><i class="fas fa-cog"></i> Manual</span>';
+
+        const instrukturDisplay = j.instruktur_nama
+            ? `<span style="font-weight:600;color:var(--admin-text);"><i class="fas fa-chalkboard-teacher" style="color:var(--admin-primary-light);margin-right:4px;"></i>${escapeHtml(j.instruktur_nama)}</span>`
+            : '<span style="color:var(--admin-text-muted);font-style:italic;">-</span>';
 
         return `
             <tr>
@@ -1030,8 +1034,8 @@ function renderBookingTable(jadwalList, dateLabel, absensiMap = {}) {
                 <td>${escapeHtml(j.no_telepon || '-')}</td>
                 <td>${escapeHtml(j.alamat || '-')}</td>
                 <td><span class="pertemuan-pill">Ke-${j.pertemuan_ke || '-'}</span></td>
-                <td><strong>${escapeHtml(j.transmisi || '-')}</strong></td>
-                <td>${carDisplay}</td>
+                <td>${transmisiBadge}</td>
+                <td>${instrukturDisplay}</td>
                 <td>${statusBadge}</td>
             </tr>
         `;
