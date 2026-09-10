@@ -915,7 +915,7 @@
 
                 const maxCars = (armadaCapacity && armadaCapacity[studentTrans] !== undefined)
                     ? armadaCapacity[studentTrans]
-                    : (studentTrans === 'matic' ? 1 : 2);
+                    : (studentTrans === 'matic' ? 2 : 1);
 
                 if (maxCars <= 0) return false; // Mobil transmisi ini sedang tidak ada yang tersedia
 
@@ -1272,7 +1272,7 @@
                                 <span><i class="fas fa-clock"></i> ${j.jam_mulai.slice(0, 5)} - ${j.jam_selesai.slice(0, 5)}</span>
                                 ${j.transmisi ? `<span><i class="fas fa-cogs"></i> Transmisi: <strong>${escapeHtml(j.transmisi)}</strong></span>` : ''}
                                 ${j.instruktur_nama ? `<span><i class="fas fa-user"></i> ${escapeHtml(j.instruktur_nama)}</span>` : ''}
-                                ${j.nama_kendaraan ? `<span><i class="fas fa-car"></i> ${escapeHtml(j.nama_kendaraan)} (${escapeHtml(j.nomor_polisi)})</span>` : ''}
+                                ${j.transmisi ? `<span><i class="fas fa-car"></i> Mobil ${escapeHtml(j.transmisi.toUpperCase() === 'MATIC' ? 'Matic' : 'Manual')}</span>` : (j.nama_kendaraan ? `<span><i class="fas fa-car"></i> ${escapeHtml(j.nama_kendaraan)}</span>` : '')}
                             </div>
                         </div>
                         <div class="pertemuan-badge">Ke-${j.pertemuan_ke || '-'}</div>
@@ -1325,7 +1325,7 @@
             const studentTrans = isMaticSession ? 'matic' : 'manual';
             const maxCars = (armadaCapacity && armadaCapacity[studentTrans] !== undefined)
                 ? armadaCapacity[studentTrans]
-                : (studentTrans === 'matic' ? 1 : 2);
+                : (studentTrans === 'matic' ? 2 : 1);
 
             const available = allSlots.filter(slot => {
                 const [sh] = slot.split(':').map(Number);
@@ -1472,8 +1472,8 @@
             }
         }
 
-        // Load kapasitas armada aktif per transmisi
-        let armadaCapacity = { manual: 2, matic: 1, total: 3 };
+        // Load kapasitas armada aktif per transmisi (1 manual, 2 matic)
+        let armadaCapacity = { manual: 1, matic: 2, total: 3 };
         async function loadArmadaCapacity() {
             try {
                 const res = await fetch('/api/armada');

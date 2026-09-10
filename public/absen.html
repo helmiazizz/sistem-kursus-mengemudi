@@ -640,7 +640,7 @@
                 <div class="detail-item">
                     <div class="detail-label"><i class="fas fa-car" style="color:var(--primary);"></i> Kendaraan</div>
                     <div class="detail-value" id="sessionCar">-</div>
-                    <div class="detail-sub" id="sessionPlate">-</div>
+                    <div class="detail-sub" id="sessionPlate" style="display:none;">-</div>
                 </div>
             </div>
 
@@ -837,8 +837,8 @@
             document.getElementById('sessionTransmisi').textContent = `Transmisi ${jadwal.transmisi || '-'}`;
 
             document.getElementById('sessionInstructor').textContent = jadwal.instruktur_nama || 'Instruktur PSJ';
-            document.getElementById('sessionCar').textContent = jadwal.nama_kendaraan || 'Armada PSJ';
-            document.getElementById('sessionPlate').textContent = jadwal.nomor_polisi || '-';
+            const carName = jadwal.transmisi ? `Mobil ${jadwal.transmisi.charAt(0).toUpperCase() + jadwal.transmisi.slice(1).toLowerCase()}` : (jadwal.nama_kendaraan || 'Armada PSJ');
+            document.getElementById('sessionCar').textContent = carName;
 
             const statusArea = document.getElementById('sessionStatusArea');
             const btnSubmit = document.getElementById('btnSubmitAbsen');

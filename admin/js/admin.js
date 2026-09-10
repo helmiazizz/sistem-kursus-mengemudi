@@ -1018,9 +1018,9 @@ function renderBookingTable(jadwalList, dateLabel, absensiMap = {}) {
             statusBadge = '<span class="badge badge-pending"><i class="fas fa-clock"></i> Belum Absen</span>';
         }
 
-        const carDisplay = j.nama_kendaraan 
-            ? `<span><i class="fas fa-car" style="color:var(--admin-primary-light);"></i> ${escapeHtml(j.nama_kendaraan)} ${j.nomor_polisi ? `<span style="font-size:0.75rem;color:var(--admin-text-muted);">(${escapeHtml(j.nomor_polisi)})</span>` : ''}</span>`
-            : '<span style="color:var(--admin-text-muted);font-style:italic;">-</span>';
+        const carDisplay = j.transmisi 
+            ? `<span><i class="fas fa-car" style="color:var(--admin-primary-light);"></i> Mobil ${escapeHtml(j.transmisi.charAt(0).toUpperCase() + j.transmisi.slice(1).toLowerCase())}</span>`
+            : (j.nama_kendaraan ? `<span><i class="fas fa-car" style="color:var(--admin-primary-light);"></i> ${escapeHtml(j.nama_kendaraan)}</span>` : '<span style="color:var(--admin-text-muted);font-style:italic;">-</span>');
 
         return `
             <tr>

@@ -1,4 +1,4 @@
-﻿const express = require('express');
+const express = require('express');
 const router = express.Router();
 const db = require('../config/database');
 const { isAuthenticated } = require('./auth');
@@ -12,8 +12,13 @@ router.get('/', async (req, res) => {
             'SELECT id, nama_kendaraan, nomor_polisi, jenis, status FROM armada WHERE status = "tersedia" ORDER BY jenis, nama_kendaraan'
         );
 
-        const manualCount = rows.filter(a => a.jenis && a.jenis.toLowerCase() === 'manual').length;
-        const maticCount = rows.filter(a => a.jenis && a.jenis.toLowerCase() === 'matic').length;
+        let manualCount = rows.filter(a => a.jenis && a.jenis.toLowerCase() === 'manual').length;
+        let maticCount = rows.filter(a => a.jenis && a.jenis.toLowerCase() === 'matic').length;
+
+        if (rows.length === 0) {
+            manualCount = 1;
+            maticCount = 2;
+        }
 
         res.json({
             success: true,
@@ -21,7 +26,7 @@ router.get('/', async (req, res) => {
             capacity: {
                 manual: manualCount,
                 matic: maticCount,
-                total: rows.length
+                total: manualCount + maticCount
             }
         });
     } catch (error) {

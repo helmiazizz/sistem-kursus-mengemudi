@@ -148,9 +148,17 @@ async function seed() {
             console.log('✅ Paket kursus seeded (7 paket)');
         }
 
-
-
-        console.log('\n🎉 Database seeding completed!');
+        // Seed armada default (1 manual, 2 matic = 3 unit)
+        const [existingArmada] = await connection.query('SELECT COUNT(*) as count FROM armada');
+        if (existingArmada[0].count === 0) {
+            await connection.query(`
+                INSERT INTO armada (nama_kendaraan, nomor_polisi, jenis, status) VALUES 
+                ('Mobil Manual', 'MANUAL-1', 'manual', 'tersedia'),
+                ('Mobil Matic 1', 'MATIC-1', 'matic', 'tersedia'),
+                ('Mobil Matic 2', 'MATIC-2', 'matic', 'tersedia')
+            `);
+            console.log('✅ Armada seeded (1 manual, 2 matic = 3 unit)');
+        }
         console.log('================================');
         console.log('Admin Login:');
         console.log('  Username: admin');

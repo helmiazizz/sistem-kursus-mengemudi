@@ -50,15 +50,45 @@ router.get('/', isAuthenticated, async (req, res) => {
 // Create jadwal
 router.post('/', isAuthenticated, async (req, res) => {
     try {
-        const { siswa_id, instruktur_id, armada_id, tanggal, jam_mulai, jam_selesai, pertemuan_ke } = req.body;
+        let { siswa_id, instruktur_id, armada_id, tanggal, jam_mulai, jam_selesai, pertemuan_ke, transmisi } = req.body;
 
         if (!siswa_id || !tanggal || !jam_mulai || !jam_selesai) {
             return res.status(400).json({ success: false, message: 'Data jadwal tidak lengkap' });
         }
 
+        if (!transmisi) {
+            const [siswaData] = await db.query(
+                `SELECT pk.nama_paket FROM siswa s LEFT JOIN paket_kursus pk ON s.paket_id = pk.id WHERE s.id = ?`,
+                [siswa_id]
+            );
+            if (siswaData.length > 0 && siswaData[0].nama_paket) {
+                transmisi = siswaData[0].nama_paket.toLowerCase().includes('matic') ? 'Matic' : 'Manual';
+            } else {
+                transmisi = 'Manual';
+            }
+        }
+
+        const jenisTransmisiKey = (transmisi || 'manual').toLowerCase();
+        const maxCapacity = jenisTransmisiKey === 'matic' ? 2 : 1;
+
+        const [bookedCars] = await db.query(
+            `SELECT j.id FROM jadwal j 
+             WHERE j.tanggal = ? AND LOWER(j.transmisi) = ? AND (
+                 j.jam_mulai < ? AND j.jam_selesai > ?
+             )`,
+            [tanggal, jenisTransmisiKey, jam_selesai, jam_mulai]
+        );
+
+        if (bookedCars.length >= maxCapacity) {
+            return res.status(400).json({
+                success: false,
+                message: `Kapasitas armada mobil ${transmisi} (${maxCapacity} unit) sudah penuh pada jam tersebut.`
+            });
+        }
+
         const [result] = await db.query(
-            'INSERT INTO jadwal (siswa_id, instruktur_id, armada_id, tanggal, jam_mulai, jam_selesai, pertemuan_ke) VALUES (?, ?, ?, ?, ?, ?, ?)',
-            [siswa_id, instruktur_id || null, armada_id || null, tanggal, jam_mulai, jam_selesai, pertemuan_ke || 1]
+            'INSERT INTO jadwal (siswa_id, instruktur_id, armada_id, tanggal, jam_mulai, jam_selesai, pertemuan_ke, transmisi) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+            [siswa_id, instruktur_id || null, armada_id || null, tanggal, jam_mulai, jam_selesai, pertemuan_ke || 1, transmisi]
         );
 
         res.json({ success: true, message: 'Jadwal berhasil dibuat', id: result.insertId });
@@ -71,10 +101,42 @@ router.post('/', isAuthenticated, async (req, res) => {
 // Update jadwal
 router.put('/:id', isAuthenticated, async (req, res) => {
     try {
-        const { siswa_id, instruktur_id, armada_id, tanggal, jam_mulai, jam_selesai, pertemuan_ke } = req.body;
+        let { siswa_id, instruktur_id, armada_id, tanggal, jam_mulai, jam_selesai, pertemuan_ke, transmisi } = req.body;
+
+        if (!transmisi && siswa_id) {
+            const [siswaData] = await db.query(
+                `SELECT pk.nama_paket FROM siswa s LEFT JOIN paket_kursus pk ON s.paket_id = pk.id WHERE s.id = ?`,
+                [siswa_id]
+            );
+            if (siswaData.length > 0 && siswaData[0].nama_paket) {
+                transmisi = siswaData[0].nama_paket.toLowerCase().includes('matic') ? 'Matic' : 'Manual';
+            } else {
+                transmisi = 'Manual';
+            }
+        }
+
+        if (tanggal && jam_mulai && jam_selesai && transmisi) {
+            const jenisTransmisiKey = transmisi.toLowerCase();
+            const maxCapacity = jenisTransmisiKey === 'matic' ? 2 : 1;
+            const [bookedCars] = await db.query(
+                `SELECT j.id FROM jadwal j 
+                 WHERE j.tanggal = ? AND LOWER(j.transmisi) = ? AND j.id != ? AND (
+                     j.jam_mulai < ? AND j.jam_selesai > ?
+                 )`,
+                [tanggal, jenisTransmisiKey, req.params.id, jam_selesai, jam_mulai]
+            );
+
+            if (bookedCars.length >= maxCapacity) {
+                return res.status(400).json({
+                    success: false,
+                    message: `Kapasitas armada mobil ${transmisi} (${maxCapacity} unit) sudah penuh pada jam tersebut.`
+                });
+            }
+        }
+
         await db.query(
-            'UPDATE jadwal SET siswa_id = ?, instruktur_id = ?, armada_id = ?, tanggal = ?, jam_mulai = ?, jam_selesai = ?, pertemuan_ke = ? WHERE id = ?',
-            [siswa_id, instruktur_id, armada_id, tanggal, jam_mulai, jam_selesai, pertemuan_ke, req.params.id]
+            'UPDATE jadwal SET siswa_id = ?, instruktur_id = ?, armada_id = ?, tanggal = ?, jam_mulai = ?, jam_selesai = ?, pertemuan_ke = ?, transmisi = ? WHERE id = ?',
+            [siswa_id, instruktur_id, armada_id, tanggal, jam_mulai, jam_selesai, pertemuan_ke, transmisi || null, req.params.id]
         );
         res.json({ success: true, message: 'Jadwal berhasil diperbarui' });
     } catch (error) {
@@ -194,8 +256,8 @@ router.get('/siswa-jadwal', async (req, res) => {
 router.get('/booked-slots', async (req, res) => {
     try {
         const [rows] = await db.query(
-            `SELECT j.tanggal, j.jam_mulai, j.jam_selesai, j.instruktur_id, i.nama as instruktur_nama, 
-                    s.nama_lengkap, j.transmisi, j.armada_id, a.nama_kendaraan, a.nomor_polisi 
+            `SELECT j.id, j.tanggal, j.jam_mulai, j.jam_selesai, j.instruktur_id, i.nama as instruktur_nama, 
+                    s.nama_lengkap, j.transmisi, j.armada_id, a.nama_kendaraan 
              FROM jadwal j 
              JOIN siswa s ON j.siswa_id = s.id
              LEFT JOIN instruktur i ON j.instruktur_id = i.id
@@ -345,23 +407,12 @@ router.post('/siswa-request', async (req, res) => {
 
         // ============================================
         // VALIDASI KAPASITAS ARMADA MOBIL (TRANSMISI)
+        // Hard-rule: 1 Mobil Manual, 2 Mobil Matic (Total 3 Unit)
         // ============================================
         const jenisTransmisiKey = (finalTransmisi || 'manual').toLowerCase();
+        const maxCapacity = jenisTransmisiKey === 'matic' ? 2 : 1;
 
-        // 1. Ambil semua armada yang berstatus 'tersedia' untuk jenis transmisi ini
-        const [availableCars] = await db.query(
-            'SELECT id, nama_kendaraan, nomor_polisi FROM armada WHERE LOWER(jenis) = ? AND status = "tersedia"',
-            [jenisTransmisiKey]
-        );
-
-        if (availableCars.length === 0) {
-            return res.status(400).json({
-                success: false,
-                message: `Mohon maaf, saat ini unit mobil transmisi ${finalTransmisi} sedang tidak tersedia (dalam perawatan / maintenance). Silakan hubungi admin.`
-            });
-        }
-
-        // 2. Cek berapa armada transmisi ini yang sudah dibooking pada jam tersebut
+        // Cek berapa armada transmisi ini yang sudah dibooking pada jam tersebut
         const [bookedCars] = await db.query(
             `SELECT j.armada_id, j.id FROM jadwal j 
              WHERE j.tanggal = ? AND LOWER(j.transmisi) = ? AND (
@@ -370,16 +421,20 @@ router.post('/siswa-request', async (req, res) => {
             [tanggal, jenisTransmisiKey, jam_selesai, jam_mulai]
         );
 
-        if (bookedCars.length >= availableCars.length) {
+        if (bookedCars.length >= maxCapacity) {
             return res.status(400).json({
                 success: false,
-                message: `Mohon maaf, semua armada mobil ${finalTransmisi} (${availableCars.length} unit) sudah penuh terpakai pada jam tersebut. Silakan pilih jam atau tanggal lain.`
+                message: `Mohon maaf, armada mobil ${finalTransmisi} (${maxCapacity} unit) sudah penuh terpakai pada jam tersebut. Silakan pilih jam atau tanggal lain.`
             });
         }
 
-        // 3. Alokasikan unit mobil yang masih kosong secara otomatis
+        // Alokasikan unit armada dari database jika ada
+        const [availableCars] = await db.query(
+            'SELECT id, nama_kendaraan FROM armada WHERE LOWER(jenis) = ? AND status = "tersedia" ORDER BY id ASC',
+            [jenisTransmisiKey]
+        );
         const usedCarIds = new Set(bookedCars.map(b => b.armada_id).filter(Boolean));
-        const freeCar = availableCars.find(c => !usedCarIds.has(c.id)) || availableCars[0];
+        const freeCar = availableCars.find(c => !usedCarIds.has(c.id)) || (availableCars.length > 0 ? availableCars[0] : null);
         const finalArmadaId = freeCar ? freeCar.id : null;
 
         // Simpan jadwal (termasuk armada_id)
@@ -415,7 +470,8 @@ Jadwal latihan Anda telah berhasil dibuat:
 
 📆 Tanggal: *${tglFormatted}*
 ⏰ Jam: *${jam_mulai} - ${jam_selesai}*
-🔢 Pertemuan Ke-${pertemuan_ke}${finalTransmisi ? `\n⚙️ Transmisi: *${finalTransmisi}*` : ''}${freeCar ? `\n🚗 Mobil: *${freeCar.nama_kendaraan} (${freeCar.nomor_polisi})*` : ''}${nightNote}
+🔢 Pertemuan Ke-${pertemuan_ke}${finalTransmisi ? `\n⚙️ Transmisi: *${finalTransmisi}*` : ''}
+🚗 Mobil: *Mobil ${finalTransmisi}*${nightNote}
 
 ⚠️ Mohon hadir 10 menit sebelum jadwal.
 
@@ -452,7 +508,8 @@ Anda mendapat jadwal latihan baru:
 📦 Paket: *${paketRows.length > 0 ? paketRows[0].nama_paket : '-'}*
 📆 Tanggal: *${tglFormatted}*
 ⏰ Jam: *${jam_mulai} - ${jam_selesai}*
-🔢 Pertemuan Ke-${pertemuan_ke}${finalTransmisi ? `\n⚙️ Transmisi: *${finalTransmisi}*` : ''}${freeCar ? `\n🚗 Mobil: *${freeCar.nama_kendaraan} (${freeCar.nomor_polisi})*` : ''}${isNightSession ? '\n🌙 *Catatan*: Sesi Latihan Sore/Malam' : ''}
+🔢 Pertemuan Ke-${pertemuan_ke}${finalTransmisi ? `\n⚙️ Transmisi: *${finalTransmisi}*` : ''}
+🚗 Mobil: *Mobil ${finalTransmisi}*${isNightSession ? '\n🌙 *Catatan*: Sesi Latihan Sore/Malam' : ''}
 📍 Alamat Siswa: *${siswa.alamat || '-'}*
 
 Terima kasih 🙏
@@ -705,30 +762,32 @@ router.post('/siswa-reschedule', async (req, res) => {
             return res.status(400).json({ success: false, message: 'Anda sudah punya jadwal lain di jam tersebut pada tanggal ini.' });
         }
 
-        // Validasi Kapasitas Armada Mobil pada jadwal baru
+        // Validasi Kapasitas Armada Mobil pada jadwal baru (1 Manual, 2 Matic)
         const jenisTransmisiKey = (rows[0].transmisi || 'manual').toLowerCase();
+        const maxCapacity = jenisTransmisiKey === 'matic' ? 2 : 1;
+
+        const [bookedCars] = await db.query(
+            `SELECT j.armada_id FROM jadwal j 
+             WHERE j.tanggal = ? AND LOWER(j.transmisi) = ? AND j.id != ? AND (
+                 j.jam_mulai < ? AND j.jam_selesai > ?
+             )`,
+            [tanggal_baru, jenisTransmisiKey, jadwal_id, jam_selesai_baru, jam_mulai_baru]
+        );
+
+        if (bookedCars.length >= maxCapacity) {
+            return res.status(400).json({
+                success: false,
+                message: `Mohon maaf, armada mobil ${rows[0].transmisi || 'latihan'} (${maxCapacity} unit) sudah penuh terpakai pada jam baru tersebut. Silakan pilih jam atau tanggal lain.`
+            });
+        }
+
         const [availableCars] = await db.query(
-            'SELECT id, nama_kendaraan, nomor_polisi FROM armada WHERE LOWER(jenis) = ? AND status = "tersedia"',
+            'SELECT id, nama_kendaraan FROM armada WHERE LOWER(jenis) = ? AND status = "tersedia" ORDER BY id ASC',
             [jenisTransmisiKey]
         );
 
         let finalRescheduleArmadaId = rows[0].armada_id;
         if (availableCars.length > 0) {
-            const [bookedCars] = await db.query(
-                `SELECT j.armada_id FROM jadwal j 
-                 WHERE j.tanggal = ? AND LOWER(j.transmisi) = ? AND j.id != ? AND (
-                     j.jam_mulai < ? AND j.jam_selesai > ?
-                 )`,
-                [tanggal_baru, jenisTransmisiKey, jadwal_id, jam_selesai_baru, jam_mulai_baru]
-            );
-
-            if (bookedCars.length >= availableCars.length) {
-                return res.status(400).json({
-                    success: false,
-                    message: `Mohon maaf, semua armada mobil ${rows[0].transmisi || 'latihan'} (${availableCars.length} unit) sudah penuh terpakai pada jam baru tersebut. Silakan pilih jam atau tanggal lain.`
-                });
-            }
-
             const usedCarIds = new Set(bookedCars.map(b => b.armada_id).filter(Boolean));
             const freeCar = availableCars.find(c => !usedCarIds.has(c.id)) || availableCars[0];
             finalRescheduleArmadaId = freeCar ? freeCar.id : null;

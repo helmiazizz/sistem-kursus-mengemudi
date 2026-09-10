@@ -357,19 +357,30 @@ async function runMigrations() {
             } catch (e) { /* ignore */ }
         }
 
-        // Seed armada default jika belum ada (1 matic, 2 manual)
+        // Seed armada default (2 matic, 1 manual = Total 3 unit)
         try {
-            const [armadaCount] = await conn.query("SELECT COUNT(*) as count FROM armada");
-            if (armadaCount[0].count === 0) {
+            const [armadaRows] = await conn.query("SELECT id, nama_kendaraan, jenis FROM armada ORDER BY id ASC");
+            if (armadaRows.length === 0) {
                 const defaultArmada = [
-                    ['Toyota Agya Matic', 'B 1234 PSJ', 'matic', 2022, 'Putih', 'tersedia', 'Mobil matic utama'],
-                    ['Toyota Avanza Manual', 'B 2345 PSJ', 'manual', 2021, 'Silver', 'tersedia', 'Mobil manual unit 1'],
-                    ['Daihatsu Xenia Manual', 'B 3456 PSJ', 'manual', 2020, 'Hitam', 'tersedia', 'Mobil manual unit 2']
+                    ['Mobil Manual', 'MANUAL-1', 'manual', 2022, 'Silver', 'tersedia', 'Unit Manual'],
+                    ['Mobil Matic 1', 'MATIC-1', 'matic', 2022, 'Putih', 'tersedia', 'Unit Matic 1'],
+                    ['Mobil Matic 2', 'MATIC-2', 'matic', 2023, 'Abu-abu', 'tersedia', 'Unit Matic 2']
                 ];
                 for (const a of defaultArmada) {
                     await conn.query(
                         "INSERT INTO armada (nama_kendaraan, nomor_polisi, jenis, tahun, warna, status, catatan) VALUES (?, ?, ?, ?, ?, ?, ?)",
                         a
+                    );
+                }
+            } else {
+                // Sinkronkan data armada lama agar strictly: 1 manual, 2 matic
+                const manuals = armadaRows.filter(a => (a.jenis || '').toLowerCase() === 'manual');
+                const matics = armadaRows.filter(a => (a.jenis || '').toLowerCase() === 'matic');
+                if (manuals.length > 1 && matics.length < 2) {
+                    // Konversi manual ke-2 menjadi matic unit 2
+                    await conn.query(
+                        "UPDATE armada SET jenis = 'matic', nama_kendaraan = 'Mobil Matic 2' WHERE id = ?",
+                        [manuals[1].id]
                     );
                 }
             }
