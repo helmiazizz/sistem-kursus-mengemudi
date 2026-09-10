@@ -190,10 +190,12 @@ router.get('/siswa-jadwal', async (req, res) => {
 router.get('/booked-slots', async (req, res) => {
     try {
         const [rows] = await db.query(
-            `SELECT j.tanggal, j.jam_mulai, j.jam_selesai, j.instruktur_id, i.nama as instruktur_nama, s.nama_lengkap 
+            `SELECT j.tanggal, j.jam_mulai, j.jam_selesai, j.instruktur_id, i.nama as instruktur_nama, 
+                    s.nama_lengkap, j.transmisi, j.armada_id, a.nama_kendaraan, a.nomor_polisi 
              FROM jadwal j 
              JOIN siswa s ON j.siswa_id = s.id
              LEFT JOIN instruktur i ON j.instruktur_id = i.id
+             LEFT JOIN armada a ON j.armada_id = a.id
              WHERE j.tanggal >= CURDATE()
              ORDER BY j.tanggal, j.jam_mulai`
         );
@@ -337,10 +339,49 @@ router.post('/siswa-request', async (req, res) => {
             });
         }
 
-        // Simpan jadwal
+        // ============================================
+        // VALIDASI KAPASITAS ARMADA MOBIL (TRANSMISI)
+        // ============================================
+        const jenisTransmisiKey = (finalTransmisi || 'manual').toLowerCase();
+
+        // 1. Ambil semua armada yang berstatus 'tersedia' untuk jenis transmisi ini
+        const [availableCars] = await db.query(
+            'SELECT id, nama_kendaraan, nomor_polisi FROM armada WHERE LOWER(jenis) = ? AND status = "tersedia"',
+            [jenisTransmisiKey]
+        );
+
+        if (availableCars.length === 0) {
+            return res.status(400).json({
+                success: false,
+                message: `Mohon maaf, saat ini unit mobil transmisi ${finalTransmisi} sedang tidak tersedia (dalam perawatan / maintenance). Silakan hubungi admin.`
+            });
+        }
+
+        // 2. Cek berapa armada transmisi ini yang sudah dibooking pada jam tersebut
+        const [bookedCars] = await db.query(
+            `SELECT j.armada_id, j.id FROM jadwal j 
+             WHERE j.tanggal = ? AND LOWER(j.transmisi) = ? AND (
+                 j.jam_mulai < ? AND j.jam_selesai > ?
+             )`,
+            [tanggal, jenisTransmisiKey, jam_selesai, jam_mulai]
+        );
+
+        if (bookedCars.length >= availableCars.length) {
+            return res.status(400).json({
+                success: false,
+                message: `Mohon maaf, semua armada mobil ${finalTransmisi} (${availableCars.length} unit) sudah penuh terpakai pada jam tersebut. Silakan pilih jam atau tanggal lain.`
+            });
+        }
+
+        // 3. Alokasikan unit mobil yang masih kosong secara otomatis
+        const usedCarIds = new Set(bookedCars.map(b => b.armada_id).filter(Boolean));
+        const freeCar = availableCars.find(c => !usedCarIds.has(c.id)) || availableCars[0];
+        const finalArmadaId = freeCar ? freeCar.id : null;
+
+        // Simpan jadwal (termasuk armada_id)
         const [result] = await db.query(
-            'INSERT INTO jadwal (siswa_id, instruktur_id, tanggal, jam_mulai, jam_selesai, pertemuan_ke, transmisi) VALUES (?, ?, ?, ?, ?, ?, ?)',
-            [siswa.id, finalInstrukturId, tanggal, jam_mulai, jam_selesai, pertemuan_ke, finalTransmisi]
+            'INSERT INTO jadwal (siswa_id, instruktur_id, armada_id, tanggal, jam_mulai, jam_selesai, pertemuan_ke, transmisi) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+            [siswa.id, finalInstrukturId, finalArmadaId, tanggal, jam_mulai, jam_selesai, pertemuan_ke, finalTransmisi]
         );
 
         // Kirim konfirmasi WA
@@ -367,7 +408,7 @@ Jadwal latihan Anda telah berhasil dibuat:
 
 📆 Tanggal: *${tglFormatted}*
 ⏰ Jam: *${jam_mulai} - ${jam_selesai}*
-🔢 Pertemuan Ke-${pertemuan_ke}${finalTransmisi ? `\n⚙️ Transmisi: *${finalTransmisi}*` : ''}
+🔢 Pertemuan Ke-${pertemuan_ke}${finalTransmisi ? `\n⚙️ Transmisi: *${finalTransmisi}*` : ''}${freeCar ? `\n🚗 Mobil: *${freeCar.nama_kendaraan} (${freeCar.nomor_polisi})*` : ''}
 
 ⚠️ Mohon hadir 10 menit sebelum jadwal.
 
@@ -383,9 +424,9 @@ _PSJ Driving Course_`;
                 });
 
                 // Kirim notifikasi WA ke instruktur jika dipilih
-                if (instrukturIdValue) {
+                if (finalInstrukturId) {
                     try {
-                        const [instrRows] = await db.query('SELECT nama, no_telepon FROM instruktur WHERE id = ? AND is_active = 1', [instrukturIdValue]);
+                        const [instrRows] = await db.query('SELECT nama, no_telepon FROM instruktur WHERE id = ? AND is_active = 1', [finalInstrukturId]);
                         if (instrRows.length > 0 && instrRows[0].no_telepon) {
                             let instrPhone = instrRows[0].no_telepon.replace(/[^0-9]/g, '');
                             if (instrPhone.startsWith('0')) instrPhone = '62' + instrPhone.substring(1);
@@ -404,7 +445,7 @@ Anda mendapat jadwal latihan baru:
 📦 Paket: *${paketRows.length > 0 ? paketRows[0].nama_paket : '-'}*
 📆 Tanggal: *${tglFormatted}*
 ⏰ Jam: *${jam_mulai} - ${jam_selesai}*
-🔢 Pertemuan Ke-${pertemuan_ke}${finalTransmisi ? `\n⚙️ Transmisi: *${finalTransmisi}*` : ''}
+🔢 Pertemuan Ke-${pertemuan_ke}${finalTransmisi ? `\n⚙️ Transmisi: *${finalTransmisi}*` : ''}${freeCar ? `\n🚗 Mobil: *${freeCar.nama_kendaraan} (${freeCar.nomor_polisi})*` : ''}
 📍 Alamat Siswa: *${siswa.alamat || '-'}*
 
 Terima kasih 🙏
@@ -644,20 +685,52 @@ router.post('/siswa-reschedule', async (req, res) => {
             }
         }
 
-        // Cek siswa sudah punya jadwal di tanggal baru (exclude jadwal ini)
+        // Cek siswa sudah punya jadwal jam bentrok di tanggal baru (exclude jadwal ini)
         const [existing] = await db.query(
-            'SELECT COUNT(*) as cnt FROM jadwal WHERE siswa_id = ? AND tanggal = ? AND id != ?',
-            [rows[0].siswa_id, tanggal_baru, jadwal_id]
+            `SELECT COUNT(*) as cnt FROM jadwal 
+             WHERE siswa_id = ? AND tanggal = ? AND id != ? AND (
+                 jam_mulai < ? AND jam_selesai > ?
+             )`,
+            [rows[0].siswa_id, tanggal_baru, jadwal_id, jam_selesai_baru, jam_mulai_baru]
         );
 
         if (existing[0].cnt > 0) {
-            return res.status(400).json({ success: false, message: 'Anda sudah punya jadwal di tanggal tersebut. Pilih tanggal lain.' });
+            return res.status(400).json({ success: false, message: 'Anda sudah punya jadwal lain di jam tersebut pada tanggal ini.' });
+        }
+
+        // Validasi Kapasitas Armada Mobil pada jadwal baru
+        const jenisTransmisiKey = (rows[0].transmisi || 'manual').toLowerCase();
+        const [availableCars] = await db.query(
+            'SELECT id, nama_kendaraan, nomor_polisi FROM armada WHERE LOWER(jenis) = ? AND status = "tersedia"',
+            [jenisTransmisiKey]
+        );
+
+        let finalRescheduleArmadaId = rows[0].armada_id;
+        if (availableCars.length > 0) {
+            const [bookedCars] = await db.query(
+                `SELECT j.armada_id FROM jadwal j 
+                 WHERE j.tanggal = ? AND LOWER(j.transmisi) = ? AND j.id != ? AND (
+                     j.jam_mulai < ? AND j.jam_selesai > ?
+                 )`,
+                [tanggal_baru, jenisTransmisiKey, jadwal_id, jam_selesai_baru, jam_mulai_baru]
+            );
+
+            if (bookedCars.length >= availableCars.length) {
+                return res.status(400).json({
+                    success: false,
+                    message: `Mohon maaf, semua armada mobil ${rows[0].transmisi || 'latihan'} (${availableCars.length} unit) sudah penuh terpakai pada jam baru tersebut. Silakan pilih jam atau tanggal lain.`
+                });
+            }
+
+            const usedCarIds = new Set(bookedCars.map(b => b.armada_id).filter(Boolean));
+            const freeCar = availableCars.find(c => !usedCarIds.has(c.id)) || availableCars[0];
+            finalRescheduleArmadaId = freeCar ? freeCar.id : null;
         }
 
         // Update jadwal
         await db.query(
-            'UPDATE jadwal SET tanggal = ?, jam_mulai = ?, jam_selesai = ? WHERE id = ?',
-            [tanggal_baru, jam_mulai_baru, jam_selesai_baru, jadwal_id]
+            'UPDATE jadwal SET tanggal = ?, jam_mulai = ?, jam_selesai = ?, armada_id = ? WHERE id = ?',
+            [tanggal_baru, jam_mulai_baru, jam_selesai_baru, finalRescheduleArmadaId, jadwal_id]
         );
 
         // Hapus absensi lama

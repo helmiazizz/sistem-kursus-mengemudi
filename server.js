@@ -120,6 +120,7 @@ const dashboardRoutes = require('./routes/dashboard');
 const paketRoutes = require('./routes/paket');
 const whatsappRoutes = require('./routes/whatsapp');
 const instrukturRoutes = require('./routes/instruktur');
+const armadaRoutes = require('./routes/armada');
 
 // Apply rate limiters ketat ke endpoint sensitif
 app.use('/api/auth/login', loginLimiter);
@@ -134,6 +135,7 @@ app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/paket', paketRoutes);
 app.use('/api/whatsapp', whatsappRoutes);
 app.use('/api/instruktur', instrukturRoutes);
+app.use('/api/armada', armadaRoutes);
 
 // ============================================
 // Frontend Routes
@@ -328,6 +330,24 @@ async function runMigrations() {
                 }
             } catch (e) { /* ignore */ }
         }
+
+        // Seed armada default jika belum ada (1 matic, 2 manual)
+        try {
+            const [armadaCount] = await conn.query("SELECT COUNT(*) as count FROM armada");
+            if (armadaCount[0].count === 0) {
+                const defaultArmada = [
+                    ['Toyota Agya Matic', 'B 1234 PSJ', 'matic', 2022, 'Putih', 'tersedia', 'Mobil matic utama'],
+                    ['Toyota Avanza Manual', 'B 2345 PSJ', 'manual', 2021, 'Silver', 'tersedia', 'Mobil manual unit 1'],
+                    ['Daihatsu Xenia Manual', 'B 3456 PSJ', 'manual', 2020, 'Hitam', 'tersedia', 'Mobil manual unit 2']
+                ];
+                for (const a of defaultArmada) {
+                    await conn.query(
+                        "INSERT INTO armada (nama_kendaraan, nomor_polisi, jenis, tahun, warna, status, catatan) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                        a
+                    );
+                }
+            }
+        } catch (e) { /* ignore */ }
 
         conn.release();
         console.log('✅ Migration ready');

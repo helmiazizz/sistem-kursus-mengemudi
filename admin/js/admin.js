@@ -53,7 +53,8 @@ function switchTab(tabName, element) {
         siswa: ['Data Siswa', 'Kelola data pendaftar kursus'],
         'jadwal-booking': ['Jadwal Booking', 'Lihat jadwal yang di-booking siswa'],
         pengingat: ['Pengingat WA', 'Kirim pengingat jadwal via WhatsApp'],
-        instruktur: ['Instruktur', 'Kelola data instruktur mengemudi']
+        instruktur: ['Instruktur', 'Kelola data instruktur mengemudi'],
+        armada: ['Armada Mobil', 'Kelola ketersediaan armada kendaraan latihan']
     };
     document.getElementById('pageTitle').textContent = titles[tabName][0];
     document.getElementById('pageSubtitle').textContent = titles[tabName][1];
@@ -65,6 +66,7 @@ function switchTab(tabName, element) {
         case 'jadwal-booking': initJadwalBooking(); break;
         case 'pengingat': loadPengingat(); break;
         case 'instruktur': loadInstruktur(); break;
+        case 'armada': loadArmada(); break;
     }
 
     // Close sidebar on mobile
@@ -997,6 +999,10 @@ function renderBookingTable(jadwalList, dateLabel, absensiMap = {}) {
             statusBadge = '<span class="badge badge-pending"><i class="fas fa-clock"></i> Belum Absen</span>';
         }
 
+        const carDisplay = j.nama_kendaraan 
+            ? `<span><i class="fas fa-car" style="color:var(--admin-primary-light);"></i> ${escapeHtml(j.nama_kendaraan)} ${j.nomor_polisi ? `<span style="font-size:0.75rem;color:var(--admin-text-muted);">(${escapeHtml(j.nomor_polisi)})</span>` : ''}</span>`
+            : '<span style="color:var(--admin-text-muted);font-style:italic;">-</span>';
+
         return `
             <tr>
                 <td><strong>${tglStr}</strong></td>
@@ -1006,6 +1012,7 @@ function renderBookingTable(jadwalList, dateLabel, absensiMap = {}) {
                 <td>${escapeHtml(j.alamat || '-')}</td>
                 <td><span class="pertemuan-pill">Ke-${j.pertemuan_ke || '-'}</span></td>
                 <td><strong>${escapeHtml(j.transmisi || '-')}</strong></td>
+                <td>${carDisplay}</td>
                 <td>${statusBadge}</td>
             </tr>
         `;
@@ -1158,6 +1165,195 @@ async function deleteInstruktur(id, nama) {
         } catch (error) {
             console.error('Delete instruktur error:', error);
             showToast('Gagal menghapus instruktur', 'error');
+        }
+    });
+}
+
+// ============================================
+// ARMADA MOBIL MANAGEMENT
+// ============================================
+let allArmada = [];
+
+async function loadArmada() {
+    const tbody = document.getElementById('armadaTable');
+    if (!tbody) return;
+
+    try {
+        tbody.innerHTML = '<tr><td colspan="7" class="empty-state">Memuat data armada...</td></tr>';
+        const res = await fetch('/api/armada/all');
+        const json = await res.json();
+
+        if (!json.success || !json.data || json.data.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="7" class="empty-state">Belum ada data armada mobil</td></tr>';
+            return;
+        }
+
+        allArmada = json.data;
+
+        tbody.innerHTML = allArmada.map((a, index) => {
+            const status = (a.status || 'tersedia').toLowerCase();
+            let statusBadge = '';
+            let nextActionBtn = '';
+
+            if (status === 'tersedia') {
+                statusBadge = `<span class="badge badge-aktif" style="cursor:pointer;" onclick="toggleStatusArmada(${a.id}, 'maintenance')" title="Klik untuk ubah jadi Maintenance"><i class="fas fa-check-circle"></i> Tersedia</span>`;
+                nextActionBtn = `<button class="action-btn" style="background:#fff3e0;color:#e65100;" onclick="toggleStatusArmada(${a.id}, 'maintenance')" title="Tandai Masuk Bengkel / Maintenance"><i class="fas fa-tools"></i></button>`;
+            } else if (status === 'maintenance') {
+                statusBadge = `<span class="badge" style="background:#fff3e0;color:#e65100;border:1px solid #ffe0b2;cursor:pointer;" onclick="toggleStatusArmada(${a.id}, 'tersedia')" title="Klik untuk ubah jadi Tersedia"><i class="fas fa-wrench"></i> Maintenance</span>`;
+                nextActionBtn = `<button class="action-btn" style="background:#e8f5e9;color:#2e7d32;" onclick="toggleStatusArmada(${a.id}, 'tersedia')" title="Tandai Selesai & Tersedia"><i class="fas fa-check"></i></button>`;
+            } else {
+                statusBadge = `<span class="badge badge-nonaktif" style="cursor:pointer;" onclick="toggleStatusArmada(${a.id}, 'tersedia')" title="Klik untuk ubah jadi Tersedia"><i class="fas fa-ban"></i> Tidak Aktif</span>`;
+                nextActionBtn = `<button class="action-btn" style="background:#e8f5e9;color:#2e7d32;" onclick="toggleStatusArmada(${a.id}, 'tersedia')" title="Aktifkan Kembali"><i class="fas fa-check"></i></button>`;
+            }
+
+            const jenisPill = (a.jenis && a.jenis.toLowerCase() === 'matic')
+                ? '<span class="badge" style="background:#f3e8ff;color:#7e22ce;font-weight:700;"><i class="fas fa-bolt"></i> Matic</span>'
+                : '<span class="badge" style="background:#e0f2fe;color:#0369a1;font-weight:700;"><i class="fas fa-cog"></i> Manual</span>';
+
+            const tahunWarna = [a.tahun, a.warna].filter(Boolean).join(' · ') || '-';
+
+            return `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td><strong>${escapeHtml(a.nama_kendaraan)}</strong>${a.catatan ? `<div style="font-size:0.75rem;color:var(--admin-text-muted);">${escapeHtml(a.catatan)}</div>` : ''}</td>
+                    <td><span style="font-family:monospace;font-weight:700;padding:2px 8px;background:#f1f5f9;border-radius:4px;border:1px solid #cbd5e1;">${escapeHtml(a.nomor_polisi)}</span></td>
+                    <td>${jenisPill}</td>
+                    <td>${escapeHtml(tahunWarna)}</td>
+                    <td>${statusBadge}</td>
+                    <td>
+                        <div style="display:flex;align-items:center;gap:6px;">
+                            ${nextActionBtn}
+                            <button class="action-btn" style="background:#e3f2fd;color:#1565c0;" onclick="openEditArmada(${a.id})" title="Edit Armada">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="action-btn delete" onclick="deleteArmada(${a.id}, '${escapeHtml(a.nama_kendaraan)}')" title="Hapus Armada">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    } catch (error) {
+        console.error('Load armada error:', error);
+        tbody.innerHTML = '<tr><td colspan="7" class="empty-state" style="color:var(--admin-danger);">Gagal memuat data armada</td></tr>';
+    }
+}
+
+function openAddArmada() {
+    document.getElementById('armadaEditId').value = '';
+    document.getElementById('armadaModalTitle').textContent = 'Tambah Armada Mobil';
+    document.getElementById('armadaNama').value = '';
+    document.getElementById('armadaPlat').value = '';
+    document.getElementById('armadaJenis').value = 'matic';
+    document.getElementById('armadaStatus').value = 'tersedia';
+    document.getElementById('armadaTahun').value = '';
+    document.getElementById('armadaWarna').value = '';
+    document.getElementById('armadaCatatan').value = '';
+    document.getElementById('modalArmada').classList.add('active');
+}
+
+function openEditArmada(id) {
+    const a = allArmada.find(item => item.id === id);
+    if (!a) return;
+
+    document.getElementById('armadaEditId').value = a.id;
+    document.getElementById('armadaModalTitle').textContent = 'Edit Armada Mobil';
+    document.getElementById('armadaNama').value = a.nama_kendaraan || '';
+    document.getElementById('armadaPlat').value = a.nomor_polisi || '';
+    document.getElementById('armadaJenis').value = (a.jenis || 'manual').toLowerCase();
+    document.getElementById('armadaStatus').value = (a.status || 'tersedia').toLowerCase();
+    document.getElementById('armadaTahun').value = a.tahun || '';
+    document.getElementById('armadaWarna').value = a.warna || '';
+    document.getElementById('armadaCatatan').value = a.catatan || '';
+    document.getElementById('modalArmada').classList.add('active');
+}
+
+function closeArmadaModal() {
+    document.getElementById('modalArmada').classList.remove('active');
+}
+
+async function saveArmada() {
+    const id = document.getElementById('armadaEditId').value;
+    const nama = document.getElementById('armadaNama').value.trim();
+    const plat = document.getElementById('armadaPlat').value.trim();
+    const jenis = document.getElementById('armadaJenis').value;
+    const status = document.getElementById('armadaStatus').value;
+    const tahun = document.getElementById('armadaTahun').value.trim();
+    const warna = document.getElementById('armadaWarna').value.trim();
+    const catatan = document.getElementById('armadaCatatan').value.trim();
+
+    if (!nama || !plat) {
+        showToast('Nama mobil dan plat nomor wajib diisi', 'error');
+        return;
+    }
+
+    try {
+        const url = id ? `/api/armada/${id}` : '/api/armada';
+        const method = id ? 'PUT' : 'POST';
+
+        const res = await fetch(url, {
+            method,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                nama_kendaraan: nama,
+                nomor_polisi: plat,
+                jenis,
+                status,
+                tahun: tahun ? parseInt(tahun) : null,
+                warna: warna || null,
+                catatan: catatan || null
+            })
+        });
+        const data = await res.json();
+
+        if (data.success) {
+            showToast(data.message || 'Armada berhasil disimpan', 'success');
+            closeArmadaModal();
+            loadArmada();
+        } else {
+            showToast(data.message || 'Gagal menyimpan armada', 'error');
+        }
+    } catch (error) {
+        console.error('Save armada error:', error);
+        showToast('Terjadi kesalahan koneksi server', 'error');
+    }
+}
+
+async function toggleStatusArmada(id, targetStatus) {
+    try {
+        const res = await fetch(`/api/armada/${id}/status`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status: targetStatus })
+        });
+        const data = await res.json();
+        if (data.success) {
+            showToast(data.message || 'Status armada berhasil diperbarui', 'success');
+            loadArmada();
+        } else {
+            showToast(data.message || 'Gagal mengubah status armada', 'error');
+        }
+    } catch (error) {
+        console.error('Toggle status armada error:', error);
+        showToast('Gagal mengubah status armada', 'error');
+    }
+}
+
+async function deleteArmada(id, nama) {
+    showConfirm('Hapus Armada', `Yakin ingin menghapus armada "${nama}"? Jika armada sudah pernah digunakan pada jadwal latihan, silakan ubah statusnya menjadi Maintenance / Tidak Aktif.`, async () => {
+        try {
+            const res = await fetch(`/api/armada/${id}`, { method: 'DELETE' });
+            const data = await res.json();
+            if (data.success) {
+                showToast(data.message || 'Armada berhasil dihapus', 'success');
+                loadArmada();
+            } else {
+                showToast(data.message || 'Gagal menghapus armada', 'error');
+            }
+        } catch (error) {
+            console.error('Delete armada error:', error);
+            showToast('Gagal menghapus armada', 'error');
         }
     });
 }

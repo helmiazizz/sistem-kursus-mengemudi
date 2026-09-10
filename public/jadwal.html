@@ -536,7 +536,7 @@
                     <div class="form-row" id="reqTransmisiRow" style="display: none;">
                         <div class="form-group" style="width: 100%;">
                             <label><i class="fas fa-cogs"></i> Transmisi Latihan</label>
-                            <select id="reqTransmisi">
+                            <select id="reqTransmisi" onchange="filterAvailableSlots()">
                                 <option value="Manual">Manual</option>
                                 <option value="Matic">Matic</option>
                             </select>
@@ -833,14 +833,16 @@
             const selectedInstId = instrukturId ? parseInt(instrukturId) : null;
             const currentSelectedJam = selectJam.value;
 
-            // List ketersediaan slot
+            // List ketersediaan slot (cek ganda: Instruktur + Kapasitas Armada Mobil)
             const available = allSlots.filter(slot => {
                 const [sh] = slot.split(':').map(Number);
                 const candidateStart = sh * 60;
                 const candidateEnd = (sh + durasi) * 60;
 
+                // 1. Cek ketersediaan Instruktur
+                let isInstrukturFree = false;
                 if (selectedInstId) {
-                    // Cek ketersediaan khusus instruktur terpilih
+                    let hasConflict = false;
                     for (const b of bookedSlots) {
                         const bDate = b.tanggal.split('T')[0];
                         if (bDate !== dateStr) continue;
@@ -852,12 +854,12 @@
                         const bEnd = bEh * 60 + (bEm || 0);
 
                         if (candidateStart < bEnd && candidateEnd > bStart) {
-                            return false;
+                            hasConflict = true;
+                            break;
                         }
                     }
-                    return true;
+                    isInstrukturFree = !hasConflict;
                 } else {
-                    // Instruktur belum dipilih: tampilkan slot jika minimal ada 1 instruktur aktif yang kosong
                     const activeInsts = (allInstructorsData || []).map(i => i.id);
                     if (activeInsts.length === 0) activeInsts.push(1, 2);
 
@@ -878,15 +880,57 @@
                                 break;
                             }
                         }
-                        if (!isBusy) return true; // Minimal 1 instruktur tersedia
+                        if (!isBusy) {
+                            isInstrukturFree = true;
+                            break;
+                        }
                     }
-                    return false;
                 }
+
+                if (!isInstrukturFree) return false;
+
+                // 2. Cek Ketersediaan Armada Mobil berdasarkan Transmisi
+                let studentTrans = 'manual';
+                const isKombinasiOrPriv = paketNama.includes('kombinasi') || paketNama.includes('private');
+                if (isKombinasiOrPriv) {
+                    const selT = document.getElementById('reqTransmisi');
+                    if (selT && selT.value) studentTrans = selT.value.toLowerCase();
+                } else if (paketNama.includes('matic')) {
+                    studentTrans = 'matic';
+                }
+
+                const maxCars = (armadaCapacity && armadaCapacity[studentTrans] !== undefined)
+                    ? armadaCapacity[studentTrans]
+                    : (studentTrans === 'matic' ? 1 : 2);
+
+                if (maxCars <= 0) return false; // Mobil transmisi ini sedang tidak ada yang tersedia
+
+                let carsUsed = 0;
+                for (const b of bookedSlots) {
+                    const bDate = b.tanggal.split('T')[0];
+                    if (bDate !== dateStr) continue;
+                    const bTrans = (b.transmisi || 'manual').toLowerCase();
+                    if (bTrans !== studentTrans) continue;
+
+                    const [bSh, bSm] = (b.jam_mulai || '00:00').split(':').map(Number);
+                    const [bEh, bEm] = (b.jam_selesai || '00:00').split(':').map(Number);
+                    const bStart = bSh * 60 + (bSm || 0);
+                    const bEnd = bEh * 60 + (bEm || 0);
+
+                    if (candidateStart < bEnd && candidateEnd > bStart) {
+                        carsUsed++;
+                    }
+                }
+
+                if (carsUsed >= maxCars) return false; // Seluruh armada transmisi ini penuh
+
+                return true;
             });
 
             if (available.length === 0) {
-                selectJam.innerHTML = '<option value="">❌ Semua jadwal penuh pada tanggal ini</option>';
-            } else {
+                selectJam.innerHTML = '<option value="">❌ Semua slot / armada penuh pada tanggal ini</option>';
+            }
+ else {
                 selectJam.innerHTML = '<option value="">Pilih Jam Latihan</option>';
                 available.forEach(slot => {
                     const [h, m] = slot.split(':').map(Number);
@@ -1005,6 +1049,7 @@
 
                 document.getElementById('scheduleSection').classList.add('show');
                 loadInstruktur();
+                loadArmadaCapacity();
 
                 // Set minimum date ke hari ini
                 const today = new Date().toISOString().split('T')[0];
@@ -1360,6 +1405,20 @@
                 }
             } catch (e) {
                 console.log('Load instruktur error (non-fatal):', e.message);
+            }
+        }
+
+        // Load kapasitas armada aktif per transmisi
+        let armadaCapacity = { manual: 2, matic: 1, total: 3 };
+        async function loadArmadaCapacity() {
+            try {
+                const res = await fetch('/api/armada');
+                const data = await res.json();
+                if (data.success && data.capacity) {
+                    armadaCapacity = data.capacity;
+                }
+            } catch (e) {
+                console.log('Load armada capacity error (non-fatal):', e.message);
             }
         }
 
