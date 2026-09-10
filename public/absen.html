@@ -857,8 +857,10 @@
                 btnSubmit.style.display = 'none';
                 let waktuStr = '';
                 if (jadwal.waktu_absen) {
-                    const w = new Date(jadwal.waktu_absen);
-                    waktuStr = ` pada pukul ${String(w.getHours()).padStart(2, '0')}:${String(w.getMinutes()).padStart(2, '0')} WIB`;
+                    const jamStr = formatJamAbsen(jadwal.waktu_absen);
+                    if (jamStr) {
+                        waktuStr = ` pada pukul ${jamStr} WIB`;
+                    }
                 }
 
                 let nextSessionHtml = '';
@@ -966,7 +968,13 @@
                 if (currentJadwal) {
                     currentJadwal.is_absen = true;
                     currentJadwal.status_absensi = 'hadir';
-                    currentJadwal.waktu_absen = new Date().toISOString();
+                    const nowWib = new Date().toLocaleTimeString('id-ID', {
+                        timeZone: 'Asia/Jakarta',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: false
+                    }).replace('.', ':');
+                    currentJadwal.waktu_absen = (json.data && (json.data.jam_absen || json.data.waktu_absen)) || nowWib;
                 }
 
                 // Update total hadir
@@ -1050,6 +1058,41 @@
             document.getElementById('sessionCard').style.display = 'none';
             document.getElementById('phoneCard').style.display = 'block';
             document.getElementById('phoneInput').focus();
+        }
+
+        // Helper: Format waktu absensi ke format jam WIB (HH:mm)
+        function formatJamAbsen(val) {
+            if (!val) return '';
+            const strVal = String(val).trim();
+            // Jika format HH:mm langsung (misal "13:24")
+            if (/^\d{2}:\d{2}$/.test(strVal)) {
+                return strVal;
+            }
+            // Jika format string SQL "YYYY-MM-DD HH:mm:ss" atau "YYYY-MM-DD HH:mm"
+            const sqlMatch = strVal.match(/\s(\d{2}):(\d{2})/);
+            if (sqlMatch) {
+                return `${sqlMatch[1]}:${sqlMatch[2]}`;
+            }
+            // Jika format ISO string seperti "2026-09-10T06:24:51.000Z"
+            if (strVal.includes('T') || strVal.includes('Z')) {
+                try {
+                    const d = new Date(strVal);
+                    if (!isNaN(d.getTime())) {
+                        return d.toLocaleTimeString('id-ID', {
+                            timeZone: 'Asia/Jakarta',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            hour12: false
+                        }).replace('.', ':');
+                    }
+                } catch (e) {}
+            }
+            // Fallback match HH:mm
+            const fallbackMatch = strVal.match(/(\d{2}):(\d{2})/);
+            if (fallbackMatch) {
+                return `${fallbackMatch[1]}:${fallbackMatch[2]}`;
+            }
+            return '';
         }
     </script>
 </body>

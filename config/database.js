@@ -9,10 +9,17 @@ const pool = mysql.createPool({
     port: parseInt(process.env.DB_PORT) || 3306,
     waitForConnections: true,
     connectionLimit: 10,
-    queueLimit: 0,
+    timezone: '+07:00',
     dateStrings: true,
     enableKeepAlive: true,
     keepAliveInitialDelay: 10000
+});
+
+// Pastikan zona waktu sesi MySQL selalu diatur ke Asia/Jakarta (WIB: +07:00)
+pool.on('connection', (connection) => {
+    connection.query("SET time_zone = '+07:00'", (err) => {
+        if (err) console.warn('Warning: Could not set session time_zone to +07:00:', err.message);
+    });
 });
 
 // Test connection with retry

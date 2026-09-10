@@ -47,7 +47,10 @@ router.get('/active-session', async (req, res) => {
                     i.nama as instruktur_nama,
                     ab.id as absensi_id,
                     ab.status as status_absensi,
-                    ab.created_at as waktu_absen
+                    COALESCE(
+                        CONVERT_TZ(ab.created_at, IF(@@session.time_zone = 'SYSTEM', '+00:00', @@session.time_zone), '+07:00'),
+                        ab.created_at
+                    ) as waktu_absen
              FROM jadwal j
              LEFT JOIN armada a ON j.armada_id = a.id
              LEFT JOIN instruktur i ON j.instruktur_id = i.id
@@ -263,10 +266,14 @@ router.post('/qr-checkin', async (req, res) => {
             });
         }
 
-        // 4. Catat kehadiran ke tabel absensi
+        // 4. Catat kehadiran ke tabel absensi dengan waktu pasti WIB (Asia/Jakarta)
+        const pad = (n) => String(n).padStart(2, '0');
+        const jamAbsenDisplay = `${pad(nowJakarta.getHours())}:${pad(nowJakarta.getMinutes())}`;
+        const waktuAbsenJakarta = `${todayStr} ${jamAbsenDisplay}:${pad(nowJakarta.getSeconds())}`;
+
         await db.query(
-            'INSERT INTO absensi (jadwal_id, siswa_id, tanggal, status, catatan) VALUES (?, ?, ?, "hadir", "Absensi Mandiri (QR Code)")',
-            [jadwal_id, j.siswa_id, todayStr]
+            'INSERT INTO absensi (jadwal_id, siswa_id, tanggal, status, catatan, created_at) VALUES (?, ?, ?, "hadir", "Absensi Mandiri (QR Code)", ?)',
+            [jadwal_id, j.siswa_id, todayStr, waktuAbsenJakarta]
         );
 
         // 5. Hitung total hadir terbaru & auto update status siswa jika tamat paket
@@ -315,7 +322,8 @@ Terima kasih! Absensi mandiri untuk sesi latihan Anda telah *berhasil dicatat*:
 
 🔢 *Pertemuan Ke-${j.pertemuan_ke}*
 📆 Tanggal: *${tglFormatted}*
-⏰ Jam: *${j.jam_mulai.slice(0, 5)} - ${j.jam_selesai.slice(0, 5)}*
+⏰ Jam Latihan: *${j.jam_mulai.slice(0, 5)} - ${j.jam_selesai.slice(0, 5)} WIB*
+🕒 Waktu Konfirmasi Absen: *${jamAbsenDisplay} WIB*
 ⚙️ Transmisi: *${j.transmisi || '-'}*
 👨‍🏫 Instruktur: *${j.instruktur_nama || '-'}*
 🚗 Armada: *${j.nama_kendaraan || '-'} (${j.nomor_polisi || '-'})*
@@ -344,6 +352,8 @@ Terima kasih telah memilih *PSJ Driving Course*! Tetap semangat dan selalu utama
                 pertemuan_ke: j.pertemuan_ke,
                 jam_mulai: j.jam_mulai,
                 jam_selesai: j.jam_selesai,
+                jam_absen: jamAbsenDisplay,
+                waktu_absen: waktuAbsenJakarta,
                 total_hadir: totalHadirAktif,
                 total_sesi: totalPaket,
                 is_complete: isComplete
