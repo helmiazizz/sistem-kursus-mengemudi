@@ -1242,9 +1242,6 @@ async function loadArmada() {
                     <td>
                         <div style="display:flex;align-items:center;gap:6px;">
                             ${nextActionBtn}
-                            <button class="action-btn" style="background:#f0fdf4;color:#16a34a;border:1px solid #bbf7d0;" onclick="openArmadaQr(${a.id}, '${escapeHtml(a.nama_kendaraan)}', '${escapeHtml(a.nomor_polisi)}')" title="Cetak QR Code Absensi Mobil">
-                                <i class="fas fa-qrcode"></i>
-                            </button>
                             <button class="action-btn" style="background:#e3f2fd;color:#1565c0;" onclick="openEditArmada(${a.id})" title="Edit Armada">
                                 <i class="fas fa-edit"></i>
                             </button>
@@ -1378,72 +1375,6 @@ async function deleteArmada(id, nama) {
             showToast('Gagal menghapus armada', 'error');
         }
     });
-}
-
-// ============================================
-// QR CODE ABSENSI MANDIRI (ARMADA & OUTLET)
-// ============================================
-let qrCodeInstance = null;
-
-function openUniversalQrModal() {
-    const origin = window.location.origin;
-    const url = `${origin}/absen`;
-
-    document.getElementById('qrModalTitle').innerHTML = '<i class="fas fa-qrcode" style="color:var(--admin-primary);"></i> QR Code Absensi Siswa';
-    document.getElementById('qrTargetName').textContent = 'PANCA SARI JAYA';
-    document.getElementById('qrTargetSub').textContent = 'Scan untuk Absensi Selesai Latihan';
-    document.getElementById('qrUrlText').textContent = url;
-
-    renderQrCode(url);
-    document.getElementById('modalQrCode').classList.add('active');
-}
-
-function openArmadaQr(armadaId, namaMobil, noPolisi) {
-    const origin = window.location.origin;
-    const url = `${origin}/absen?armada=${encodeURIComponent(armadaId)}&plat=${encodeURIComponent(noPolisi)}`;
-
-    document.getElementById('qrModalTitle').innerHTML = '<i class="fas fa-qrcode" style="color:var(--admin-primary);"></i> QR Code Absensi Mobil';
-    document.getElementById('qrTargetName').textContent = namaMobil || 'Armada Mobil';
-    document.getElementById('qrTargetSub').textContent = noPolisi || '';
-    document.getElementById('qrUrlText').textContent = url;
-
-    renderQrCode(url);
-    document.getElementById('modalQrCode').classList.add('active');
-}
-
-function openOutletQrModal() {
-    const origin = window.location.origin;
-    const url = `${origin}/absen?outlet=1`;
-
-    document.getElementById('qrModalTitle').innerHTML = '<i class="fas fa-qrcode" style="color:var(--admin-primary);"></i> QR Code Meja Outlet';
-    document.getElementById('qrTargetName').textContent = 'Panca Sari Jaya Driving Course';
-    document.getElementById('qrTargetSub').textContent = 'Standee / Meja Pendaftaran Outlet';
-    document.getElementById('qrUrlText').textContent = url;
-
-    renderQrCode(url);
-    document.getElementById('modalQrCode').classList.add('active');
-}
-
-function renderQrCode(text) {
-    const container = document.getElementById('qrCodeContainer');
-    container.innerHTML = '';
-
-    if (typeof QRCode !== 'undefined') {
-        qrCodeInstance = new QRCode(container, {
-            text: text,
-            width: 170,
-            height: 170,
-            colorDark: '#0f172a',
-            colorLight: '#ffffff',
-            correctLevel: QRCode.CorrectLevel.H
-        });
-    } else {
-        container.innerHTML = `<p style="font-size:0.8rem;color:red;padding:20px;">Library QR Code sedang dimuat...</p>`;
-    }
-}
-
-function closeQrModal() {
-    document.getElementById('modalQrCode').classList.remove('active');
 }
 
 
