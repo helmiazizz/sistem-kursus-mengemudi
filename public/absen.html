@@ -770,7 +770,7 @@
                     oninput="this.value = this.value.replace(/[^0-9]/g, '')"
                     onkeydown="if(event.key==='Enter')loadActiveSession()">
                 <button class="btn-check" id="btnCek" onclick="loadActiveSession()">
-                    <i class="fas fa-arrow-right"></i> Cek
+                    <i class="fas fa-clipboard-check"></i> Absen
                 </button>
             </div>
             <div id="phoneErrorHint" class="phone-error-hint" style="display:none;">
@@ -790,18 +790,10 @@
 
         <!-- Alert State (Error / Not Found) -->
         <div class="card" id="errorCard" style="display:none;">
-            <div class="status-box error">
+            <div class="status-box error" style="margin-bottom:0;">
                 <i class="fas fa-exclamation-circle"></i>
                 <div class="status-title" id="errorTitle">Tidak Ada Jadwal</div>
                 <div class="status-desc" id="errorMessage">Nomor WhatsApp tidak terdaftar atau tidak memiliki jadwal latihan mengemudi hari ini.</div>
-            </div>
-            <div style="display:flex;gap:8px;margin-top:12px;">
-                <button onclick="resetPhoneForm()" class="btn-check" style="flex:1;justify-content:center;padding:12px;background:#f1f5f9;color:#334155;">
-                    <i class="fas fa-redo"></i> Ganti Nomor
-                </button>
-                <a href="https://wa.me/6281385359897?text=Halo%20Admin%20PSJ,%20saya%20ingin%20konfirmasi%20jadwal%20latihan%20saya" target="_blank" class="btn-check" style="flex:1;justify-content:center;padding:12px;text-decoration:none;background:#25D366;">
-                    <i class="fab fa-whatsapp"></i> Chat Admin
-                </a>
             </div>
         </div>
 
@@ -859,11 +851,6 @@
             <div class="finish-banner" id="finishBanner" style="display:none;">
                 <h4>🎓 SELAMAT! KUOTA PAKET SELESAI</h4>
                 <p>Anda telah menyelesaikan seluruh sesi latihan mengemudi pada paket ini. Sertifikat kelulusan dapat diambil di kantor PSJ Driving Course.</p>
-            </div>
-
-            <!-- Switch Student -->
-            <div class="switch-link">
-                Bukan akun Anda? <a href="javascript:void(0)" onclick="resetPhoneForm()">Ganti Nomor WhatsApp</a>
             </div>
         </div>
 
@@ -951,6 +938,8 @@
                     if (hint) hint.style.display = 'none';
                     const errorCard = document.getElementById('errorCard');
                     if (errorCard) errorCard.style.display = 'none';
+                    const sessionCard = document.getElementById('sessionCard');
+                    if (sessionCard) sessionCard.style.display = 'none';
                 });
             }
 
@@ -1073,6 +1062,9 @@
             const currentJadwal = allSessionsToday.find(s => s.id === selectedJadwalId) || apiData.jadwal;
             renderSingleSessionDetail(currentJadwal, siswa);
             document.getElementById('sessionCard').style.display = 'block';
+            setTimeout(() => {
+                document.getElementById('sessionCard').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }, 100);
         }
 
         // Ganti sesi yang dilihat saat siswa mengetuk tab sesi
