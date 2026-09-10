@@ -15,7 +15,7 @@ router.get('/', isAuthenticated, async (req, res) => {
             JOIN siswa s ON j.siswa_id = s.id
             LEFT JOIN instruktur i ON j.instruktur_id = i.id
             LEFT JOIN armada a ON j.armada_id = a.id
-            LEFT JOIN absensi ab ON (j.id = ab.jadwal_id OR (ab.siswa_id = j.siswa_id AND ab.tanggal = j.tanggal))
+            LEFT JOIN absensi ab ON j.id = ab.jadwal_id
         `;
         const params = [];
         const conditions = [];

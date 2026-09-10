@@ -435,9 +435,17 @@ async function loadKelolaRiwayat(siswaId) {
 
     try {
         // Fetch jadwal for this siswa
-        const jadwalRes = await fetch('/api/jadwal');
+        const jadwalRes = await fetch(`/api/jadwal?siswa_id=${siswaId}`);
         const jadwalJson = await jadwalRes.json();
-        const jadwalSiswa = (jadwalJson.data || []).filter(j => j.siswa_id === parseInt(siswaId));
+        let rawJadwal = (jadwalJson.data || []).filter(j => j.siswa_id === parseInt(siswaId));
+
+        // Deduplikasi defense-in-depth by ID
+        const seenIds = new Set();
+        const jadwalSiswa = rawJadwal.filter(j => {
+            if (seenIds.has(j.id)) return false;
+            seenIds.add(j.id);
+            return true;
+        });
 
         // Fetch absensi for this siswa
         const absensiRes = await fetch(`/api/absensi?siswa_id=${siswaId}`);
