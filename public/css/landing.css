@@ -160,6 +160,11 @@ img {
     font-weight: 800;
     color: var(--text-dark);
     transition: color var(--transition-normal);
+    white-space: nowrap;
+}
+
+.nav-logo span {
+    white-space: nowrap;
 }
 
 .nav-logo-img {
@@ -1599,6 +1604,7 @@ img {
     }
     .nav-logo span {
         font-size: 0.9rem;
+        white-space: nowrap;
     }
     .nav-logo-img {
         height: 40px;
