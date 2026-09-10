@@ -387,7 +387,16 @@
                     <span class="month-label" id="monthLabel"></span>
                     <button onclick="changeMonth(1)">Next <i class="fas fa-chevron-right"></i></button>
                 </div>
-                <div class="calendar-grid" id="calendarGrid"></div>
+                <div class="calendar-scroll-wrapper">
+                    <div class="calendar-grid" id="calendarGrid"></div>
+                </div>
+                <!-- Box info interaktif saat tanggal dipilih -->
+                <div class="calendar-selected-box" id="calendarSelectedBox" style="display:none;"></div>
+                <div class="calendar-legend">
+                    <div class="legend-item"><span class="legend-dot available"></span> Tersedia</div>
+                    <div class="legend-item"><span class="legend-dot booked"></span> Terisi / Ada Booking</div>
+                    <div class="legend-item"><span class="legend-dot today-dot"></span> Hari Ini</div>
+                </div>
             </div>
 
             <!-- Siswa Info -->
@@ -752,8 +761,10 @@
                 if (hasBookings) classes += ' booked';
 
                 let slotsHtml = '';
+                let mobileIndicatorHtml = '';
+
                 if (hasBookings) {
-                    slotsHtml += `<span class="booked-slot booked-full"><i class="fas fa-user"></i> ${dayBookings.length} Sesi Booked</span>`;
+                    let desktopInner = `<span class="booked-slot booked-full"><i class="fas fa-user"></i> ${dayBookings.length} Sesi Booked</span>`;
                     const showSlots = dayBookings.slice(0, 2);
                     showSlots.forEach(s => {
                         const rawInstName = s.instruktur_nama || s.nama_instruktur || 'Instruktur';
@@ -762,13 +773,16 @@
                         const instName = cleanInstName.split(' ')[0] || rawInstName;
                         const timeStart = s.jam_mulai ? s.jam_mulai.slice(0, 5) : '';
                         const timeEnd = s.jam_selesai ? s.jam_selesai.slice(0, 5) : '';
-                        slotsHtml += `<span class="booked-slot" title="Siswa: ${escapeHtml(s.nama_lengkap || 'Siswa')} | Instruktur: ${escapeHtml(rawInstName)} | Jam: ${timeStart}-${timeEnd}">${timeStart} - ${escapeHtml(instName)}</span>`;
+                        desktopInner += `<span class="booked-slot" title="Siswa: ${escapeHtml(s.nama_lengkap || 'Siswa')} | Instruktur: ${escapeHtml(rawInstName)} | Jam: ${timeStart}-${timeEnd}">${timeStart} - ${escapeHtml(instName)}</span>`;
                     });
                     if (dayBookings.length > 2) {
-                        slotsHtml += `<span class="slot-count">+${dayBookings.length - 2} lainnya</span>`;
+                        desktopInner += `<span class="slot-count">+${dayBookings.length - 2} lainnya</span>`;
                     }
+                    slotsHtml = `<div class="desktop-slots">${desktopInner}</div>`;
+                    mobileIndicatorHtml = `<div class="mobile-indicator"><span class="mobile-dot booked" title="${dayBookings.length} sesi terisi">${dayBookings.length}</span></div>`;
                 } else if (!isPast) {
-                    slotsHtml = `<span class="available-label">Tersedia</span>`;
+                    slotsHtml = `<div class="desktop-slots"><span class="available-label">Tersedia</span></div>`;
+                    mobileIndicatorHtml = `<div class="mobile-indicator"><span class="mobile-dot avail" title="Tersedia"></span></div>`;
                 }
 
                 if (dateStr === activeSelectedCalendarDate) {
@@ -776,9 +790,10 @@
                 }
 
                 html += `
-                    <div class="${classes}" ${!isPast ? `onclick="selectCalendarDate('${dateStr}', ${day}, '${monthNames[calendarMonth]}')" style="cursor:pointer;" title="Klik untuk memilih tanggal ${day} ${monthNames[calendarMonth]} ${calendarYear}"` : ''}>
+                    <div class="${classes}" ${!isPast ? `onclick="selectCalendarDate('${dateStr}', ${day}, '${monthNames[calendarMonth]}')\" style=\"cursor:pointer;\" title=\"Klik untuk memilih tanggal ${day} ${monthNames[calendarMonth]} ${calendarYear}\"` : ''}>
                         <div class="day-number">${day}</div>
                         ${slotsHtml}
+                        ${mobileIndicatorHtml}
                     </div>
                 `;
             }
@@ -792,14 +807,60 @@
             activeSelectedCalendarDate = dateStr;
             renderCalendar();
 
+            // Tampilkan Selected Info Box di bawah kalender (sangat membantu di mobile)
+            renderSelectedDateBox(dateStr, dayNum, monthName);
+
             const dateInput = document.getElementById('reqTanggal');
             if (dateInput) {
                 dateInput.value = dateStr;
                 filterAvailableSlots();
-                dateInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
             if (dayNum && monthName) {
-                showToast(`Tanggal ${dayNum} ${monthName} dipilih! Silakan isi jam & instruktur pada form di bawah.`, 'info');
+                showToast(`Tanggal ${dayNum} ${monthName} dipilih! Cek detail atau isi jam latihan di bawah.`, 'info');
+            }
+        }
+
+        function renderSelectedDateBox(dateStr, dayNum, monthName) {
+            const box = document.getElementById('calendarSelectedBox');
+            if (!box) return;
+            const dayBookings = (bookedSlots || []).filter(s => (s.tanggal || '').split('T')[0] === dateStr);
+            let detailsHtml = '';
+            if (dayBookings.length > 0) {
+                detailsHtml = `
+                    <div class="sel-box-bookings">
+                        <span style="font-size:0.75rem;font-weight:700;color:#1e3a8a;">${dayBookings.length} Sesi Terjadwal:</span>
+                        <ul>
+                            ${dayBookings.map(b => {
+                                const rawInst = b.instruktur_nama || b.nama_instruktur || 'Instruktur';
+                                const time = (b.jam_mulai ? b.jam_mulai.slice(0, 5) : '') + ' - ' + (b.jam_selesai ? b.jam_selesai.slice(0, 5) : '');
+                                return `<li><i class="fas fa-clock" style="color:var(--primary)"></i> <strong>${time}</strong> (${escapeHtml(rawInst)})</li>`;
+                            }).join('')}
+                        </ul>
+                    </div>`;
+            } else {
+                detailsHtml = `<div class="sel-box-avail"><i class="fas fa-check-circle"></i> Seluruh jam latihan pada tanggal ini masih tersedia!</div>`;
+            }
+
+            box.innerHTML = `
+                <div class="sel-box-header">
+                    <div><i class="fas fa-calendar-check" style="color:var(--primary);margin-right:4px;"></i> Tanggal: <strong>${dayNum} ${monthName} ${calendarYear}</strong></div>
+                    <button type="button" class="sel-box-btn" onclick="scrollToBookingForm()">
+                        <i class="fas fa-edit"></i> Buat Jadwal
+                    </button>
+                </div>
+                ${detailsHtml}
+            `;
+            box.style.display = 'block';
+        }
+
+        function scrollToBookingForm() {
+            const card = document.getElementById('requestFormCard');
+            if (card && (card.style.display === 'none' || !card.classList.contains('show'))) {
+                toggleRequestForm();
+            }
+            const dateInput = document.getElementById('reqTanggal');
+            if (dateInput) {
+                dateInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
         }
 

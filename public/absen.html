@@ -141,10 +141,13 @@
         .input-group {
             display: flex;
             gap: 8px;
+            width: 100%;
         }
 
         .phone-input {
             flex: 1;
+            min-width: 0;
+            width: 100%;
             padding: 13px 16px;
             font-size: 1rem;
             border: 1.5px solid var(--border);
@@ -154,6 +157,7 @@
             background: #fff;
             outline: none;
             transition: all 0.2s;
+            box-sizing: border-box;
         }
 
         .phone-input:focus {
@@ -162,17 +166,19 @@
         }
 
         .btn-check {
+            flex-shrink: 0;
+            white-space: nowrap;
             background: linear-gradient(135deg, var(--primary), var(--primary-dark));
             color: white;
             border: none;
             border-radius: 12px;
-            padding: 0 20px;
+            padding: 0 16px;
             font-weight: 700;
             font-size: 0.92rem;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             transition: all 0.2s;
         }
 
@@ -538,6 +544,76 @@
         .footer a {
             color: var(--text-muted);
             text-decoration: none;
+        }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 480px) {
+            body {
+                padding: 12px 10px;
+            }
+            .container {
+                gap: 12px;
+            }
+            .header-card {
+                padding: 16px 12px;
+            }
+            .card {
+                padding: 16px 14px;
+            }
+            .form-label {
+                font-size: 0.84rem;
+            }
+            .phone-input {
+                padding: 11px 12px;
+                font-size: 0.92rem;
+            }
+            .btn-check {
+                padding: 0 14px;
+                font-size: 0.86rem;
+            }
+            .details-grid {
+                gap: 8px;
+            }
+            .detail-item {
+                padding: 10px;
+                min-width: 0;
+            }
+            .detail-value {
+                font-size: 0.85rem;
+                word-break: break-word;
+            }
+            .multi-session-grid {
+                grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+                gap: 6px;
+            }
+            .session-tab-card {
+                padding: 8px 10px;
+            }
+            .btn-absen {
+                padding: 14px 16px;
+                font-size: 0.95rem;
+            }
+        }
+
+        @media (max-width: 360px) {
+            body {
+                padding: 8px 6px;
+            }
+            .card {
+                padding: 14px 10px;
+            }
+            .phone-input {
+                padding: 10px 10px;
+                font-size: 0.85rem;
+            }
+            .btn-check {
+                padding: 0 10px;
+                font-size: 0.8rem;
+                gap: 4px;
+            }
+            .details-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>

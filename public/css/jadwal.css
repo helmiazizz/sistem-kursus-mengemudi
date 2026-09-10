@@ -623,9 +623,15 @@
     color: var(--text-dark);
 }
 
+.calendar-scroll-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
 .calendar-grid {
     display: grid;
-    grid-template-columns: repeat(7, 1fr);
+    grid-template-columns: repeat(7, minmax(0, 1fr));
     gap: 6px;
     width: 100%;
 }
@@ -708,6 +714,117 @@
     font-size: 0.6rem;
     color: var(--text-muted);
     margin-top: 2px;
+}
+
+.desktop-slots {
+    display: block;
+    width: 100%;
+}
+
+.mobile-indicator {
+    display: none;
+}
+
+.mobile-dot {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.65rem;
+    font-weight: 800;
+    border-radius: 4px;
+    padding: 2px 4px;
+    line-height: 1;
+}
+
+.mobile-dot.booked {
+    background: rgba(225, 112, 85, 0.15);
+    color: #c0392b;
+    border: 1px solid rgba(225, 112, 85, 0.3);
+    gap: 3px;
+}
+
+.mobile-dot.avail {
+    width: 6px;
+    height: 6px;
+    background: #16a34a;
+    border-radius: 50%;
+    margin: 2px auto 0;
+}
+
+.calendar-selected-box {
+    margin-top: 14px;
+    padding: 14px 16px;
+    background: #eff6ff;
+    border: 1.5px solid #bfdbfe;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    color: #1e3a8a;
+    animation: fadeIn 0.3s ease;
+}
+
+.sel-box-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    font-weight: 700;
+}
+
+.sel-box-btn {
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: opacity 0.2s;
+}
+
+.sel-box-btn:hover {
+    opacity: 0.9;
+}
+
+.sel-box-bookings {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px dashed #bfdbfe;
+}
+
+.sel-box-bookings ul {
+    list-style: none;
+    margin-top: 4px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 0;
+}
+
+.sel-box-bookings li {
+    background: white;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    border: 1px solid #dbeafe;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    color: #1e293b;
+}
+
+.sel-box-avail {
+    margin-top: 6px;
+    font-size: 0.82rem;
+    color: #15803d;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 600;
 }
 
 .calendar-legend {
@@ -911,47 +1028,77 @@
     }
 
     .calendar-card {
-        padding: 12px;
-        overflow-x: visible;
+        padding: 14px 10px;
+        overflow: hidden;
+    }
+
+    .calendar-scroll-wrapper {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 2px;
     }
 
     .calendar-grid {
-        gap: 4px;
-        min-width: 100%;
+        display: grid;
+        grid-template-columns: repeat(7, minmax(0, 1fr));
+        gap: 3px;
+        min-width: 290px;
         width: 100%;
-    }
-
-    .calendar-day {
-        min-height: auto;
-        aspect-ratio: 1 / 1.15;
-        padding: 4px;
-        border-radius: 6px;
     }
 
     .calendar-day-header {
         font-size: 10px;
         padding: 4px 0;
         letter-spacing: 0;
+        min-width: 0;
+        overflow: hidden;
+        text-align: center;
+    }
+
+    .calendar-day {
+        min-height: 48px;
+        aspect-ratio: auto;
+        padding: 4px 2px;
+        border-radius: 6px;
+        min-width: 0;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
     }
 
     .calendar-day .day-number {
         font-size: 11px;
+        font-weight: 700;
         margin-bottom: 2px;
+        line-height: 1.1;
     }
 
-    .calendar-day .booked-slot {
-        font-size: 8px;
-        padding: 1px 2px;
-        border-radius: 2px;
+    .desktop-slots {
+        display: none !important;
+    }
+
+    .mobile-indicator {
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        min-width: 0;
         margin-top: 2px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
     }
 
-    .calendar-day .slot-count {
-        font-size: 8px;
-        margin-top: 1px;
+    .calendar-legend {
+        gap: 8px;
+        justify-content: center;
+        margin-top: 10px;
+        padding-top: 10px;
+    }
+
+    .legend-item {
+        font-size: 0.7rem;
+        gap: 4px;
     }
 
     .calendar-nav {
@@ -965,26 +1112,6 @@
 
     .calendar-nav .month-label {
         font-size: 14px;
-    }
-
-    .available-label {
-        font-size: 8px;
-        padding: 2px;
-        border-radius: 3px;
-        margin-top: 2px;
-        text-align: center;
-        display: block;
-    }
-
-    .calendar-day .booked-slot.booked-full {
-        min-height: auto;
-        line-height: normal;
-        font-size: 8px;
-        padding: 1px 2px;
-    }
-
-    .calendar-day .booked-slot.booked-full i {
-        font-size: 8px;
     }
 
     .seo-content-section {
