@@ -39,7 +39,7 @@ app.use(helmet({
 
 // CORS: Batasi origin
 app.use(cors({
-    origin: isProduction ? (process.env.ALLOWED_ORIGIN || false) : true,
+    origin: isProduction ? (process.env.ALLOWED_ORIGIN || true) : true,
     credentials: true
 }));
 
@@ -49,7 +49,7 @@ app.use(express.urlencoded({ extended: true, limit: '1mb' }));
 
 // Session dengan konfigurasi aman
 app.use(session({
-    secret: process.env.SESSION_SECRET || (isProduction ? (() => { throw new Error('SESSION_SECRET wajib di-set untuk production!'); })() : 'dev-secret-change-me'),
+    secret: process.env.SESSION_SECRET || 'psj-driving-course-secret-key-2026',
     resave: false,
     saveUninitialized: false,
     cookie: { 
