@@ -1100,7 +1100,7 @@
             document.getElementById('sessionTransmisi').textContent = `Transmisi ${jadwal.transmisi || '-'}`;
 
             document.getElementById('sessionInstructor').textContent = jadwal.instruktur_nama || 'Instruktur PSJ';
-            const carName = jadwal.transmisi ? `Mobil ${jadwal.transmisi.charAt(0).toUpperCase() + jadwal.transmisi.slice(1).toLowerCase()}` : (jadwal.nama_kendaraan || 'Armada PSJ');
+            const carName = jadwal.nama_kendaraan || 'Armada PSJ';
             document.getElementById('sessionCar').textContent = carName;
 
             const statusArea = document.getElementById('sessionStatusArea');
@@ -1278,7 +1278,7 @@
                 const statusArea = document.getElementById('sessionStatusArea');
                 statusArea.innerHTML = `
                     <div class="status-box success" style="animation: bounceIn 0.5s ease;">
-                        <i class="fas fa-check-double" style="font-size:2.2rem;color:var(--success);"></i>
+                        <i class="fas fa-check-circle" style="font-size:2.4rem;color:var(--success);"></i>
                         <div class="status-title" style="font-size:1.15rem;color:#14532d;">ABSENSI BERHASIL! 🎉</div>
                         <div class="status-desc" style="font-size:0.9rem;margin-top:6px;">
                             ${json.message}<br>
