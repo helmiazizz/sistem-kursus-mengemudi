@@ -236,12 +236,10 @@ router.post('/siswa-request', async (req, res) => {
             });
         }
 
-        // Hitung pertemuan ke berapa untuk paket aktif (mengabaikan 'tidak hadir' atau 'izin')
+        // Hitung pertemuan ke berapa: total SEMUA jadwal yang pernah dibuat (termasuk tidak hadir/izin)
+        // agar nomor pertemuan selalu naik dan tidak duplikat meski booking 2x di hari sama
         const [countRows] = await db.query(
-            `SELECT COUNT(j.id) as total 
-             FROM jadwal j
-             LEFT JOIN absensi a ON j.id = a.jadwal_id
-             WHERE j.siswa_id = ? AND (a.status IS NULL OR a.status = 'hadir')`,
+            `SELECT COUNT(j.id) as total FROM jadwal j WHERE j.siswa_id = ?`,
             [siswa.id]
         );
 
