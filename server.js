@@ -137,6 +137,23 @@ app.use('/api/whatsapp', whatsappRoutes);
 app.use('/api/instruktur', instrukturRoutes);
 app.use('/api/armada', armadaRoutes);
 
+// Healthcheck & DB diagnostic
+app.get('/api/health', async (req, res) => {
+    try {
+        const db = require('./config/database');
+        await db.query('SELECT 1 as ok');
+        res.json({ success: true, db: 'connected', envLoaded: !!process.env.DB_NAME });
+    } catch (err) {
+        res.status(500).json({ 
+            success: false, 
+            db: 'disconnected', 
+            error: err.message, 
+            code: err.code,
+            envLoaded: !!process.env.DB_NAME 
+        });
+    }
+});
+
 // ============================================
 // Frontend Routes
 // ============================================

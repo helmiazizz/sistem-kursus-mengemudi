@@ -46,7 +46,11 @@ router.post('/login', async (req, res) => {
         });
     } catch (error) {
         console.error('Login error:', error);
-        res.status(500).json({ success: false, message: 'Server error' });
+        let msg = 'Server error';
+        if (error.code === 'ECONNREFUSED' || error.code === 'ER_ACCESS_DENIED_ERROR' || error.code === 'ENOTFOUND') {
+            msg = 'Gagal koneksi database. Periksa file .env di server.';
+        }
+        res.status(500).json({ success: false, message: msg });
     }
 });
 
