@@ -53,6 +53,10 @@
                     <i class="fab fa-whatsapp"></i>
                     <span>Pengingat WA</span>
                 </a>
+                <a href="#" class="sidebar-link" data-tab="instruktur" onclick="switchTab('instruktur', this)">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                    <span>Instruktur</span>
+                </a>
             </nav>
             <div class="sidebar-footer">
                 <a href="/" class="sidebar-link">
@@ -279,6 +283,40 @@
                     </div>
                 </div>
 
+                <!-- ================================ -->
+                <!-- TAB: Instruktur -->
+                <!-- ================================ -->
+                <div class="tab-content" id="tab-instruktur">
+                    <div class="panel">
+                        <div class="panel-header">
+                            <h3 class="panel-title"><i class="fas fa-chalkboard-teacher"></i> Kelola Instruktur</h3>
+                            <div class="panel-actions">
+                                <button class="btn btn-sm btn-primary" onclick="openAddInstruktur()">
+                                    <i class="fas fa-plus"></i> Tambah Instruktur
+                                </button>
+                            </div>
+                        </div>
+                        <div class="panel-body no-padding">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>No</th>
+                                        <th>Nama</th>
+                                        <th>No. WhatsApp</th>
+                                        <th>Status</th>
+                                        <th>Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="instrukturTable">
+                                    <tr>
+                                        <td colspan="5" class="empty-state">Memuat data...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </main>
     </div>
@@ -286,6 +324,33 @@
     <!-- ============================================ -->
     <!-- MODALS -->
     <!-- ============================================ -->
+
+    <!-- Modal: Tambah/Edit Instruktur -->
+    <div class="modal-overlay" id="modalInstruktur">
+        <div class="modal-dialog" style="max-width:480px;">
+            <div class="modal-header">
+                <h3 id="instrukturModalTitle">Tambah Instruktur</h3>
+                <button class="modal-close" onclick="closeInstrukturModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="instrukturEditId" value="">
+                <div class="form-group">
+                    <label><i class="fas fa-user"></i> Nama Instruktur <span style="color:red;">*</span></label>
+                    <input type="text" id="instrukturNama" placeholder="Contoh: Mas Adam" required>
+                </div>
+                <div class="form-group">
+                    <label><i class="fab fa-whatsapp"></i> No. WhatsApp <span style="color:var(--admin-text-muted);font-weight:400;">(opsional)</span></label>
+                    <input type="text" id="instrukturPhone" placeholder="Contoh: 081234567890">
+                </div>
+                <div style="display:flex;gap:12px;justify-content:flex-end;margin-top:20px;">
+                    <button class="btn btn-sm btn-outline" onclick="closeInstrukturModal()">Batal</button>
+                    <button class="btn btn-sm btn-primary" onclick="saveInstruktur()">
+                        <i class="fas fa-save"></i> Simpan
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
 
 

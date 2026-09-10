@@ -293,23 +293,37 @@ async function runMigrations() {
         } catch (e) { /* ignore */ }
 
         // Insert / update default instructors
-        // Format: [nama, no_telepon, is_active] — set is_active = 0 untuk instruktur yang sedang libur/off
+        // Mas Ivan dihapus / digantikan Mas Adam, nomor WhatsApp Mas Adam belum ada (NULL)
+        try {
+            const [ivanRows] = await conn.query("SELECT id FROM instruktur WHERE nama LIKE '%Ivan%'");
+            if (ivanRows.length > 0) {
+                const ivanId = ivanRows[0].id;
+                const [jadwalWithIvan] = await conn.query("SELECT COUNT(*) as cnt FROM jadwal WHERE instruktur_id = ?", [ivanId]);
+                if (jadwalWithIvan[0].cnt > 0) {
+                    await conn.query("UPDATE instruktur SET nama = 'Mas Adam', no_telepon = NULL WHERE id = ?", [ivanId]);
+                } else {
+                    await conn.query("DELETE FROM instruktur WHERE id = ?", [ivanId]);
+                }
+            }
+        } catch (e) { /* ignore */ }
+
         const defaultInstructors = [
-            ['Mas Danang', '081385359897', 1],
-            ['Mas Ivan', '082114764131', 0]  // Libur / non-aktif sementara
+            ['Mas Danang', '081385359897'],
+            ['Mas Adam', null]
         ];
         for (const inst of defaultInstructors) {
             try {
                 const [exists] = await conn.query("SELECT id FROM instruktur WHERE nama = ?", [inst[0]]);
                 if (exists.length === 0) {
                     await conn.query(
-                        "INSERT INTO instruktur (nama, no_telepon, is_active) VALUES (?, ?, ?)",
-                        inst
+                        "INSERT INTO instruktur (nama, no_telepon, is_active) VALUES (?, ?, 1)",
+                        [inst[0], inst[1]]
                     );
-                } else {
+                } else if (inst[1] !== null) {
+                    // Update nomor telepon jika ada, tetapi JANGAN timpa is_active agar status libur admin tersimpan
                     await conn.query(
-                        "UPDATE instruktur SET no_telepon = ?, is_active = ? WHERE nama = ?",
-                        [inst[1], inst[2], inst[0]]
+                        "UPDATE instruktur SET no_telepon = ? WHERE nama = ?",
+                        [inst[1], inst[0]]
                     );
                 }
             } catch (e) { /* ignore */ }

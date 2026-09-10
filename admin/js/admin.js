@@ -52,7 +52,8 @@ function switchTab(tabName, element) {
         dashboard: ['Dashboard', 'Selamat datang di panel admin'],
         siswa: ['Data Siswa', 'Kelola data pendaftar kursus'],
         'jadwal-booking': ['Jadwal Booking', 'Lihat jadwal yang di-booking siswa'],
-        pengingat: ['Pengingat WA', 'Kirim pengingat jadwal via WhatsApp']
+        pengingat: ['Pengingat WA', 'Kirim pengingat jadwal via WhatsApp'],
+        instruktur: ['Instruktur', 'Kelola data instruktur mengemudi']
     };
     document.getElementById('pageTitle').textContent = titles[tabName][0];
     document.getElementById('pageSubtitle').textContent = titles[tabName][1];
@@ -63,6 +64,7 @@ function switchTab(tabName, element) {
         case 'siswa': loadSiswa(); break;
         case 'jadwal-booking': initJadwalBooking(); break;
         case 'pengingat': loadPengingat(); break;
+        case 'instruktur': loadInstruktur(); break;
     }
 
     // Close sidebar on mobile
@@ -1008,5 +1010,155 @@ function renderBookingTable(jadwalList, dateLabel, absensiMap = {}) {
             </tr>
         `;
     }).join('');
+}
+
+// ============================================
+// INSTRUKTUR MANAGEMENT
+// ============================================
+let allInstruktur = [];
+
+async function loadInstruktur() {
+    const tbody = document.getElementById('instrukturTable');
+    if (!tbody) return;
+
+    try {
+        tbody.innerHTML = '<tr><td colspan="5" class="empty-state">Memuat data instruktur...</td></tr>';
+        const res = await fetch('/api/instruktur/all');
+        const json = await res.json();
+
+        if (!json.success || !json.data || json.data.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" class="empty-state">Belum ada data instruktur</td></tr>';
+            return;
+        }
+
+        allInstruktur = json.data;
+
+        tbody.innerHTML = allInstruktur.map((inst, index) => {
+            const isAktif = inst.is_active === 1 || inst.is_active === true;
+            const statusBadge = isAktif
+                ? `<span class="badge badge-aktif" style="cursor:pointer;" onclick="toggleInstruktur(${inst.id}, '${escapeHtml(inst.nama)}', 0)" title="Klik untuk liburkan"><i class="fas fa-check-circle"></i> Aktif</span>`
+                : `<span class="badge" style="background:#fff3e0;color:#e65100;border:1px solid #ffe0b2;cursor:pointer;" onclick="toggleInstruktur(${inst.id}, '${escapeHtml(inst.nama)}', 1)" title="Klik untuk aktifkan"><i class="fas fa-bed"></i> Libur</span>`;
+
+            const toggleBtn = isAktif
+                ? `<button class="action-btn" style="background:#fff3e0;color:#e65100;" onclick="toggleInstruktur(${inst.id}, '${escapeHtml(inst.nama)}', 0)" title="Liburkan Instruktur"><i class="fas fa-bed"></i></button>`
+                : `<button class="action-btn" style="background:#e8f5e9;color:#2e7d32;" onclick="toggleInstruktur(${inst.id}, '${escapeHtml(inst.nama)}', 1)" title="Aktifkan Instruktur"><i class="fas fa-check"></i></button>`;
+
+            const phoneDisplay = inst.no_telepon
+                ? `<a href="https://wa.me/${inst.no_telepon.replace(/[^0-9]/g, '')}" target="_blank" style="color:var(--admin-primary-light);text-decoration:none;"><i class="fab fa-whatsapp" style="color:#25D366;"></i> ${escapeHtml(inst.no_telepon)}</a>`
+                : '<span style="color:var(--admin-text-muted);font-style:italic;">Belum diisi</span>';
+
+            return `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td><strong>${escapeHtml(inst.nama)}</strong></td>
+                    <td>${phoneDisplay}</td>
+                    <td>${statusBadge}</td>
+                    <td>
+                        <div style="display:flex;align-items:center;gap:6px;">
+                            ${toggleBtn}
+                            <button class="action-btn" style="background:#e3f2fd;color:#1565c0;" onclick="openEditInstruktur(${inst.id}, '${escapeHtml(inst.nama)}', '${escapeHtml(inst.no_telepon || '')}')" title="Edit Instruktur">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="action-btn delete" onclick="deleteInstruktur(${inst.id}, '${escapeHtml(inst.nama)}')" title="Hapus Instruktur">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    } catch (error) {
+        console.error('Load instruktur error:', error);
+        tbody.innerHTML = '<tr><td colspan="5" class="empty-state" style="color:var(--admin-danger);">Gagal memuat data instruktur</td></tr>';
+    }
+}
+
+function openAddInstruktur() {
+    document.getElementById('instrukturEditId').value = '';
+    document.getElementById('instrukturModalTitle').textContent = 'Tambah Instruktur';
+    document.getElementById('instrukturNama').value = '';
+    document.getElementById('instrukturPhone').value = '';
+    document.getElementById('modalInstruktur').classList.add('active');
+}
+
+function openEditInstruktur(id, nama, phone) {
+    document.getElementById('instrukturEditId').value = id;
+    document.getElementById('instrukturModalTitle').textContent = 'Edit Instruktur';
+    document.getElementById('instrukturNama').value = nama;
+    document.getElementById('instrukturPhone').value = phone || '';
+    document.getElementById('modalInstruktur').classList.add('active');
+}
+
+function closeInstrukturModal() {
+    document.getElementById('modalInstruktur').classList.remove('active');
+}
+
+async function saveInstruktur() {
+    const id = document.getElementById('instrukturEditId').value;
+    const nama = document.getElementById('instrukturNama').value.trim();
+    const phone = document.getElementById('instrukturPhone').value.trim();
+
+    if (!nama) {
+        showToast('Nama instruktur wajib diisi', 'error');
+        return;
+    }
+
+    try {
+        const url = id ? `/api/instruktur/${id}` : '/api/instruktur';
+        const method = id ? 'PUT' : 'POST';
+
+        const res = await fetch(url, {
+            method,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ nama, no_telepon: phone || null })
+        });
+        const data = await res.json();
+
+        if (data.success) {
+            showToast(data.message || 'Instruktur berhasil disimpan', 'success');
+            closeInstrukturModal();
+            loadInstruktur();
+        } else {
+            showToast(data.message || 'Gagal menyimpan instruktur', 'error');
+        }
+    } catch (error) {
+        console.error('Save instruktur error:', error);
+        showToast('Terjadi kesalahan koneksi server', 'error');
+    }
+}
+
+async function toggleInstruktur(id, nama, targetStatus) {
+    const actionLabel = targetStatus === 1 ? 'mengaktifkan' : 'meliburkan';
+    try {
+        const res = await fetch(`/api/instruktur/${id}/toggle`, { method: 'PUT' });
+        const data = await res.json();
+        if (data.success) {
+            showToast(data.message || `Instruktur ${nama} berhasil diubah`, 'success');
+            loadInstruktur();
+        } else {
+            showToast(data.message || `Gagal ${actionLabel} instruktur`, 'error');
+        }
+    } catch (error) {
+        console.error('Toggle instruktur error:', error);
+        showToast(`Gagal ${actionLabel} instruktur`, 'error');
+    }
+}
+
+async function deleteInstruktur(id, nama) {
+    showConfirm('Hapus Instruktur', `Yakin ingin menghapus instruktur "${nama}"? Jika instruktur sudah pernah mengajar, Anda dapat meliburkannya saja.`, async () => {
+        try {
+            const res = await fetch(`/api/instruktur/${id}`, { method: 'DELETE' });
+            const data = await res.json();
+            if (data.success) {
+                showToast(data.message || 'Instruktur berhasil dihapus', 'success');
+                loadInstruktur();
+            } else {
+                showToast(data.message || 'Gagal menghapus instruktur', 'error');
+            }
+        } catch (error) {
+            console.error('Delete instruktur error:', error);
+            showToast('Gagal menghapus instruktur', 'error');
+        }
+    });
 }
 
