@@ -239,6 +239,96 @@
             border: 1px solid #bfdbfe;
         }
 
+        /* Multi-session Selector Tabs */
+        .multi-session-box {
+            background: #f8fafc;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 16px;
+        }
+
+        .multi-session-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .multi-session-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 8px;
+        }
+
+        .session-tab-card {
+            background: #ffffff;
+            border: 2px solid #cbd5e1;
+            border-radius: 10px;
+            padding: 10px 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            user-select: none;
+        }
+
+        .session-tab-card:hover {
+            border-color: var(--primary);
+            background: #f0f7ff;
+        }
+
+        .session-tab-card.active {
+            border-color: var(--primary) !important;
+            background: #eff6ff !important;
+            box-shadow: 0 0 0 2px rgba(21, 101, 192, 0.2);
+        }
+
+        .tab-meet-title {
+            font-size: 0.82rem;
+            font-weight: 800;
+            color: var(--text);
+        }
+
+        .tab-time-sub {
+            font-size: 0.74rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .tab-status-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.68rem;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 4px;
+            width: fit-content;
+            margin-top: 4px;
+        }
+
+        .tab-status-chip.chip-hadir {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .tab-status-chip.chip-ready {
+            background: #e0f2fe;
+            color: #0369a1;
+        }
+
+        .tab-status-chip.chip-early {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
         /* Session Details Grid */
         .details-grid {
             display: grid;
@@ -334,6 +424,12 @@
             color: #78350f;
         }
 
+        .status-box.info {
+            background: #eff6ff;
+            border: 1.5px solid #bfdbfe;
+            color: #1e40af;
+        }
+
         .status-box.error {
             background: var(--danger-light);
             border: 1.5px solid #fca5a5;
@@ -355,6 +451,29 @@
         .status-desc {
             font-size: 0.82rem;
             line-height: 1.4;
+        }
+
+        /* Next Session Quick Switch Button */
+        .btn-next-session {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #1d4ed8;
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 16px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 10px;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .btn-next-session:hover {
+            background: #1e40af;
+            transform: translateY(-1px);
         }
 
         /* Congratulations Finish Banner */
@@ -488,6 +607,15 @@
                 <div class="progress-pill" id="studentProgress">- Sesi</div>
             </div>
 
+            <!-- Multi-Session Selector (tampil otomatis jika siswa punya 2x atau lebih latihan hari ini) -->
+            <div class="multi-session-box" id="multiSessionBox" style="display:none;">
+                <div class="multi-session-header">
+                    <span><i class="fas fa-layer-group" style="color:var(--primary);"></i> Sesi Latihan Hari Ini</span>
+                    <span id="multiSessionCount">2 Sesi</span>
+                </div>
+                <div class="multi-session-grid" id="sessionTabsGrid"></div>
+            </div>
+
             <!-- Detail Grid -->
             <div class="details-grid">
                 <div class="detail-item">
@@ -539,7 +667,9 @@
     </div>
 
     <script>
-        let currentSessionData = null;
+        let currentSiswa = null;
+        let allSessionsToday = [];
+        let selectedJadwalId = null;
         let urlArmadaId = null;
 
         // Inisialisasi halaman & deteksi URL param
@@ -572,7 +702,7 @@
         });
 
         // Muat sesi aktif hari ini
-        async function loadActiveSession() {
+        async function loadActiveSession(overrideJadwalId = null) {
             const phoneInput = document.getElementById('phoneInput');
             const phone = phoneInput.value.trim().replace(/[^0-9]/g, '');
 
@@ -585,14 +715,17 @@
             // Simpan ke localStorage
             localStorage.setItem('psj_student_phone', phone);
 
-            // Tampilkan loading
-            document.getElementById('loadingState').style.display = 'block';
-            document.getElementById('errorCard').style.display = 'none';
-            document.getElementById('sessionCard').style.display = 'none';
+            // Tampilkan loading jika bukan override
+            if (!overrideJadwalId) {
+                document.getElementById('loadingState').style.display = 'block';
+                document.getElementById('errorCard').style.display = 'none';
+                document.getElementById('sessionCard').style.display = 'none';
+            }
 
             try {
                 let url = `/api/absensi/active-session?no_telepon=${encodeURIComponent(phone)}`;
                 if (urlArmadaId) url += `&armada_id=${encodeURIComponent(urlArmadaId)}`;
+                if (overrideJadwalId) url += `&jadwal_id=${encodeURIComponent(overrideJadwalId)}`;
 
                 const res = await fetch(url);
                 const json = await res.json();
@@ -604,8 +737,11 @@
                     return;
                 }
 
-                currentSessionData = json.data;
-                renderSession(json.data);
+                currentSiswa = json.data.siswa;
+                allSessionsToday = json.data.all_sessions_today || [json.data.jadwal];
+                selectedJadwalId = overrideJadwalId || json.data.jadwal.id;
+
+                renderAllSessionsView(json.data);
             } catch (err) {
                 console.error('Fetch error:', err);
                 document.getElementById('loadingState').style.display = 'none';
@@ -613,14 +749,74 @@
             }
         }
 
-        // Tampilkan detail sesi
-        function renderSession(data) {
-            const { siswa, jadwal, is_absen, status_absensi, waktu_absen, is_too_early } = data;
+        // Tampilkan sesi & tab pemilih sesi jika latihan 2x di hari yang sama
+        function renderAllSessionsView(apiData) {
+            const { siswa } = apiData;
 
+            // Student profile
             document.getElementById('studentName').textContent = siswa.nama_lengkap;
             document.getElementById('studentPackage').textContent = siswa.paket || 'Paket Kursus';
             document.getElementById('studentProgress').textContent = `${siswa.total_hadir} / ${siswa.jumlah_pertemuan || 0} Sesi Selesai`;
 
+            // Setup multi-session tabs jika ada 2 sesi atau lebih hari ini
+            const multiBox = document.getElementById('multiSessionBox');
+            const tabsGrid = document.getElementById('sessionTabsGrid');
+
+            if (allSessionsToday.length > 1) {
+                multiBox.style.display = 'block';
+                document.getElementById('multiSessionCount').textContent = `${allSessionsToday.length} Sesi Hari Ini`;
+
+                tabsGrid.innerHTML = allSessionsToday.map((sess, idx) => {
+                    const isActive = sess.id === selectedJadwalId;
+                    const jamText = `${(sess.jam_mulai || '').slice(0, 5)} - ${(sess.jam_selesai || '').slice(0, 5)}`;
+                    
+                    let statusChip = '';
+                    if (sess.is_absen) {
+                        statusChip = '<span class="tab-status-chip chip-hadir"><i class="fas fa-check"></i> Hadir</span>';
+                    } else if (sess.is_too_early) {
+                        statusChip = '<span class="tab-status-chip chip-early"><i class="fas fa-clock"></i> Nanti</span>';
+                    } else {
+                        statusChip = '<span class="tab-status-chip chip-ready"><i class="fas fa-check-circle"></i> Siap</span>';
+                    }
+
+                    return `
+                        <div class="session-tab-card ${isActive ? 'active' : ''}" onclick="selectSessionTab(${sess.id})">
+                            <div class="tab-meet-title">Pertemuan Ke-${sess.pertemuan_ke || (idx + 1)}</div>
+                            <div class="tab-time-sub">${jamText}</div>
+                            ${statusChip}
+                        </div>
+                    `;
+                }).join('');
+            } else {
+                multiBox.style.display = 'none';
+            }
+
+            // Temukan sesi yang sedang dipilih
+            const currentJadwal = allSessionsToday.find(s => s.id === selectedJadwalId) || apiData.jadwal;
+            renderSingleSessionDetail(currentJadwal, siswa);
+            document.getElementById('sessionCard').style.display = 'block';
+        }
+
+        // Ganti sesi yang dilihat saat siswa mengetuk tab sesi
+        function selectSessionTab(jadwalId) {
+            selectedJadwalId = jadwalId;
+            const currentJadwal = allSessionsToday.find(s => s.id === jadwalId);
+            if (!currentJadwal) return;
+
+            // Update active state di tabs
+            document.querySelectorAll('.session-tab-card').forEach((card, idx) => {
+                if (allSessionsToday[idx] && allSessionsToday[idx].id === jadwalId) {
+                    card.classList.add('active');
+                } else {
+                    card.classList.remove('active');
+                }
+            });
+
+            renderSingleSessionDetail(currentJadwal, currentSiswa);
+        }
+
+        // Tampilkan rincian dari satu sesi latihan
+        function renderSingleSessionDetail(jadwal, siswa) {
             document.getElementById('sessionNumber').textContent = `Pertemuan Ke-${jadwal.pertemuan_ke || '-'}`;
             
             // Format Tanggal
@@ -646,13 +842,30 @@
             btnSubmit.disabled = false;
             finishBanner.style.display = 'none';
 
-            if (is_absen) {
-                // Sesi sudah diabsen sebelumnya
+            // Cari apakah masih ada sesi lain hari ini yang belum diabsen
+            const otherPendingSession = allSessionsToday.find(s => s.id !== jadwal.id && !s.is_absen);
+
+            if (jadwal.is_absen) {
+                // Sesi ini sudah diabsen
                 btnSubmit.style.display = 'none';
                 let waktuStr = '';
-                if (waktu_absen) {
-                    const w = new Date(waktu_absen);
+                if (jadwal.waktu_absen) {
+                    const w = new Date(jadwal.waktu_absen);
                     waktuStr = ` pada pukul ${String(w.getHours()).padStart(2, '0')}:${String(w.getMinutes()).padStart(2, '0')} WIB`;
+                }
+
+                let nextSessionHtml = '';
+                if (otherPendingSession) {
+                    const otherJam = `${(otherPendingSession.jam_mulai || '').slice(0, 5)} - ${(otherPendingSession.jam_selesai || '').slice(0, 5)}`;
+                    nextSessionHtml = `
+                        <div style="margin-top:12px;padding-top:10px;border-top:1px dashed #86efac;">
+                            <div style="font-size:0.82rem;font-weight:700;">💡 Anda masih memiliki sesi latihan lagi hari ini:</div>
+                            <div style="font-size:0.8rem;margin-top:2px;">Pertemuan Ke-${otherPendingSession.pertemuan_ke} (${otherJam} WIB)</div>
+                            <button class="btn-next-session" onclick="selectSessionTab(${otherPendingSession.id})">
+                                Buka Sesi Ke-${otherPendingSession.pertemuan_ke} <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    `;
                 }
 
                 statusArea.innerHTML = `
@@ -660,7 +873,8 @@
                         <i class="fas fa-check-circle"></i>
                         <div class="status-title">Absensi Selesai Dicatat</div>
                         <div class="status-desc">
-                            Kehadiran Anda pada Pertemuan Ke-${jadwal.pertemuan_ke} telah berhasil tercatat${waktuStr}.
+                            Kehadiran Anda pada <strong>Pertemuan Ke-${jadwal.pertemuan_ke}</strong> (${jamMulai} - ${jamSelesai} WIB) telah berhasil tercatat${waktuStr}.
+                            ${nextSessionHtml}
                         </div>
                     </div>
                 `;
@@ -668,7 +882,7 @@
                 if (siswa.jumlah_pertemuan > 0 && siswa.total_hadir >= siswa.jumlah_pertemuan) {
                     finishBanner.style.display = 'block';
                 }
-            } else if (is_too_early) {
+            } else if (jadwal.is_too_early) {
                 // Terlalu awal (belum masuk 30 menit sebelum sesi)
                 btnSubmit.disabled = true;
                 btnSubmit.innerHTML = `<i class="fas fa-clock"></i> Belum Waktunya Absen`;
@@ -677,23 +891,22 @@
                         <i class="fas fa-hourglass-half"></i>
                         <div class="status-title">Sesi Belum Dimulai</div>
                         <div class="status-desc">
-                            Sesi latihan Anda dijadwalkan pukul <strong>${jamMulai} WIB</strong>. Tombol absensi dibuka otomatis mulai 30 menit sebelum sesi dimulai.
+                            Sesi latihan ini dijadwalkan pukul <strong>${jamMulai} WIB</strong>. Tombol absensi dibuka otomatis mulai 30 menit sebelum sesi dimulai.
                         </div>
                     </div>
                 `;
             } else {
-                // Siap absen
+                // Siap absen untuk sesi ini
                 btnSubmit.disabled = false;
-                btnSubmit.innerHTML = `<i class="fas fa-check-circle"></i> Konfirmasi Selesai Latihan`;
+                btnSubmit.innerHTML = `<i class="fas fa-check-circle"></i> Konfirmasi Selesai Latihan (Ke-${jadwal.pertemuan_ke})`;
             }
-
-            document.getElementById('sessionCard').style.display = 'block';
         }
 
-        // Kirim konfirmasi absensi mandiri
+        // Kirim konfirmasi absensi mandiri untuk sesi yang dipilih
         async function submitAbsen() {
-            if (!currentSessionData) return;
+            if (!currentSiswa || !selectedJadwalId) return;
 
+            const currentJadwal = allSessionsToday.find(s => s.id === selectedJadwalId);
             const btnSubmit = document.getElementById('btnSubmitAbsen');
             btnSubmit.disabled = true;
             btnSubmit.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Menyimpan Kehadiran...`;
@@ -703,9 +916,9 @@
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        no_telepon: currentSessionData.siswa.no_telepon,
-                        jadwal_id: currentSessionData.jadwal.id,
-                        armada_id: urlArmadaId || currentSessionData.jadwal.armada_id || null
+                        no_telepon: currentSiswa.no_telepon,
+                        jadwal_id: selectedJadwalId,
+                        armada_id: urlArmadaId || (currentJadwal ? currentJadwal.armada_id : null)
                     })
                 });
 
@@ -718,8 +931,47 @@
                     return;
                 }
 
-                // Sukses!
+                // Tandai sesi ini sudah absen di memory lokal
+                if (currentJadwal) {
+                    currentJadwal.is_absen = true;
+                    currentJadwal.status_absensi = 'hadir';
+                    currentJadwal.waktu_absen = new Date().toISOString();
+                }
+
+                // Update total hadir
+                if (json.data && json.data.total_hadir) {
+                    currentSiswa.total_hadir = json.data.total_hadir;
+                    document.getElementById('studentProgress').textContent = `${json.data.total_hadir} / ${json.data.total_sesi} Sesi Selesai`;
+                }
+
                 btnSubmit.style.display = 'none';
+
+                // Cek apakah ada sesi berikutnya hari ini yang masih pending
+                const otherPendingSession = allSessionsToday.find(s => s.id !== selectedJadwalId && !s.is_absen);
+                let nextSessionPrompt = '';
+
+                if (otherPendingSession) {
+                    const nextJam = `${(otherPendingSession.jam_mulai || '').slice(0, 5)} - ${(otherPendingSession.jam_selesai || '').slice(0, 5)}`;
+                    nextSessionPrompt = `
+                        <div style="margin-top:14px;padding:12px;background:#ffffff;border-radius:10px;border:1.5px solid #86efac;text-align:left;">
+                            <div style="font-weight:800;color:#14532d;font-size:0.88rem;">
+                                <i class="fas fa-calendar-alt"></i> Sesi Berikutnya Hari Ini:
+                            </div>
+                            <div style="font-size:0.82rem;color:#166534;margin-top:2px;">
+                                Pertemuan Ke-${otherPendingSession.pertemuan_ke} &bull; Jam ${nextJam} WIB
+                            </div>
+                            <button class="btn-next-session" style="margin-top:8px;width:100%;justify-content:center;" onclick="selectSessionTab(${otherPendingSession.id})">
+                                Buka Absensi Sesi Ke-${otherPendingSession.pertemuan_ke} <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    `;
+                } else {
+                    nextSessionPrompt = `
+                        <div style="font-size:0.82rem;color:#15803d;margin-top:8px;font-weight:700;">
+                            ✨ Seluruh sesi latihan Anda untuk hari ini telah selesai diabsen!
+                        </div>
+                    `;
+                }
 
                 const statusArea = document.getElementById('sessionStatusArea');
                 statusArea.innerHTML = `
@@ -731,16 +983,18 @@
                             <span style="font-size:0.8rem;color:#15803d;display:inline-block;margin-top:6px;">
                                 📲 Konfirmasi dan progres telah dikirimkan ke WhatsApp Anda.
                             </span>
+                            ${nextSessionPrompt}
                         </div>
                     </div>
                 `;
 
-                // Update info progres di kartu
-                if (json.data) {
-                    document.getElementById('studentProgress').textContent = `${json.data.total_hadir} / ${json.data.total_sesi} Sesi Selesai`;
-                    if (json.data.is_complete) {
-                        document.getElementById('finishBanner').style.display = 'block';
-                    }
+                // Update status tab grid
+                if (allSessionsToday.length > 1) {
+                    renderAllSessionsView({ siswa: currentSiswa, jadwal: currentJadwal, all_sessions_today: allSessionsToday });
+                }
+
+                if (json.data && json.data.is_complete) {
+                    document.getElementById('finishBanner').style.display = 'block';
                 }
 
             } catch (err) {

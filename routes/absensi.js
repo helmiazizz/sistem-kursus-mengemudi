@@ -8,7 +8,7 @@ const { isAuthenticated } = require('./auth');
 // ============================================================
 router.get('/active-session', async (req, res) => {
     try {
-        let { no_telepon, armada_id } = req.query;
+        let { no_telepon, armada_id, jadwal_id } = req.query;
 
         if (!no_telepon) {
             return res.status(400).json({ success: false, message: 'Nomor WhatsApp wajib diisi' });
@@ -40,7 +40,7 @@ router.get('/active-session', async (req, res) => {
         const nowJakarta = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Jakarta' }));
         const today = nowJakarta.getFullYear() + '-' + String(nowJakarta.getMonth() + 1).padStart(2, '0') + '-' + String(nowJakarta.getDate()).padStart(2, '0');
 
-        // Cari jadwal siswa untuk hari ini
+        // Cari semua jadwal siswa untuk hari ini (mendukung 2x atau lebih latihan di hari yang sama untuk semua paket)
         const [jadwalRows] = await db.query(
             `SELECT j.*, 
                     a.nama_kendaraan, a.nomor_polisi, 
@@ -65,8 +65,36 @@ router.get('/active-session', async (req, res) => {
             });
         }
 
-        // Ambil sesi yang paling relevan saat ini (prioritaskan yang belum absen)
-        let activeJadwal = jadwalRows.find(j => !j.absensi_id) || jadwalRows[0];
+        // Waktu saat ini di Jakarta
+        const currentHours = nowJakarta.getHours();
+        const currentMinutes = nowJakarta.getMinutes();
+        const currentTotalMin = currentHours * 60 + currentMinutes;
+
+        // Ambil sesi yang paling relevan saat ini (dukung multi-sesi di hari yang sama untuk semua paket)
+        let activeJadwal = null;
+        if (jadwal_id) {
+            activeJadwal = jadwalRows.find(j => j.id === parseInt(jadwal_id));
+        } else if (armada_id) {
+            // Prioritaskan sesi armada yang bersangkutan jika scan QR di mobil tertentu
+            activeJadwal = jadwalRows.find(j => j.armada_id === parseInt(armada_id) && !j.absensi_id)
+                        || jadwalRows.find(j => j.armada_id === parseInt(armada_id));
+        }
+
+        if (!activeJadwal) {
+            // Prioritaskan sesi yang belum diabsen
+            const pendingSessions = jadwalRows.filter(j => !j.absensi_id);
+            if (pendingSessions.length > 0) {
+                // Cari sesi pending yang sudah masuk jendela waktu (>= start - 30 min)
+                const readySession = pendingSessions.find(j => {
+                    const [sh, sm] = (j.jam_mulai || '00:00').split(':').map(Number);
+                    return currentTotalMin >= (sh * 60 + (sm || 0) - 30);
+                });
+                activeJadwal = readySession || pendingSessions[0];
+            } else {
+                // Jika semua sesi hari ini sudah absen, default ke sesi terakhir
+                activeJadwal = jadwalRows[jadwalRows.length - 1];
+            }
+        }
 
         // Hitung total hadir siswa
         const [absensiRows] = await db.query(
@@ -81,12 +109,7 @@ router.get('/active-session', async (req, res) => {
         const totalHadirAktif = Math.max(0, totalHadirAll - offset);
         const totalPaket = siswa.jumlah_pertemuan || 0;
 
-        // Validasi waktu latihan: apakah sudah waktunya absen?
-        // Sesi bisa diabsen mulai 30 menit sebelum jam_mulai sampai akhir hari
-        const currentHours = nowJakarta.getHours();
-        const currentMinutes = nowJakarta.getMinutes();
-        const currentTotalMin = currentHours * 60 + currentMinutes;
-
+        // Validasi waktu latihan sesi aktif
         const [startH, startM] = (activeJadwal.jam_mulai || '00:00').split(':').map(Number);
         const startTotalMin = startH * 60 + (startM || 0);
 
@@ -115,14 +138,26 @@ router.get('/active-session', async (req, res) => {
                     nama_kendaraan: activeJadwal.nama_kendaraan || 'Armada PSJ',
                     nomor_polisi: activeJadwal.nomor_polisi || ''
                 },
-                all_sessions_today: jadwalRows.map(j => ({
-                    id: j.id,
-                    jam_mulai: j.jam_mulai,
-                    jam_selesai: j.jam_selesai,
-                    pertemuan_ke: j.pertemuan_ke,
-                    is_absen: !!j.absensi_id,
-                    status_absensi: j.status_absensi
-                })),
+                all_sessions_today: jadwalRows.map(j => {
+                    const [jH, jM] = (j.jam_mulai || '00:00').split(':').map(Number);
+                    const jStartMin = jH * 60 + (jM || 0);
+                    const jTooEarly = currentTotalMin < (jStartMin - 30);
+                    return {
+                        id: j.id,
+                        tanggal: j.tanggal,
+                        jam_mulai: j.jam_mulai,
+                        jam_selesai: j.jam_selesai,
+                        pertemuan_ke: j.pertemuan_ke,
+                        transmisi: j.transmisi,
+                        instruktur_nama: j.instruktur_nama || 'Instruktur PSJ',
+                        nama_kendaraan: j.nama_kendaraan || 'Armada PSJ',
+                        nomor_polisi: j.nomor_polisi || '',
+                        is_absen: !!j.absensi_id,
+                        status_absensi: j.status_absensi,
+                        waktu_absen: j.waktu_absen,
+                        is_too_early: jTooEarly
+                    };
+                }),
                 is_absen: !!activeJadwal.absensi_id,
                 status_absensi: activeJadwal.status_absensi,
                 waktu_absen: activeJadwal.waktu_absen,
@@ -271,7 +306,10 @@ Terima kasih telah memilih *PSJ Driving Course*! Tetap semangat dan selalu utama
             success: true,
             message: `Absensi Pertemuan Ke-${j.pertemuan_ke} berhasil dicatat! Terima kasih telah berlatih hari ini.`,
             data: {
+                jadwal_id: j.id,
                 pertemuan_ke: j.pertemuan_ke,
+                jam_mulai: j.jam_mulai,
+                jam_selesai: j.jam_selesai,
                 total_hadir: totalHadirAktif,
                 total_sesi: totalPaket,
                 is_complete: isComplete
