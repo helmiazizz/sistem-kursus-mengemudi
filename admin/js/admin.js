@@ -447,6 +447,9 @@ async function loadKelolaRiwayat(siswaId) {
             return true;
         });
 
+        // Urutkan dari pertemuan 1 sampai terakhir
+        jadwalSiswa.sort((a, b) => (a.pertemuan_ke - b.pertemuan_ke) || (new Date(a.tanggal) - new Date(b.tanggal)));
+
         // Fetch absensi for this siswa
         const absensiRes = await fetch(`/api/absensi?siswa_id=${siswaId}`);
         const absensiJson = await absensiRes.json();
