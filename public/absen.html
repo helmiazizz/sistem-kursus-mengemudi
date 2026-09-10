@@ -329,6 +329,11 @@
             color: #92400e;
         }
 
+        .tab-status-chip.chip-late {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
         /* Session Details Grid */
         .details-grid {
             display: grid;
@@ -774,9 +779,11 @@
                     if (sess.is_absen) {
                         statusChip = '<span class="tab-status-chip chip-hadir"><i class="fas fa-check"></i> Hadir</span>';
                     } else if (sess.is_too_early) {
-                        statusChip = '<span class="tab-status-chip chip-early"><i class="fas fa-clock"></i> Nanti</span>';
+                        statusChip = '<span class="tab-status-chip chip-early"><i class="fas fa-clock"></i> Belum Jamnya</span>';
+                    } else if (sess.is_too_late) {
+                        statusChip = '<span class="tab-status-chip chip-late"><i class="fas fa-times-circle"></i> Berakhir</span>';
                     } else {
-                        statusChip = '<span class="tab-status-chip chip-ready"><i class="fas fa-check-circle"></i> Siap</span>';
+                        statusChip = '<span class="tab-status-chip chip-ready"><i class="fas fa-check-circle"></i> Buka</span>';
                     }
 
                     return `
@@ -883,22 +890,46 @@
                     finishBanner.style.display = 'block';
                 }
             } else if (jadwal.is_too_early) {
-                // Terlalu awal (belum masuk 30 menit sebelum sesi)
+                // Terlalu awal (belum masuk jam booking latihan)
                 btnSubmit.disabled = true;
-                btnSubmit.innerHTML = `<i class="fas fa-clock"></i> Belum Waktunya Absen`;
+                btnSubmit.innerHTML = `<i class="fas fa-clock"></i> Belum Jamnya Absen (Mulai ${jamMulai} WIB)`;
                 statusArea.innerHTML = `
                     <div class="status-box warning">
                         <i class="fas fa-hourglass-half"></i>
                         <div class="status-title">Sesi Belum Dimulai</div>
                         <div class="status-desc">
-                            Sesi latihan ini dijadwalkan pukul <strong>${jamMulai} WIB</strong>. Tombol absensi dibuka otomatis mulai 30 menit sebelum sesi dimulai.
+                            Sesi latihan ini dijadwalkan pukul <strong>${jamMulai} - ${jamSelesai} WIB</strong>.<br>
+                            Absensi dapat dilakukan mulai tepat pukul <strong>${jamMulai} WIB pas</strong>.
+                        </div>
+                    </div>
+                `;
+            } else if (jadwal.is_too_late) {
+                // Sudah lewat rentang waktu jadwal + toleransi
+                btnSubmit.disabled = true;
+                btnSubmit.innerHTML = `<i class="fas fa-times-circle"></i> Waktu Absen Telah Berakhir`;
+                statusArea.innerHTML = `
+                    <div class="status-box error">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <div class="status-title">Rentang Waktu Absen Berakhir</div>
+                        <div class="status-desc">
+                            Rentang waktu absensi untuk jadwal Pertemuan Ke-${jadwal.pertemuan_ke} (<strong>${jamMulai} - ${jamSelesai} WIB</strong>) telah berakhir.<br>
+                            Silakan hubungi admin atau instruktur untuk bantuan absensi manual.
                         </div>
                     </div>
                 `;
             } else {
-                // Siap absen untuk sesi ini
+                // Siap absen dalam rentang waktu sesi booking
                 btnSubmit.disabled = false;
                 btnSubmit.innerHTML = `<i class="fas fa-check-circle"></i> Konfirmasi Selesai Latihan (Ke-${jadwal.pertemuan_ke})`;
+                statusArea.innerHTML = `
+                    <div class="status-box info" style="text-align:left;display:flex;align-items:center;gap:12px;padding:12px 14px;">
+                        <i class="fas fa-clock" style="font-size:1.3rem;color:#2563eb;margin:0;"></i>
+                        <div>
+                            <div style="font-weight:700;color:#1e40af;font-size:0.86rem;">Rentang Waktu Latihan Aktif (${jamMulai} - ${jamSelesai} WIB)</div>
+                            <div style="font-size:0.78rem;color:#2563eb;">Tekan tombol di bawah untuk konfirmasi kehadiran setelah selesai latihan.</div>
+                        </div>
+                    </div>
+                `;
             }
         }
 

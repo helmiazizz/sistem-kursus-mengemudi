@@ -84,10 +84,13 @@ router.get('/active-session', async (req, res) => {
             // Prioritaskan sesi yang belum diabsen
             const pendingSessions = jadwalRows.filter(j => !j.absensi_id);
             if (pendingSessions.length > 0) {
-                // Cari sesi pending yang sudah masuk jendela waktu (>= start - 30 min)
+                // Cari sesi pending yang berada dalam rentang waktu (>= jam_mulai dan <= jam_selesai + 60 menit)
                 const readySession = pendingSessions.find(j => {
                     const [sh, sm] = (j.jam_mulai || '00:00').split(':').map(Number);
-                    return currentTotalMin >= (sh * 60 + (sm || 0) - 30);
+                    const [eh, em] = (j.jam_selesai || '23:59').split(':').map(Number);
+                    const sMin = sh * 60 + (sm || 0);
+                    const eMin = eh * 60 + (em || 0) + 60;
+                    return currentTotalMin >= sMin && currentTotalMin <= eMin;
                 });
                 activeJadwal = readySession || pendingSessions[0];
             } else {
@@ -109,12 +112,15 @@ router.get('/active-session', async (req, res) => {
         const totalHadirAktif = Math.max(0, totalHadirAll - offset);
         const totalPaket = siswa.jumlah_pertemuan || 0;
 
-        // Validasi waktu latihan sesi aktif
+        // Validasi waktu latihan sesi aktif sesuai rentang booking (misal 08:00 - 10:00, buka jam 8 pas)
         const [startH, startM] = (activeJadwal.jam_mulai || '00:00').split(':').map(Number);
+        const [endH, endM] = (activeJadwal.jam_selesai || '23:59').split(':').map(Number);
         const startTotalMin = startH * 60 + (startM || 0);
+        const endTotalMin = endH * 60 + (endM || 0) + 60; // Toleransi 60 menit setelah jam latihan berakhir
 
-        const isTooEarly = currentTotalMin < (startTotalMin - 30);
-        const isSessionActive = currentTotalMin >= (startTotalMin - 30);
+        const isTooEarly = currentTotalMin < startTotalMin;
+        const isTooLate = currentTotalMin > endTotalMin;
+        const isSessionActive = !isTooEarly && !isTooLate;
 
         res.json({
             success: true,
@@ -140,8 +146,11 @@ router.get('/active-session', async (req, res) => {
                 },
                 all_sessions_today: jadwalRows.map(j => {
                     const [jH, jM] = (j.jam_mulai || '00:00').split(':').map(Number);
+                    const [jEH, jEM] = (j.jam_selesai || '23:59').split(':').map(Number);
                     const jStartMin = jH * 60 + (jM || 0);
-                    const jTooEarly = currentTotalMin < (jStartMin - 30);
+                    const jEndMin = jEH * 60 + (jEM || 0) + 60;
+                    const jTooEarly = currentTotalMin < jStartMin;
+                    const jTooLate = currentTotalMin > jEndMin;
                     return {
                         id: j.id,
                         tanggal: j.tanggal,
@@ -155,13 +164,15 @@ router.get('/active-session', async (req, res) => {
                         is_absen: !!j.absensi_id,
                         status_absensi: j.status_absensi,
                         waktu_absen: j.waktu_absen,
-                        is_too_early: jTooEarly
+                        is_too_early: jTooEarly,
+                        is_too_late: jTooLate
                     };
                 }),
                 is_absen: !!activeJadwal.absensi_id,
                 status_absensi: activeJadwal.status_absensi,
                 waktu_absen: activeJadwal.waktu_absen,
                 is_too_early: isTooEarly,
+                is_too_late: isTooLate,
                 is_session_active: isSessionActive
             }
         });
@@ -208,7 +219,7 @@ router.post('/qr-checkin', async (req, res) => {
 
         const j = jadwalRows[0];
 
-        // 2. Verifikasi tanggal (harus hari ini di Asia/Jakarta)
+        // 2. Verifikasi tanggal & rentang jam latihan booking (di Asia/Jakarta)
         const nowJakarta = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Jakarta' }));
         const todayStr = nowJakarta.getFullYear() + '-' + String(nowJakarta.getMonth() + 1).padStart(2, '0') + '-' + String(nowJakarta.getDate()).padStart(2, '0');
         const jadwalTglStr = String(j.tanggal).split('T')[0];
@@ -217,6 +228,29 @@ router.post('/qr-checkin', async (req, res) => {
             return res.status(400).json({ 
                 success: false, 
                 message: 'Absensi hanya dapat dilakukan pada tanggal jadwal latihan yang bersangkutan.' 
+            });
+        }
+
+        const currentTotalMin = nowJakarta.getHours() * 60 + nowJakarta.getMinutes();
+        const [startH, startM] = (j.jam_mulai || '00:00').split(':').map(Number);
+        const [endH, endM] = (j.jam_selesai || '23:59').split(':').map(Number);
+        const startTotalMin = startH * 60 + (startM || 0);
+        const endTotalMin = endH * 60 + (endM || 0) + 60; // Toleransi 60 menit setelah jadwal selesai
+
+        const jamMulaiClean = (j.jam_mulai || '').slice(0, 5);
+        const jamSelesaiClean = (j.jam_selesai || '').slice(0, 5);
+
+        if (currentTotalMin < startTotalMin) {
+            return res.status(400).json({
+                success: false,
+                message: `Sesi latihan belum dimulai. Sesuai jadwal booking Anda (${jamMulaiClean} - ${jamSelesaiClean} WIB), absensi baru dapat dilakukan mulai pukul ${jamMulaiClean} WIB pas.`
+            });
+        }
+
+        if (currentTotalMin > endTotalMin) {
+            return res.status(400).json({
+                success: false,
+                message: `Rentang waktu absensi untuk jadwal Pertemuan Ke-${j.pertemuan_ke} (${jamMulaiClean} - ${jamSelesaiClean} WIB) telah berakhir. Silakan hubungi admin untuk bantuan absensi manual.`
             });
         }
 
