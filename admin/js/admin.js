@@ -133,8 +133,9 @@ async function loadDashboard() {
 
             schedulePanel.innerHTML = data.today_schedule.map(j => {
                 const ab = todayAbsensi[j.id];
+                const isQr = ab && ab.catatan && ab.catatan.includes('QR Code');
                 const statusClass = ab ? (ab.status === 'hadir' ? 'aktif' : 'dibatalkan') : 'pending';
-                const statusText = ab ? ab.status : 'Menunggu';
+                const statusText = ab ? (ab.status === 'hadir' ? (isQr ? 'Hadir (QR)' : 'Hadir') : ab.status) : 'Menunggu';
                 return `
                     <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--admin-border);">
                         <div style="display:flex;align-items:center;gap:10px;">
@@ -144,7 +145,7 @@ async function loadDashboard() {
                                 <div style="font-size:0.75rem;color:var(--admin-text-muted);">${j.jam_mulai?.slice(0, 5)} - ${j.jam_selesai?.slice(0, 5)}</div>
                             </div>
                         </div>
-                        <span class="badge badge-${statusClass}">${statusText}</span>
+                        <span class="badge badge-${statusClass}">${isQr && ab.status === 'hadir' ? '<i class="fas fa-qrcode"></i> ' : ''}${statusText}</span>
                     </div>`;
             }).join('');
         }
@@ -465,8 +466,10 @@ async function loadKelolaRiwayat(siswaId) {
 
         riwayatDiv.innerHTML = jadwalSiswa.map(j => {
             const absensi = absensiMap[j.id];
+            const isQr = absensi && absensi.catatan && absensi.catatan.includes('QR Code');
+            const hadirText = isQr ? '✅ Hadir (QR)' : '✅ Hadir';
             const statusBadge = absensi
-                ? `<span class="badge badge-${absensi.status === 'hadir' ? 'aktif' : 'dibatalkan'}" style="font-size:0.8rem;padding:5px 12px;">${absensi.status === 'hadir' ? '✅ Hadir' : '❌ Tidak Hadir'}</span>`
+                ? `<span class="badge badge-${absensi.status === 'hadir' ? 'aktif' : 'dibatalkan'}" style="font-size:0.8rem;padding:5px 12px;" title="${escapeHtml(absensi.catatan || '')}">${absensi.status === 'hadir' ? hadirText : '❌ Tidak Hadir'}</span>`
                 : `<span class="badge badge-pending" style="font-size:0.8rem;padding:5px 12px;">⏳ Belum absen</span>`;
 
             return `
@@ -999,9 +1002,14 @@ function renderBookingTable(jadwalList, dateLabel, absensiMap = {}) {
         const tglStr = d.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 
         const abStatus = j.status_absensi || absensiMap[j.id]?.status;
+        const abCatatan = j.catatan_absensi || absensiMap[j.id]?.catatan || '';
+        const isQr = abCatatan.includes('QR Code');
+
         let statusBadge;
         if (abStatus === 'hadir') {
-            statusBadge = '<span class="badge badge-aktif"><i class="fas fa-check-circle"></i> Hadir</span>';
+            statusBadge = isQr
+                ? '<span class="badge badge-aktif" title="Absensi Mandiri via QR Code"><i class="fas fa-qrcode"></i> Hadir (QR)</span>'
+                : '<span class="badge badge-aktif"><i class="fas fa-check-circle"></i> Hadir</span>';
         } else if (abStatus === 'tidak hadir') {
             statusBadge = '<span class="badge badge-dibatalkan"><i class="fas fa-times-circle"></i> Tidak Hadir</span>';
         } else if (abStatus === 'izin') {
@@ -1234,6 +1242,9 @@ async function loadArmada() {
                     <td>
                         <div style="display:flex;align-items:center;gap:6px;">
                             ${nextActionBtn}
+                            <button class="action-btn" style="background:#f0fdf4;color:#16a34a;border:1px solid #bbf7d0;" onclick="openArmadaQr(${a.id}, '${escapeHtml(a.nama_kendaraan)}', '${escapeHtml(a.nomor_polisi)}')" title="Cetak QR Code Absensi Mobil">
+                                <i class="fas fa-qrcode"></i>
+                            </button>
                             <button class="action-btn" style="background:#e3f2fd;color:#1565c0;" onclick="openEditArmada(${a.id})" title="Edit Armada">
                                 <i class="fas fa-edit"></i>
                             </button>
@@ -1368,4 +1379,58 @@ async function deleteArmada(id, nama) {
         }
     });
 }
+
+// ============================================
+// QR CODE ABSENSI MANDIRI (ARMADA & OUTLET)
+// ============================================
+let qrCodeInstance = null;
+
+function openArmadaQr(armadaId, namaMobil, noPolisi) {
+    const origin = window.location.origin;
+    const url = `${origin}/absen?armada=${encodeURIComponent(armadaId)}&plat=${encodeURIComponent(noPolisi)}`;
+
+    document.getElementById('qrModalTitle').innerHTML = '<i class="fas fa-qrcode" style="color:var(--admin-primary);"></i> QR Code Absensi Mobil';
+    document.getElementById('qrTargetName').textContent = namaMobil || 'Armada Mobil';
+    document.getElementById('qrTargetSub').textContent = noPolisi || '';
+    document.getElementById('qrUrlText').textContent = url;
+
+    renderQrCode(url);
+    document.getElementById('modalQrCode').classList.add('active');
+}
+
+function openOutletQrModal() {
+    const origin = window.location.origin;
+    const url = `${origin}/absen?outlet=1`;
+
+    document.getElementById('qrModalTitle').innerHTML = '<i class="fas fa-qrcode" style="color:var(--admin-primary);"></i> QR Code Meja Outlet';
+    document.getElementById('qrTargetName').textContent = 'Panca Sari Jaya Driving Course';
+    document.getElementById('qrTargetSub').textContent = 'Standee / Meja Pendaftaran Outlet';
+    document.getElementById('qrUrlText').textContent = url;
+
+    renderQrCode(url);
+    document.getElementById('modalQrCode').classList.add('active');
+}
+
+function renderQrCode(text) {
+    const container = document.getElementById('qrCodeContainer');
+    container.innerHTML = '';
+
+    if (typeof QRCode !== 'undefined') {
+        qrCodeInstance = new QRCode(container, {
+            text: text,
+            width: 170,
+            height: 170,
+            colorDark: '#0f172a',
+            colorLight: '#ffffff',
+            correctLevel: QRCode.CorrectLevel.H
+        });
+    } else {
+        container.innerHTML = `<p style="font-size:0.8rem;color:red;padding:20px;">Library QR Code sedang dimuat...</p>`;
+    }
+}
+
+function closeQrModal() {
+    document.getElementById('modalQrCode').classList.remove('active');
+}
+
 

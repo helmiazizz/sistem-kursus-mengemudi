@@ -18,6 +18,123 @@
                 grid-template-columns: 1fr !important;
             }
         }
+
+        .qr-print-card {
+            background: #ffffff;
+            border: 2px dashed #cbd5e1;
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+        .qr-card-logo {
+            max-height: 38px;
+            width: auto;
+            margin-bottom: 4px;
+        }
+        .qr-card-company {
+            font-size: 0.85rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            color: #1e293b;
+        }
+        .qr-card-badge {
+            display: inline-block;
+            background: #1565c0;
+            color: #ffffff;
+            font-size: 0.72rem;
+            font-weight: 800;
+            padding: 3px 10px;
+            border-radius: 20px;
+            margin-top: 4px;
+            letter-spacing: 0.5px;
+        }
+        .qr-code-box {
+            padding: 12px;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            min-width: 180px;
+            min-height: 180px;
+        }
+        .qr-code-box img, .qr-code-box canvas {
+            display: block;
+            margin: 0 auto;
+        }
+        .qr-target-name {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: #0f172a;
+        }
+        .qr-target-sub {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #2563eb;
+            margin-top: 2px;
+        }
+        .qr-instructions {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            width: 100%;
+            margin-top: 6px;
+            background: #f8fafc;
+            padding: 10px 14px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            text-align: left;
+        }
+        .qr-inst-step {
+            font-size: 0.75rem;
+            color: #334155;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .qr-inst-step span {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #1565c0;
+            color: #ffffff;
+            font-size: 0.65rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        @media print {
+            body * {
+                visibility: hidden !important;
+            }
+            #printableQrArea, #printableQrArea * {
+                visibility: visible !important;
+            }
+            #printableQrArea {
+                position: fixed !important;
+                left: 50% !important;
+                top: 50% !important;
+                transform: translate(-50%, -50%) !important;
+                width: 380px !important;
+                padding: 30px !important;
+                background: #ffffff !important;
+                border: 2px solid #0f172a !important;
+                border-radius: 16px !important;
+                text-align: center !important;
+                box-shadow: none !important;
+                display: flex !important;
+                flex-direction: column !important;
+                align-items: center !important;
+            }
+        }
     </style>
 </head>
 
@@ -330,6 +447,9 @@
                         <div class="panel-header">
                             <h3 class="panel-title"><i class="fas fa-car"></i> Kelola Armada Mobil</h3>
                             <div class="panel-actions">
+                                <button class="btn btn-sm btn-outline" onclick="openOutletQrModal()" style="margin-right:8px;">
+                                    <i class="fas fa-qrcode"></i> QR Meja Outlet
+                                </button>
                                 <button class="btn btn-sm btn-primary" onclick="openAddArmada()">
                                     <i class="fas fa-plus"></i> Tambah Mobil
                                 </button>
@@ -475,6 +595,50 @@
     </div>
 
 
+    <!-- Modal: QR Code Absensi Mandiri -->
+    <div class="modal-overlay" id="modalQrCode">
+        <div class="modal-dialog" style="max-width:440px;">
+            <div class="modal-header">
+                <h3 id="qrModalTitle"><i class="fas fa-qrcode" style="color:var(--admin-primary);"></i> QR Code Absensi</h3>
+                <button class="modal-close" onclick="closeQrModal()">&times;</button>
+            </div>
+            <div class="modal-body" style="text-align:center;">
+                <!-- Printable Card -->
+                <div id="printableQrArea" class="qr-print-card">
+                    <div class="qr-card-header">
+                        <img src="/images/logo-psj.webp?v=3" alt="PSJ Logo" class="qr-card-logo" onerror="this.src='/images/logo-psj.png?v=3'">
+                        <div class="qr-card-company">PANCA SARI JAYA</div>
+                        <div class="qr-card-badge">ABSENSI MANDIRI SISWA</div>
+                    </div>
+
+                    <div id="qrCodeContainer" class="qr-code-box"></div>
+
+                    <div class="qr-card-info" style="margin-top:6px;">
+                        <div class="qr-target-name" id="qrTargetName">Armada Mobil</div>
+                        <div class="qr-target-sub" id="qrTargetSub">B 1234 PSJ</div>
+                    </div>
+
+                    <div class="qr-instructions">
+                        <div class="qr-inst-step"><span>1</span> Scan QR dengan Kamera / Browser HP</div>
+                        <div class="qr-inst-step"><span>2</span> Masukkan Nomor WhatsApp Siswa</div>
+                        <div class="qr-inst-step"><span>3</span> Tekan "Konfirmasi Selesai Latihan"</div>
+                    </div>
+                </div>
+
+                <div class="qr-url-preview" style="margin-top:14px;padding:8px 12px;background:#f1f5f9;border-radius:8px;font-size:0.75rem;word-break:break-all;color:var(--admin-text-muted);">
+                    <span id="qrUrlText">https://...</span>
+                </div>
+
+                <div style="display:flex;gap:10px;justify-content:center;margin-top:16px;">
+                    <button class="btn btn-sm btn-outline" onclick="closeQrModal()">Tutup</button>
+                    <button class="btn btn-sm btn-primary" onclick="window.print()">
+                        <i class="fas fa-print"></i> Cetak / Print Stiker
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal: Konfirmasi Hapus -->
     <div class="modal-overlay" id="modalConfirm">
         <div class="modal-dialog" style="max-width:420px;">
@@ -499,7 +663,8 @@
     <!-- Toast Container -->
     <div class="toast-container" id="toastContainer"></div>
 
-    <script src="js/admin.js?v=3.6.2"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="js/admin.js?v=3.7.0"></script>
 </body>
 
 </html>

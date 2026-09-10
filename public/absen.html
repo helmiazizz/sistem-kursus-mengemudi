@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Absensi Mandiri Siswa | PSJ Driving Course</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" sizes="48x48" href="/images/favicon-48.png?v=5">
+    <link rel="icon" type="image/png" sizes="96x96" href="/images/favicon-96.png?v=5">
+    <link rel="icon" type="image/png" sizes="192x192" href="/images/favicon-192.png?v=5">
+    <link rel="apple-touch-icon" sizes="192x192" href="/images/favicon-192.png?v=5">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            --primary: #1565c0;
+            --primary-dark: #0d47a1;
+            --primary-light: #e3f2fd;
+            --success: #16a34a;
+            --success-light: #dcfce7;
+            --warning: #f59e0b;
+            --warning-light: #fef3c7;
+            --danger: #dc2626;
+            --danger-light: #fee2e2;
+            --text: #0f172a;
+            --text-muted: #64748b;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --border: #e2e8f0;
+            --radius: 16px;
+            --shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 16px;
+            line-height: 1.5;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 480px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        /* Header / Branding */
+        .header-card {
+            background: #ffffff;
+            border-radius: var(--radius);
+            padding: 20px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #1565c0, #00b4d8);
+        }
+
+        .logo-img {
+            max-height: 44px;
+            width: auto;
+            margin-bottom: 8px;
+        }
+
+        .header-title {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .header-subtitle {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .scan-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--primary-light);
+            color: var(--primary-dark);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        /* Card Umum */
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 22px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+        }
+
+        /* Form Input Nomor */
+        .form-label {
+            display: block;
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 8px;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        .phone-input {
+            flex: 1;
+            padding: 13px 16px;
+            font-size: 1rem;
+            border: 1.5px solid var(--border);
+            border-radius: 12px;
+            font-family: inherit;
+            color: var(--text);
+            background: #fff;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .phone-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(21, 101, 192, 0.15);
+        }
+
+        .btn-check {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 0 20px;
+            font-weight: 700;
+            font-size: 0.92rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .btn-check:hover {
+            opacity: 0.95;
+            transform: translateY(-1px);
+        }
+
+        /* Loading Spinner */
+        .loading-state {
+            display: none;
+            text-align: center;
+            padding: 30px 20px;
+            color: var(--text-muted);
+        }
+
+        .spinner {
+            width: 38px;
+            height: 38px;
+            border: 3.5px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 12px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Session Card */
+        .session-card {
+            display: none;
+            border-top: 4px solid var(--primary);
+        }
+
+        .student-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 14px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 16px;
+        }
+
+        .student-name {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: var(--text);
+        }
+
+        .student-package {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .progress-pill {
+            background: #eff6ff;
+            color: #1d4ed8;
+            font-size: 0.8rem;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 12px;
+            border: 1px solid #bfdbfe;
+        }
+
+        /* Session Details Grid */
+        .details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .detail-item {
+            background: #f8fafc;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .detail-label {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .detail-value {
+            font-size: 0.92rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .detail-sub {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
+        /* Big Action Button */
+        .btn-absen {
+            width: 100%;
+            background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            padding: 16px 20px;
+            font-size: 1.05rem;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(22, 163, 74, 0.35);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .btn-absen:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(22, 163, 74, 0.45);
+        }
+
+        .btn-absen:active {
+            transform: translateY(0);
+        }
+
+        .btn-absen:disabled {
+            background: #94a3b8;
+            box-shadow: none;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Status Badges */
+        .status-box {
+            padding: 16px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 16px;
+        }
+
+        .status-box.success {
+            background: var(--success-light);
+            border: 1.5px solid #86efac;
+            color: #14532d;
+        }
+
+        .status-box.warning {
+            background: var(--warning-light);
+            border: 1.5px solid #fde68a;
+            color: #78350f;
+        }
+
+        .status-box.error {
+            background: var(--danger-light);
+            border: 1.5px solid #fca5a5;
+            color: #7f1d1d;
+        }
+
+        .status-box i {
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .status-title {
+            font-size: 1rem;
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
+
+        .status-desc {
+            font-size: 0.82rem;
+            line-height: 1.4;
+        }
+
+        /* Congratulations Finish Banner */
+        .finish-banner {
+            background: linear-gradient(135deg, #fef08a 0%, #fde047 100%);
+            border: 2px solid #ca8a04;
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            color: #713f12;
+            margin-top: 16px;
+            animation: bounceIn 0.5s ease;
+        }
+
+        .finish-banner h4 {
+            font-size: 1rem;
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
+
+        .finish-banner p {
+            font-size: 0.82rem;
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0.9); opacity: 0; }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Switch Student Link */
+        .switch-link {
+            text-align: center;
+            margin-top: 14px;
+            font-size: 0.82rem;
+        }
+
+        .switch-link a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .switch-link a:hover {
+            text-decoration: underline;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: auto;
+            padding-top: 20px;
+        }
+
+        .footer a {
+            color: var(--text-muted);
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header-card">
+            <a href="/">
+                <img src="/images/logo-psj.webp?v=3" alt="PSJ Logo" class="logo-img" onerror="this.src='/images/logo-psj.png?v=3'">
+            </a>
+            <div class="header-title">
+                <i class="fas fa-qrcode" style="color:var(--primary);"></i>
+                Absensi Mandiri Siswa
+            </div>
+            <p class="header-subtitle">Panca Sari Jaya Driving Course Tangerang</p>
+            <div id="scanLocationBadge" class="scan-badge" style="display:none;">
+                <i class="fas fa-map-marker-alt"></i> <span id="scanLocationText">Armada Mobil</span>
+            </div>
+        </div>
+
+        <!-- Card Input WhatsApp (Step 1) -->
+        <div class="card" id="phoneCard">
+            <label class="form-label" for="phoneInput">
+                <i class="fab fa-whatsapp" style="color:#25D366;font-size:1.1rem;"></i> Nomor WhatsApp Anda
+            </label>
+            <div class="input-group">
+                <input type="tel" id="phoneInput" class="phone-input" placeholder="Contoh: 08123456789"
+                    inputmode="numeric" autocomplete="tel"
+                    oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                    onkeydown="if(event.key==='Enter')loadActiveSession()">
+                <button class="btn-check" id="btnCek" onclick="loadActiveSession()">
+                    <i class="fas fa-arrow-right"></i> Cek
+                </button>
+            </div>
+            <p style="font-size:0.75rem;color:var(--text-muted);margin-top:8px;">
+                💡 Masukkan nomor WhatsApp yang digunakan saat mendaftar kursus.
+            </p>
+        </div>
+
+        <!-- Loading State -->
+        <div class="card loading-state" id="loadingState">
+            <div class="spinner"></div>
+            <p style="font-weight:600;">Memeriksa jadwal latihan hari ini...</p>
+            <p style="font-size:0.8rem;margin-top:4px;">Harap tunggu sebentar</p>
+        </div>
+
+        <!-- Alert State (Error / Not Found) -->
+        <div class="card" id="errorCard" style="display:none;">
+            <div class="status-box error">
+                <i class="fas fa-exclamation-circle"></i>
+                <div class="status-title" id="errorTitle">Tidak Ada Jadwal</div>
+                <div class="status-desc" id="errorMessage">Nomor WhatsApp tidak terdaftar atau tidak memiliki jadwal latihan mengemudi hari ini.</div>
+            </div>
+            <div style="display:flex;gap:8px;margin-top:12px;">
+                <button onclick="resetPhoneForm()" class="btn-check" style="flex:1;justify-content:center;padding:12px;background:#f1f5f9;color:#334155;">
+                    <i class="fas fa-redo"></i> Ganti Nomor
+                </button>
+                <a href="https://wa.me/6281385359897?text=Halo%20Admin%20PSJ,%20saya%20ingin%20konfirmasi%20jadwal%20latihan%20saya" target="_blank" class="btn-check" style="flex:1;justify-content:center;padding:12px;text-decoration:none;background:#25D366;">
+                    <i class="fab fa-whatsapp"></i> Chat Admin
+                </a>
+            </div>
+        </div>
+
+        <!-- Session Card (Step 2: Found) -->
+        <div class="card session-card" id="sessionCard">
+            <div class="student-header">
+                <div>
+                    <div class="student-name" id="studentName">-</div>
+                    <div class="student-package" id="studentPackage">-</div>
+                </div>
+                <div class="progress-pill" id="studentProgress">- Sesi</div>
+            </div>
+
+            <!-- Detail Grid -->
+            <div class="details-grid">
+                <div class="detail-item">
+                    <div class="detail-label"><i class="fas fa-calendar-check" style="color:var(--primary);"></i> Sesi Latihan</div>
+                    <div class="detail-value" id="sessionNumber">Pertemuan -</div>
+                    <div class="detail-sub" id="sessionDate">Hari Ini</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label"><i class="fas fa-clock" style="color:var(--primary);"></i> Jam Latihan</div>
+                    <div class="detail-value" id="sessionTime">00:00 - 00:00</div>
+                    <div class="detail-sub" id="sessionTransmisi">Manual / Matic</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label"><i class="fas fa-user-tie" style="color:var(--primary);"></i> Instruktur</div>
+                    <div class="detail-value" id="sessionInstructor">-</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label"><i class="fas fa-car" style="color:var(--primary);"></i> Kendaraan</div>
+                    <div class="detail-value" id="sessionCar">-</div>
+                    <div class="detail-sub" id="sessionPlate">-</div>
+                </div>
+            </div>
+
+            <!-- Notice / Status Area -->
+            <div id="sessionStatusArea"></div>
+
+            <!-- Action Button: Konfirmasi Hadir -->
+            <button class="btn-absen" id="btnSubmitAbsen" onclick="submitAbsen()">
+                <i class="fas fa-check-circle"></i> Konfirmasi Selesai Latihan
+            </button>
+
+            <!-- Finish Package Celebration -->
+            <div class="finish-banner" id="finishBanner" style="display:none;">
+                <h4>🎓 SELAMAT! KUOTA PAKET SELESAI</h4>
+                <p>Anda telah menyelesaikan seluruh sesi latihan mengemudi pada paket ini. Sertifikat kelulusan dapat diambil di kantor PSJ Driving Course.</p>
+            </div>
+
+            <!-- Switch Student -->
+            <div class="switch-link">
+                Bukan akun Anda? <a href="javascript:void(0)" onclick="resetPhoneForm()">Ganti Nomor WhatsApp</a>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>&copy; 2026 PSJ Driving Course Tangerang</p>
+            <p style="margin-top:2px;"><a href="/">Kembali ke Beranda</a> &bull; <a href="/jadwal">Cek Jadwal Lengkap</a></p>
+        </div>
+    </div>
+
+    <script>
+        let currentSessionData = null;
+        let urlArmadaId = null;
+
+        // Inisialisasi halaman & deteksi URL param
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            urlArmadaId = urlParams.get('armada') || urlParams.get('armada_id');
+            const urlPlat = urlParams.get('plat');
+            const isOutlet = urlParams.get('outlet');
+
+            const badge = document.getElementById('scanLocationBadge');
+            const badgeText = document.getElementById('scanLocationText');
+
+            if (urlPlat) {
+                badge.style.display = 'inline-flex';
+                badgeText.textContent = `Armada: ${decodeURIComponent(urlPlat)}`;
+            } else if (urlArmadaId) {
+                badge.style.display = 'inline-flex';
+                badgeText.textContent = `Armada Mobil #${urlArmadaId}`;
+            } else if (isOutlet) {
+                badge.style.display = 'inline-flex';
+                badgeText.textContent = 'Meja Outlet PSJ';
+            }
+
+            // Cek nomor di localStorage
+            const savedPhone = localStorage.getItem('psj_student_phone');
+            if (savedPhone) {
+                document.getElementById('phoneInput').value = savedPhone;
+                loadActiveSession();
+            }
+        });
+
+        // Muat sesi aktif hari ini
+        async function loadActiveSession() {
+            const phoneInput = document.getElementById('phoneInput');
+            const phone = phoneInput.value.trim().replace(/[^0-9]/g, '');
+
+            if (!phone || phone.length < 9) {
+                alert('Silakan masukkan nomor WhatsApp yang valid (minimal 9 digit).');
+                phoneInput.focus();
+                return;
+            }
+
+            // Simpan ke localStorage
+            localStorage.setItem('psj_student_phone', phone);
+
+            // Tampilkan loading
+            document.getElementById('loadingState').style.display = 'block';
+            document.getElementById('errorCard').style.display = 'none';
+            document.getElementById('sessionCard').style.display = 'none';
+
+            try {
+                let url = `/api/absensi/active-session?no_telepon=${encodeURIComponent(phone)}`;
+                if (urlArmadaId) url += `&armada_id=${encodeURIComponent(urlArmadaId)}`;
+
+                const res = await fetch(url);
+                const json = await res.json();
+
+                document.getElementById('loadingState').style.display = 'none';
+
+                if (!res.ok || !json.success) {
+                    showError(json.message || 'Tidak ada jadwal latihan aktif hari ini.');
+                    return;
+                }
+
+                currentSessionData = json.data;
+                renderSession(json.data);
+            } catch (err) {
+                console.error('Fetch error:', err);
+                document.getElementById('loadingState').style.display = 'none';
+                showError('Gagal menghubungkan ke server. Pastikan koneksi internet Anda stabil.');
+            }
+        }
+
+        // Tampilkan detail sesi
+        function renderSession(data) {
+            const { siswa, jadwal, is_absen, status_absensi, waktu_absen, is_too_early } = data;
+
+            document.getElementById('studentName').textContent = siswa.nama_lengkap;
+            document.getElementById('studentPackage').textContent = siswa.paket || 'Paket Kursus';
+            document.getElementById('studentProgress').textContent = `${siswa.total_hadir} / ${siswa.jumlah_pertemuan || 0} Sesi Selesai`;
+
+            document.getElementById('sessionNumber').textContent = `Pertemuan Ke-${jadwal.pertemuan_ke || '-'}`;
+            
+            // Format Tanggal
+            const tgl = new Date(jadwal.tanggal);
+            const dateStr = tgl.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'short' });
+            document.getElementById('sessionDate').textContent = dateStr;
+
+            const jamMulai = (jadwal.jam_mulai || '').slice(0, 5);
+            const jamSelesai = (jadwal.jam_selesai || '').slice(0, 5);
+            document.getElementById('sessionTime').textContent = `${jamMulai} - ${jamSelesai} WIB`;
+            document.getElementById('sessionTransmisi').textContent = `Transmisi ${jadwal.transmisi || '-'}`;
+
+            document.getElementById('sessionInstructor').textContent = jadwal.instruktur_nama || 'Instruktur PSJ';
+            document.getElementById('sessionCar').textContent = jadwal.nama_kendaraan || 'Armada PSJ';
+            document.getElementById('sessionPlate').textContent = jadwal.nomor_polisi || '-';
+
+            const statusArea = document.getElementById('sessionStatusArea');
+            const btnSubmit = document.getElementById('btnSubmitAbsen');
+            const finishBanner = document.getElementById('finishBanner');
+
+            statusArea.innerHTML = '';
+            btnSubmit.style.display = 'flex';
+            btnSubmit.disabled = false;
+            finishBanner.style.display = 'none';
+
+            if (is_absen) {
+                // Sesi sudah diabsen sebelumnya
+                btnSubmit.style.display = 'none';
+                let waktuStr = '';
+                if (waktu_absen) {
+                    const w = new Date(waktu_absen);
+                    waktuStr = ` pada pukul ${String(w.getHours()).padStart(2, '0')}:${String(w.getMinutes()).padStart(2, '0')} WIB`;
+                }
+
+                statusArea.innerHTML = `
+                    <div class="status-box success">
+                        <i class="fas fa-check-circle"></i>
+                        <div class="status-title">Absensi Selesai Dicatat</div>
+                        <div class="status-desc">
+                            Kehadiran Anda pada Pertemuan Ke-${jadwal.pertemuan_ke} telah berhasil tercatat${waktuStr}.
+                        </div>
+                    </div>
+                `;
+
+                if (siswa.jumlah_pertemuan > 0 && siswa.total_hadir >= siswa.jumlah_pertemuan) {
+                    finishBanner.style.display = 'block';
+                }
+            } else if (is_too_early) {
+                // Terlalu awal (belum masuk 30 menit sebelum sesi)
+                btnSubmit.disabled = true;
+                btnSubmit.innerHTML = `<i class="fas fa-clock"></i> Belum Waktunya Absen`;
+                statusArea.innerHTML = `
+                    <div class="status-box warning">
+                        <i class="fas fa-hourglass-half"></i>
+                        <div class="status-title">Sesi Belum Dimulai</div>
+                        <div class="status-desc">
+                            Sesi latihan Anda dijadwalkan pukul <strong>${jamMulai} WIB</strong>. Tombol absensi dibuka otomatis mulai 30 menit sebelum sesi dimulai.
+                        </div>
+                    </div>
+                `;
+            } else {
+                // Siap absen
+                btnSubmit.disabled = false;
+                btnSubmit.innerHTML = `<i class="fas fa-check-circle"></i> Konfirmasi Selesai Latihan`;
+            }
+
+            document.getElementById('sessionCard').style.display = 'block';
+        }
+
+        // Kirim konfirmasi absensi mandiri
+        async function submitAbsen() {
+            if (!currentSessionData) return;
+
+            const btnSubmit = document.getElementById('btnSubmitAbsen');
+            btnSubmit.disabled = true;
+            btnSubmit.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Menyimpan Kehadiran...`;
+
+            try {
+                const res = await fetch('/api/absensi/qr-checkin', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        no_telepon: currentSessionData.siswa.no_telepon,
+                        jadwal_id: currentSessionData.jadwal.id,
+                        armada_id: urlArmadaId || currentSessionData.jadwal.armada_id || null
+                    })
+                });
+
+                const json = await res.json();
+
+                if (!res.ok || !json.success) {
+                    alert(json.message || 'Gagal mencatat absensi. Silakan hubungi instruktur/admin.');
+                    btnSubmit.disabled = false;
+                    btnSubmit.innerHTML = `<i class="fas fa-check-circle"></i> Konfirmasi Selesai Latihan`;
+                    return;
+                }
+
+                // Sukses!
+                btnSubmit.style.display = 'none';
+
+                const statusArea = document.getElementById('sessionStatusArea');
+                statusArea.innerHTML = `
+                    <div class="status-box success" style="animation: bounceIn 0.5s ease;">
+                        <i class="fas fa-check-double" style="font-size:2.2rem;color:var(--success);"></i>
+                        <div class="status-title" style="font-size:1.15rem;color:#14532d;">ABSENSI BERHASIL! 🎉</div>
+                        <div class="status-desc" style="font-size:0.9rem;margin-top:6px;">
+                            ${json.message}<br>
+                            <span style="font-size:0.8rem;color:#15803d;display:inline-block;margin-top:6px;">
+                                📲 Konfirmasi dan progres telah dikirimkan ke WhatsApp Anda.
+                            </span>
+                        </div>
+                    </div>
+                `;
+
+                // Update info progres di kartu
+                if (json.data) {
+                    document.getElementById('studentProgress').textContent = `${json.data.total_hadir} / ${json.data.total_sesi} Sesi Selesai`;
+                    if (json.data.is_complete) {
+                        document.getElementById('finishBanner').style.display = 'block';
+                    }
+                }
+
+            } catch (err) {
+                console.error('Submit error:', err);
+                alert('Terjadi kesalahan jaringan saat mencatat absensi.');
+                btnSubmit.disabled = false;
+                btnSubmit.innerHTML = `<i class="fas fa-check-circle"></i> Konfirmasi Selesai Latihan`;
+            }
+        }
+
+        // Tampilkan Error
+        function showError(msg) {
+            document.getElementById('errorMessage').textContent = msg;
+            document.getElementById('errorCard').style.display = 'block';
+        }
+
+        // Reset form nomor
+        function resetPhoneForm() {
+            localStorage.removeItem('psj_student_phone');
+            document.getElementById('phoneInput').value = '';
+            document.getElementById('errorCard').style.display = 'none';
+            document.getElementById('sessionCard').style.display = 'none';
+            document.getElementById('phoneCard').style.display = 'block';
+            document.getElementById('phoneInput').focus();
+        }
+    </script>
+</body>
+
+</html>

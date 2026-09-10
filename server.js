@@ -164,6 +164,15 @@ app.get('/', (req, res) => {
 app.get('/jadwal', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'jadwal.html'));
 });
+
+app.get('/absen', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'absen.html'));
+});
+
+app.get('/absen.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'absen.html'));
+});
+
 app.get('/admin', (req, res) => {
     res.sendFile(path.join(__dirname, 'admin', 'login.html'));
 });
