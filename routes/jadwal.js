@@ -467,6 +467,22 @@ router.post('/siswa-request', async (req, res) => {
                 const isNightSession = jam_mulai === '17:00' || jam_mulai === '18:00';
                 const nightNote = isNightSession ? '\n🌙 *Sesi Latihan Malam*: Pastikan kondisi fisik prima dan bawa kacamata jika ada minus/silinder.' : '';
 
+                let instrukturNama = '';
+                let instrPhone = '';
+                if (finalInstrukturId) {
+                    try {
+                        const [instrRows] = await db.query('SELECT nama, no_telepon FROM instruktur WHERE id = ? AND is_active = 1', [finalInstrukturId]);
+                        if (instrRows.length > 0) {
+                            instrukturNama = instrRows[0].nama;
+                            instrPhone = instrRows[0].no_telepon ? instrRows[0].no_telepon.replace(/[^0-9]/g, '') : '';
+                            if (instrPhone.startsWith('0')) instrPhone = '62' + instrPhone.substring(1);
+                            if (instrPhone && !instrPhone.startsWith('62')) instrPhone = '62' + instrPhone;
+                        }
+                    } catch (instrErr) {
+                        console.error('WA lookup instruktur error:', instrErr.message);
+                    }
+                }
+
                 const message = `📅 *KONFIRMASI JADWAL LATIHAN*
 ━━━━━━━━━━━━━━━━━━
 🏫 *PSJ Driving Course*
@@ -478,8 +494,7 @@ Jadwal latihan Anda telah berhasil dibuat:
 
 📆 Tanggal: *${tglFormatted}*
 ⏰ Jam: *${jam_mulai} - ${jam_selesai}*
-🔢 Pertemuan Ke-${pertemuan_ke}${finalTransmisi ? `\n⚙️ Transmisi: *${finalTransmisi}*` : ''}
-🚗 Mobil: *Mobil ${finalTransmisi}*${nightNote}
+🔢 Pertemuan Ke-${pertemuan_ke}${finalTransmisi ? `\n⚙️ Transmisi: *${finalTransmisi}*` : ''}${instrukturNama ? `\n👨‍🏫 Instruktur: *${instrukturNama}*` : ''}${nightNote}
 
 ⚠️ Mohon hadir 10 menit sebelum jadwal.
 
@@ -495,20 +510,14 @@ _PSJ Driving Course_`;
                 });
 
                 // Kirim notifikasi WA ke instruktur jika dipilih
-                if (finalInstrukturId) {
+                if (instrPhone && instrukturNama) {
                     try {
-                        const [instrRows] = await db.query('SELECT nama, no_telepon FROM instruktur WHERE id = ? AND is_active = 1', [finalInstrukturId]);
-                        if (instrRows.length > 0 && instrRows[0].no_telepon) {
-                            let instrPhone = instrRows[0].no_telepon.replace(/[^0-9]/g, '');
-                            if (instrPhone.startsWith('0')) instrPhone = '62' + instrPhone.substring(1);
-                            if (!instrPhone.startsWith('62')) instrPhone = '62' + instrPhone;
-
-                            const instrMessage = `📅 *JADWAL LATIHAN BARU*
+                        const instrMessage = `📅 *JADWAL LATIHAN BARU*
 ━━━━━━━━━━━━━━━━━━
 🏫 *PSJ Driving Course*
 ━━━━━━━━━━━━━━━━━━
 
-Halo *${instrRows[0].nama}* 👋
+Halo *${instrukturNama}* 👋
 
 Anda mendapat jadwal latihan baru:
 
@@ -516,20 +525,18 @@ Anda mendapat jadwal latihan baru:
 📦 Paket: *${paketRows.length > 0 ? paketRows[0].nama_paket : '-'}*
 📆 Tanggal: *${tglFormatted}*
 ⏰ Jam: *${jam_mulai} - ${jam_selesai}*
-🔢 Pertemuan Ke-${pertemuan_ke}${finalTransmisi ? `\n⚙️ Transmisi: *${finalTransmisi}*` : ''}
-🚗 Mobil: *Mobil ${finalTransmisi}*${isNightSession ? '\n🌙 *Catatan*: Sesi Latihan Sore/Malam' : ''}
+🔢 Pertemuan Ke-${pertemuan_ke}${finalTransmisi ? `\n⚙️ Transmisi: *${finalTransmisi}*` : ''}${isNightSession ? '\n🌙 *Catatan*: Sesi Latihan Sore/Malam' : ''}
 📍 Alamat Siswa: *${siswa.alamat || '-'}*
 
 Terima kasih 🙏
 _PSJ Driving Course_`;
 
-                            await fetch('https://api.fonnte.com/send', {
-                                method: 'POST',
-                                headers: { 'Authorization': token, 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ target: instrPhone, message: instrMessage, typing: false })
-                            });
-                            console.log(`✅ Notifikasi WA instruktur terkirim ke ${instrRows[0].nama}`);
-                        }
+                        await fetch('https://api.fonnte.com/send', {
+                            method: 'POST',
+                            headers: { 'Authorization': token, 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ target: instrPhone, message: instrMessage, typing: false })
+                        });
+                        console.log(`✅ Notifikasi WA instruktur terkirim ke ${instrukturNama}`);
                     } catch (instrErr) {
                         console.error('WA instruktur error (non-fatal):', instrErr.message);
                     }

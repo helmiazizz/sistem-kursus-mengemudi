@@ -718,7 +718,8 @@ function getWaMessage(template, data = {}) {
     const tanggal = data.tanggal || '{tanggal}';
     const jam = data.jam || '{jam}';
     const pertemuan = data.pertemuan || '{pertemuan}';
-    const paket = data.paket || '{paket}';
+    const transmisi = data.transmisi || '';
+    const instruktur = data.instruktur || '';
 
     const templates = {
         reminder:
@@ -729,7 +730,7 @@ Ini adalah pengingat dari *Panca Sari Jaya Driving Course* 🚗
 📅 *Jadwal Latihan Anda:*
 • Tanggal: *${tanggal}*
 • Jam: *${jam}*
-• Pertemuan: *Ke-${pertemuan}*
+• Pertemuan: *Ke-${pertemuan}*${transmisi ? `\n• Transmisi: *${transmisi}*` : ''}${instruktur ? `\n• Instruktur: *${instruktur}*` : ''}
 
 ⚠️ Mohon hadir 10 menit sebelum jadwal. 😊
 
@@ -758,7 +759,9 @@ async function sendWaReminder(jadwalId) {
         nama: jadwal.nama_lengkap,
         tanggal: formatDate(jadwal.tanggal),
         jam: `${jadwal.jam_mulai.slice(0, 5)} - ${jadwal.jam_selesai.slice(0, 5)}`,
-        pertemuan: jadwal.pertemuan_ke
+        pertemuan: jadwal.pertemuan_ke,
+        transmisi: jadwal.transmisi || '',
+        instruktur: jadwal.instruktur_nama || ''
     });
 
     try {
@@ -807,7 +810,9 @@ function sendAllReminders() {
                 nama: j.nama_lengkap,
                 tanggal: formatDate(j.tanggal),
                 jam: `${j.jam_mulai.slice(0, 5)} - ${j.jam_selesai.slice(0, 5)}`,
-                pertemuan: j.pertemuan_ke
+                pertemuan: j.pertemuan_ke,
+                transmisi: j.transmisi || '',
+                instruktur: j.instruktur_nama || ''
             })
         }));
 

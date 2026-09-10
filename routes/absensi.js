@@ -326,7 +326,6 @@ Terima kasih! Absensi mandiri untuk sesi latihan Anda telah *berhasil dicatat*:
 🕒 Waktu Konfirmasi Absen: *${jamAbsenDisplay} WIB*
 ⚙️ Transmisi: *${j.transmisi || '-'}*
 👨‍🏫 Instruktur: *${j.instruktur_nama || '-'}*
-🚗 Armada: *Mobil ${j.transmisi || 'Latihan'}*
 
 📊 *Status Progres Latihan:*
 ${totalHadirAktif} / ${totalPaket} Sesi Selesai
