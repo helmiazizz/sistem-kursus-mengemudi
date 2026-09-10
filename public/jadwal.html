@@ -1170,7 +1170,15 @@
             }
 
             const totalHadir = siswa.total_hadir || 0;
-            const totalSesi = siswa.jumlah_pertemuan || 0;
+            let totalSesi = siswa.jumlah_pertemuan || 0;
+            if (!totalSesi && siswa.paket) {
+                const match = siswa.paket.match(/(\d+)\s*x/i);
+                if (match) {
+                    totalSesi = parseInt(match[1]);
+                } else if (/private|per pertemuan/i.test(siswa.paket)) {
+                    totalSesi = 1;
+                }
+            }
             const isComplete = totalSesi > 0 && totalHadir >= totalSesi;
 
             document.getElementById('siswaInfoGrid').innerHTML = `
@@ -1224,44 +1232,34 @@
                 document.getElementById('siswaInfoCard').appendChild(bannerDiv);
             }
 
-            // Tampilkan notifikasi jika paket sudah selesai, atau tombol toggle jika masih aktif
+            // Tampilkan tombol & strip perpanjang paket HANYA jika seluruh sesi latihan sudah selesai
             if (isComplete || siswa.status === 'selesai') {
-                const stripDiv = document.createElement('div');
-                stripDiv.id = 'siswaExtraActions';
-                stripDiv.className = 'selesai-strip';
-                stripDiv.innerHTML = `
-                    <i class="fas fa-check-circle"></i>
-                    <div>
-                        <strong>Sesi Latihan Telah Selesai (${totalHadir}/${totalSesi} Sesi)</strong>
-                        <div style="font-size:0.8rem;color:#15803d;margin-top:2px;">Silakan pilih paket baru pada formulir di bawah ini untuk melanjutkan sesi latihan berikutnya.</div>
+                const selesaiDiv = document.createElement('div');
+                selesaiDiv.id = 'siswaExtraActions';
+                selesaiDiv.style.marginTop = '16px';
+                selesaiDiv.innerHTML = `
+                    <div class="selesai-strip" style="margin-bottom:12px;">
+                        <i class="fas fa-graduation-cap" style="font-size:1.6rem;color:#15803d;"></i>
+                        <div>
+                            <strong>Seluruh Sesi Latihan Telah Selesai (${totalHadir}/${totalSesi} Sesi) 🎓🎉</strong>
+                            <div style="font-size:0.82rem;color:#15803d;margin-top:2px;">
+                                Selamat atas kelulusan sesi latihan Anda! Seluruh kuota sesi pada paket ini telah selesai diikuti. Ingin melancarkan kemampuan mengemudi atau menambah SIM? Silakan gunakan tombol di bawah untuk menambah / memperpanjang paket baru.
+                            </div>
+                        </div>
+                    </div>
+                    <div style="display:flex;justify-content:flex-end;">
+                        <button type="button" class="btn-tambah-paket-toggle" onclick="toggleTambahPaketCard()">
+                            <i class="fas fa-plus-circle"></i> Tambah / Perpanjang Paket Baru
+                        </button>
                     </div>
                 `;
-                document.getElementById('siswaInfoCard').appendChild(stripDiv);
-            } else {
-                const actionsDiv = document.createElement('div');
-                actionsDiv.id = 'siswaExtraActions';
-                actionsDiv.style.marginTop = '16px';
-                actionsDiv.style.display = 'flex';
-                actionsDiv.style.justifyContent = 'flex-end';
-                actionsDiv.innerHTML = `
-                    <button type="button" class="btn-tambah-paket-toggle" onclick="toggleTambahPaketCard()">
-                        <i class="fas fa-plus-circle"></i> Tambah / Perpanjang Paket Baru
-                    </button>
-                `;
-                document.getElementById('siswaInfoCard').appendChild(actionsDiv);
+                document.getElementById('siswaInfoCard').appendChild(selesaiDiv);
             }
 
-            // Tampilkan / sembunyikan card tambah paket
+            // Pastikan card formulir tambah paket tersembunyi secara default
             const tambahCard = document.getElementById('tambahPaketCard');
             if (tambahCard) {
-                if (isComplete || siswa.status === 'selesai') {
-                    tambahCard.style.display = 'block';
-                    if (typeof updateTambahPaketSummary === 'function') {
-                        updateTambahPaketSummary();
-                    }
-                } else {
-                    tambahCard.style.display = 'none';
-                }
+                tambahCard.style.display = 'none';
             }
         }
         function renderJadwal(jadwalList, absensiList = []) {
@@ -1681,6 +1679,22 @@
         }
 
         function toggleTambahPaketCard() {
+            const totalHadir = siswaData?.siswa?.total_hadir || 0;
+            let totalSesi = siswaData?.siswa?.jumlah_pertemuan || 0;
+            if (!totalSesi && siswaData?.siswa?.paket) {
+                const match = siswaData.siswa.paket.match(/(\d+)\s*x/i);
+                if (match) totalSesi = parseInt(match[1]);
+                else if (/private|per pertemuan/i.test(siswaData.siswa.paket)) totalSesi = 1;
+            }
+            const isComplete = (totalSesi > 0 && totalHadir >= totalSesi) || (siswaData?.siswa?.status === 'selesai');
+
+            if (!isComplete) {
+                showToast('Fitur tambah/perpanjang paket baru hanya muncul jika seluruh sesi latihan sudah selesai semua.', 'warning');
+                const card = document.getElementById('tambahPaketCard');
+                if (card) card.style.display = 'none';
+                return;
+            }
+
             const card = document.getElementById('tambahPaketCard');
             if (card) {
                 if (card.style.display === 'none' || !card.style.display) {
@@ -1696,6 +1710,20 @@
         async function submitTambahPaket() {
             if (!currentPhone) {
                 showToast('Silakan cek jadwal dengan nomor WhatsApp Anda terlebih dahulu', 'error');
+                return;
+            }
+
+            const totalHadir = siswaData?.siswa?.total_hadir || 0;
+            let totalSesi = siswaData?.siswa?.jumlah_pertemuan || 0;
+            if (!totalSesi && siswaData?.siswa?.paket) {
+                const match = siswaData.siswa.paket.match(/(\d+)\s*x/i);
+                if (match) totalSesi = parseInt(match[1]);
+                else if (/private|per pertemuan/i.test(siswaData.siswa.paket)) totalSesi = 1;
+            }
+            const isComplete = (totalSesi > 0 && totalHadir >= totalSesi) || (siswaData?.siswa?.status === 'selesai');
+
+            if (!isComplete) {
+                showToast('Anda belum dapat menambah atau memperpanjang paket karena sesi latihan saat ini belum selesai.', 'error');
                 return;
             }
 

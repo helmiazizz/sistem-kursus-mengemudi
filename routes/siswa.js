@@ -338,6 +338,31 @@ router.post('/tambah-paket', async (req, res) => {
             [siswa.id]
         );
         const totalHadirSekarang = hadirRows[0].total || 0;
+        const offset = parseInt(siswa.pertemuan_sebelumnya) || 0;
+        const totalHadirAktif = Math.max(0, totalHadirSekarang - offset);
+
+        // Ambil kuota sesi paket aktif saat ini
+        let totalSesiLama = 0;
+        if (siswa.paket_id) {
+            const [oldPkt] = await db.query('SELECT jumlah_pertemuan, nama_paket FROM paket_kursus WHERE id = ?', [siswa.paket_id]);
+            if (oldPkt.length > 0) {
+                totalSesiLama = oldPkt[0].jumlah_pertemuan || 0;
+            }
+        }
+        if (!totalSesiLama && siswa.paket_lama) {
+            const match = siswa.paket_lama.match(/(\d+)\s*x/i);
+            if (match) totalSesiLama = parseInt(match[1]);
+            else if (/private|per pertemuan/i.test(siswa.paket_lama)) totalSesiLama = 1;
+        }
+
+        // VALIDASI KRITIS: Tolak tambah paket jika sesi latihan paket saat ini belum selesai semua
+        const isSelesaiSemua = (totalSesiLama > 0 && totalHadirAktif >= totalSesiLama) || (siswa.status === 'selesai');
+        if (totalSesiLama > 0 && !isSelesaiSemua) {
+            return res.status(400).json({
+                success: false,
+                message: `Anda belum dapat menambah atau memperpanjang paket baru karena sesi latihan saat ini belum selesai (${totalHadirAktif}/${totalSesiLama} sesi). Harap selesaikan seluruh sesi latihan terlebih dahulu.`
+            });
+        }
 
         // Catat riwayat paket
         let riwayat = [];

@@ -214,7 +214,15 @@ router.get('/siswa-jadwal', async (req, res) => {
         const totalHadirAll = absensiRows.filter(a => a.status === 'hadir').length;
         const offset = parseInt(siswa.pertemuan_sebelumnya) || 0;
         const totalHadirAktif = Math.max(0, totalHadirAll - offset);
-        const totalPaket = siswa.jumlah_pertemuan || 0;
+        let totalPaket = siswa.jumlah_pertemuan || 0;
+        if (!totalPaket && siswa.nama_paket) {
+            const match = siswa.nama_paket.match(/(\d+)\s*x/i);
+            if (match) {
+                totalPaket = parseInt(match[1]);
+            } else if (/private|per pertemuan/i.test(siswa.nama_paket)) {
+                totalPaket = 1;
+            }
+        }
         const isComplete = totalPaket > 0 && totalHadirAktif >= totalPaket;
         let finalStatus = siswa.status;
 
