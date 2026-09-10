@@ -1331,7 +1331,6 @@
                                 <span><i class="fas fa-clock"></i> ${j.jam_mulai.slice(0, 5)} - ${j.jam_selesai.slice(0, 5)}</span>
                                 ${j.transmisi ? `<span><i class="fas fa-cogs"></i> Transmisi: <strong>${escapeHtml(j.transmisi)}</strong></span>` : ''}
                                 ${j.instruktur_nama ? `<span><i class="fas fa-user"></i> ${escapeHtml(j.instruktur_nama)}</span>` : ''}
-                                ${j.transmisi ? `<span><i class="fas fa-car"></i> Mobil ${escapeHtml(j.transmisi.toUpperCase() === 'MATIC' ? 'Matic' : 'Manual')}</span>` : (j.nama_kendaraan ? `<span><i class="fas fa-car"></i> ${escapeHtml(j.nama_kendaraan)}</span>` : '')}
                             </div>
                         </div>
                         <div class="pertemuan-badge">Ke-${j.pertemuan_ke || '-'}</div>
