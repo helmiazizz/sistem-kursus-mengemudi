@@ -821,13 +821,27 @@
                 return;
             }
 
-            // Tentukan slot & durasi berdasarkan paket siswa
+            // Tentukan slot & durasi berdasarkan paket siswa dan transmisi
             const paketNama = (siswaData?.siswa?.paket || '').toLowerCase();
             const is2Jam = paketNama.includes('matic') || paketNama.includes('private') || paketNama.includes('kombinasi');
-            const allSlots = is2Jam
-                ? ['08:00', '10:00', '13:00', '15:00']
-                : ['08:00', '09:00', '10:00', '11:00', '13:00', '14:00', '15:00', '16:00'];
             const durasi = is2Jam ? 2 : 1;
+
+            // Cek apakah sesi ini transmisi Matic
+            let isMaticSession = paketNama.includes('matic');
+            const isKombinasiOrPriv = paketNama.includes('kombinasi') || paketNama.includes('private');
+            if (isKombinasiOrPriv) {
+                const selT = document.getElementById('reqTransmisi');
+                if (selT && selT.value && selT.value.toLowerCase() === 'matic') {
+                    isMaticSession = true;
+                }
+            }
+
+            // Khusus Matic: ada opsi sesi sore/malam (17:00-19:00 dan 18:00-20:00)
+            const allSlots = is2Jam
+                ? (isMaticSession 
+                    ? ['08:00', '10:00', '13:00', '15:00', '17:00', '18:00'] 
+                    : ['08:00', '10:00', '13:00', '15:00'])
+                : ['08:00', '09:00', '10:00', '11:00', '13:00', '14:00', '15:00', '16:00'];
 
             const dateStr = tanggal;
             const selectedInstId = instrukturId ? parseInt(instrukturId) : null;
@@ -929,14 +943,16 @@
 
             if (available.length === 0) {
                 selectJam.innerHTML = '<option value="">❌ Semua slot / armada penuh pada tanggal ini</option>';
-            }
- else {
+            } else {
                 selectJam.innerHTML = '<option value="">Pilih Jam Latihan</option>';
                 available.forEach(slot => {
                     const [h, m] = slot.split(':').map(Number);
                     const end = `${String(h + durasi).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
                     const isSel = slot === currentSelectedJam ? 'selected' : '';
-                    selectJam.innerHTML += `<option value="${slot}" ${isSel}>${slot} - ${end} (${durasi} jam)</option>`;
+                    let nightBadge = '';
+                    if (slot === '17:00') nightBadge = ' 🌙 (Sore/Malam)';
+                    else if (slot === '18:00') nightBadge = ' 🌙 (Malam)';
+                    selectJam.innerHTML += `<option value="${slot}" ${isSel}>${slot} - ${end} (${durasi} jam)${nightBadge}</option>`;
                 });
             }
 
@@ -1286,41 +1302,89 @@
         function filterRescheduleSlots() {
             const tanggal = document.getElementById('rescheduleTanggal').value;
             const select = document.getElementById('rescheduleJam');
+            const jadwalId = document.getElementById('rescheduleJadwalId').value;
 
-            // Tentukan slot berdasarkan paket siswa
+            // Cari jadwal yang sedang di-reschedule
+            const targetJadwal = (siswaData?.jadwal || []).find(j => String(j.id) === String(jadwalId));
             const paketNama = (siswaData?.siswa?.paket || '').toLowerCase();
-            const is2Jam = paketNama.includes('matic') || paketNama.includes('private');
-            const allSlots = is2Jam
-                ? ['08:00', '10:00', '13:00', '15:00']
-                : ['08:00', '09:00', '10:00', '11:00', '13:00', '14:00', '15:00', '16:00'];
+            const isMaticSession = (targetJadwal && targetJadwal.transmisi && targetJadwal.transmisi.toLowerCase() === 'matic') || paketNama.includes('matic');
+            const is2Jam = paketNama.includes('matic') || paketNama.includes('private') || paketNama.includes('kombinasi');
             const durasi = is2Jam ? 2 : 1;
+
+            const allSlots = is2Jam
+                ? (isMaticSession 
+                    ? ['08:00', '10:00', '13:00', '15:00', '17:00', '18:00'] 
+                    : ['08:00', '10:00', '13:00', '15:00'])
+                : ['08:00', '09:00', '10:00', '11:00', '13:00', '14:00', '15:00', '16:00'];
 
             if (!tanggal) {
                 select.innerHTML = '<option value="">Pilih tanggal dulu</option>';
                 return;
             }
 
-            const bookedTimes = bookedSlots
-                .filter(s => s.tanggal.split('T')[0] === tanggal)
-                .map(s => s.jam_mulai.slice(0, 5));
+            const studentTrans = isMaticSession ? 'matic' : 'manual';
+            const maxCars = (armadaCapacity && armadaCapacity[studentTrans] !== undefined)
+                ? armadaCapacity[studentTrans]
+                : (studentTrans === 'matic' ? 1 : 2);
 
             const available = allSlots.filter(slot => {
                 const [sh] = slot.split(':').map(Number);
-                for (let i = 0; i < durasi; i++) {
-                    const checkTime = `${String(sh + i).padStart(2, '0')}:00`;
-                    if (bookedTimes.includes(checkTime)) return false;
+                const candidateStart = sh * 60;
+                const candidateEnd = (sh + durasi) * 60;
+
+                // Cek konflik instruktur pada jadwal ini (jika ada instruktur_id)
+                const targetInstId = targetJadwal ? targetJadwal.instruktur_id : null;
+                if (targetInstId) {
+                    for (const b of bookedSlots) {
+                        if (b.tanggal.split('T')[0] !== tanggal) continue;
+                        if (String(b.id) === String(jadwalId)) continue;
+                        if (b.instruktur_id && b.instruktur_id !== targetInstId) continue;
+
+                        const [bSh, bSm] = (b.jam_mulai || '00:00').split(':').map(Number);
+                        const [bEh, bEm] = (b.jam_selesai || '00:00').split(':').map(Number);
+                        const bStart = bSh * 60 + (bSm || 0);
+                        const bEnd = bEh * 60 + (bEm || 0);
+
+                        if (candidateStart < bEnd && candidateEnd > bStart) {
+                            return false;
+                        }
+                    }
                 }
+
+                // Cek kuota armada mobil transmisi ini
+                if (maxCars <= 0) return false;
+                let carsUsed = 0;
+                for (const b of bookedSlots) {
+                    if (b.tanggal.split('T')[0] !== tanggal) continue;
+                    if (String(b.id) === String(jadwalId)) continue;
+                    const bTrans = (b.transmisi || 'manual').toLowerCase();
+                    if (bTrans !== studentTrans) continue;
+
+                    const [bSh, bSm] = (b.jam_mulai || '00:00').split(':').map(Number);
+                    const [bEh, bEm] = (b.jam_selesai || '00:00').split(':').map(Number);
+                    const bStart = bSh * 60 + (bSm || 0);
+                    const bEnd = bEh * 60 + (bEm || 0);
+
+                    if (candidateStart < bEnd && candidateEnd > bStart) {
+                        carsUsed++;
+                    }
+                }
+                if (carsUsed >= maxCars) return false;
+
                 return true;
             });
 
             if (available.length === 0) {
-                select.innerHTML = '<option value="">❌ Semua jam sudah penuh</option>';
+                select.innerHTML = '<option value="">❌ Semua slot / armada penuh pada tanggal ini</option>';
             } else {
                 select.innerHTML = '<option value="">Pilih Jam</option>';
                 available.forEach(slot => {
                     const [h, m] = slot.split(':').map(Number);
                     const end = `${String(h + durasi).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
-                    select.innerHTML += `<option value="${slot}">${slot} - ${end} (${durasi} jam)</option>`;
+                    let nightBadge = '';
+                    if (slot === '17:00') nightBadge = ' 🌙 (Sore/Malam)';
+                    else if (slot === '18:00') nightBadge = ' 🌙 (Malam)';
+                    select.innerHTML += `<option value="${slot}">${slot} - ${end} (${durasi} jam)${nightBadge}</option>`;
                 });
             }
         }

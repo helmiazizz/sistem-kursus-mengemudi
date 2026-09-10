@@ -397,6 +397,9 @@ router.post('/siswa-request', async (req, res) => {
                     timeZone: 'Asia/Jakarta'
                 });
 
+                const isNightSession = jam_mulai === '17:00' || jam_mulai === '18:00';
+                const nightNote = isNightSession ? '\n🌙 *Sesi Latihan Malam*: Pastikan kondisi fisik prima dan bawa kacamata jika ada minus/silinder.' : '';
+
                 const message = `📅 *KONFIRMASI JADWAL LATIHAN*
 ━━━━━━━━━━━━━━━━━━
 🏫 *PSJ Driving Course*
@@ -408,7 +411,7 @@ Jadwal latihan Anda telah berhasil dibuat:
 
 📆 Tanggal: *${tglFormatted}*
 ⏰ Jam: *${jam_mulai} - ${jam_selesai}*
-🔢 Pertemuan Ke-${pertemuan_ke}${finalTransmisi ? `\n⚙️ Transmisi: *${finalTransmisi}*` : ''}${freeCar ? `\n🚗 Mobil: *${freeCar.nama_kendaraan} (${freeCar.nomor_polisi})*` : ''}
+🔢 Pertemuan Ke-${pertemuan_ke}${finalTransmisi ? `\n⚙️ Transmisi: *${finalTransmisi}*` : ''}${freeCar ? `\n🚗 Mobil: *${freeCar.nama_kendaraan} (${freeCar.nomor_polisi})*` : ''}${nightNote}
 
 ⚠️ Mohon hadir 10 menit sebelum jadwal.
 
@@ -445,7 +448,7 @@ Anda mendapat jadwal latihan baru:
 📦 Paket: *${paketRows.length > 0 ? paketRows[0].nama_paket : '-'}*
 📆 Tanggal: *${tglFormatted}*
 ⏰ Jam: *${jam_mulai} - ${jam_selesai}*
-🔢 Pertemuan Ke-${pertemuan_ke}${finalTransmisi ? `\n⚙️ Transmisi: *${finalTransmisi}*` : ''}${freeCar ? `\n🚗 Mobil: *${freeCar.nama_kendaraan} (${freeCar.nomor_polisi})*` : ''}
+🔢 Pertemuan Ke-${pertemuan_ke}${finalTransmisi ? `\n⚙️ Transmisi: *${finalTransmisi}*` : ''}${freeCar ? `\n🚗 Mobil: *${freeCar.nama_kendaraan} (${freeCar.nomor_polisi})*` : ''}${isNightSession ? '\n🌙 *Catatan*: Sesi Latihan Sore/Malam' : ''}
 📍 Alamat Siswa: *${siswa.alamat || '-'}*
 
 Terima kasih 🙏
