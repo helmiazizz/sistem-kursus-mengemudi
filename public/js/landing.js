@@ -58,19 +58,51 @@ function initNavbar() {
         });
     });
 
-    // Mobile toggle
-    navToggle.addEventListener('click', () => {
-        navLinks.classList.toggle('active');
-        navToggle.classList.toggle('active');
+    // Mobile navigation controls
+    const navOverlay = document.getElementById('navOverlay');
+    const navClose = document.getElementById('navClose');
+
+    function openMobileMenu() {
+        navLinks.classList.add('active');
+        navToggle.classList.add('active');
+        if (navOverlay) navOverlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeMobileMenu() {
+        navLinks.classList.remove('active');
+        navToggle.classList.remove('active');
+        if (navOverlay) navOverlay.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    if (navToggle) {
+        navToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (navLinks.classList.contains('active')) {
+                closeMobileMenu();
+            } else {
+                openMobileMenu();
+            }
+        });
+    }
+
+    if (navOverlay) navOverlay.addEventListener('click', closeMobileMenu);
+    if (navClose) navClose.addEventListener('click', closeMobileMenu);
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && navLinks.classList.contains('active')) {
+            closeMobileMenu();
+        }
     });
 
     // Close on link click
     links.forEach(link => {
-        link.addEventListener('click', () => {
-            navLinks.classList.remove('active');
-            navToggle.classList.remove('active');
-        });
+        link.addEventListener('click', closeMobileMenu);
     });
+
+    const mobileCta = document.querySelector('.nav-mobile-cta');
+    if (mobileCta) mobileCta.addEventListener('click', closeMobileMenu);
 }
 
 // ============================================

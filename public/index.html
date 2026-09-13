@@ -51,14 +51,29 @@
                 <img src="/images/logo-psj.webp?v=3" alt="PSJ Logo" class="nav-logo-img" width="160" height="40">
                 <span>Panca Sari Jaya</span>
             </a>
+            <div class="nav-overlay" id="navOverlay"></div>
             <ul class="nav-links" id="navLinks">
-                <li><a href="#hero" class="nav-link active">Beranda</a></li>
-                <li><a href="#tentang" class="nav-link">Tentang</a></li>
-                <li><a href="#paket" class="nav-link">Paket</a></li>
-                <li><a href="#armada" class="nav-link">Armada</a></li>
-                <li><a href="#daftar" class="nav-link">Daftar</a></li>
-                <li><a href="/jadwal.html" class="nav-link">Jadwal</a></li>
-                <li><a href="#kontak" class="nav-link">Kontak</a></li>
+                <li class="nav-mobile-header">
+                    <div class="nav-mobile-brand">
+                        <img src="/images/logo-psj.webp?v=3" alt="PSJ Logo" class="nav-mobile-logo" width="36" height="36">
+                        <span>Panca Sari Jaya</span>
+                    </div>
+                    <button class="nav-close" id="navClose" aria-label="Tutup menu">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </li>
+                <li><a href="#hero" class="nav-link active"><i class="fas fa-home mobile-nav-icon"></i> Beranda</a></li>
+                <li><a href="#tentang" class="nav-link"><i class="fas fa-info-circle mobile-nav-icon"></i> Tentang</a></li>
+                <li><a href="#paket" class="nav-link"><i class="fas fa-box mobile-nav-icon"></i> Paket</a></li>
+                <li><a href="#armada" class="nav-link"><i class="fas fa-car-side mobile-nav-icon"></i> Armada</a></li>
+                <li><a href="#daftar" class="nav-link"><i class="fas fa-edit mobile-nav-icon"></i> Daftar</a></li>
+                <li><a href="/jadwal.html" class="nav-link"><i class="fas fa-calendar-alt mobile-nav-icon"></i> Jadwal</a></li>
+                <li><a href="#kontak" class="nav-link"><i class="fas fa-phone-alt mobile-nav-icon"></i> Kontak</a></li>
+                <li class="nav-mobile-footer">
+                    <a href="#daftar" class="btn btn-primary btn-block nav-mobile-cta">
+                        <i class="fas fa-paper-plane"></i> Daftar Sekarang
+                    </a>
+                </li>
             </ul>
             <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
                 <span></span>
@@ -170,7 +185,7 @@
                             <div class="badge-icon blue"><i class="fas fa-cogs"></i></div>
                             <div class="badge-text">
                                 <strong>Manual &amp; Matic</strong>
-                                <span>Unit Avanza &amp; Xenia</span>
+                                <span>Pilihan Transmisi Lengkap</span>
                             </div>
                         </div>
                     </div>
