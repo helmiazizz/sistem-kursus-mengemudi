@@ -2138,39 +2138,104 @@ img {
         text-align: center;
     }
     .hero-trust-proof {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
         justify-content: center;
+        text-align: center;
+        gap: 5px;
+        margin: 4px auto 18px;
+        width: 100%;
+        max-width: 320px;
+    }
+    .trust-stars {
+        justify-content: center;
+        font-size: 0.88rem;
+        gap: 3px;
+    }
+    .trust-text {
+        font-size: clamp(0.75rem, 2.2vw, 0.82rem);
+        color: #64748B;
+        line-height: 1.35;
+        text-align: center;
     }
     .hero-stats-card {
-        padding: 14px 16px;
-        border-radius: 14px;
+        padding: 16px 12px;
+        border-radius: 16px;
         width: 100%;
+        max-width: 380px;
+        margin: 0 auto;
+        box-shadow: 0 4px 20px rgba(15, 23, 42, 0.06);
     }
     .hero-stats {
-        gap: 12px;
-        flex-wrap: wrap;
-        justify-content: center;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        align-items: stretch;
+        gap: 0;
+        width: 100%;
     }
     .stat-item {
-        gap: 8px;
-        min-width: 80px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        gap: 5px;
+        padding: 4px 6px;
+        min-width: 0;
+        position: relative;
+    }
+    /* Hairline vertical divider between columns */
+    .stat-item:not(:last-child)::after {
+        content: '';
+        position: absolute;
+        right: 0;
+        top: 15%;
+        height: 70%;
+        width: 1px;
+        background: #E2E8F0;
     }
     .stat-icon-wrapper {
-        width: 36px;
-        height: 36px;
+        width: 34px;
+        height: 34px;
         border-radius: 10px;
-        font-size: 0.95rem;
+        font-size: 0.9rem;
+        margin-bottom: 2px;
+    }
+    .stat-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        width: 100%;
+    }
+    .stat-value-row {
+        display: flex;
+        align-items: baseline;
+        justify-content: center;
+        gap: 2px;
+        line-height: 1;
     }
     .stat-number {
-        font-size: 1.35rem;
+        font-size: clamp(1.15rem, 3.8vw, 1.35rem);
+        font-weight: 900;
     }
     .stat-suffix {
-        font-size: 1.15rem;
+        font-size: clamp(0.95rem, 3.2vw, 1.15rem);
+        font-weight: 800;
     }
     .stat-label {
-        font-size: 0.7rem;
+        font-size: clamp(0.64rem, 1.9vw, 0.72rem);
+        color: var(--text-muted);
+        margin-top: 3px;
+        font-weight: 600;
+        line-height: 1.25;
+        text-align: center;
+        white-space: normal;
+        word-break: normal;
     }
     .stat-divider {
-        display: none;
+        display: none !important;
     }
     .hero-badge {
         font-size: 0.75rem;
@@ -2372,19 +2437,27 @@ img {
         display: none;
     }
     .hero-stats-card {
-        padding: 14px 12px;
+        padding: 12px 8px;
+        max-width: 330px;
     }
-    .hero-stats {
-        gap: 10px;
+    .stat-item {
+        padding: 2px 4px;
+        gap: 4px;
+    }
+    .stat-icon-wrapper {
+        width: 30px;
+        height: 30px;
+        font-size: 0.82rem;
     }
     .stat-number {
-        font-size: 1.3rem;
+        font-size: 1.15rem;
     }
     .stat-suffix {
-        font-size: 1.1rem;
+        font-size: 0.95rem;
     }
     .stat-label {
-        font-size: 0.65rem;
+        font-size: 0.62rem;
+        letter-spacing: -0.2px;
     }
     .section-header h2 {
         font-size: 1.3rem;
