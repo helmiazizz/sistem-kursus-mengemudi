@@ -58,11 +58,15 @@
     --radius-lg: 20px;
     --radius-xl: 28px;
     --radius-full: 50%;
+
+    /* Layout Dynamic Spacing Tokens */
+    --navbar-height: 84px;
+    --hero-clearance: 28px;
 }
 
 html {
     scroll-behavior: smooth;
-    scroll-padding-top: 80px;
+    scroll-padding-top: var(--navbar-height, 80px);
 }
 
 body {
@@ -131,7 +135,7 @@ img {
     left: 0;
     right: 0;
     z-index: 1000;
-    padding: 16px 0;
+    padding: 12px 0;
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
@@ -140,7 +144,7 @@ img {
 
 .navbar.scrolled {
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.08);
-    padding: 10px 0;
+    padding: 8px 0;
 }
 
 .nav-container {
@@ -168,9 +172,14 @@ img {
 }
 
 .nav-logo-img {
-    height: 80px;
+    height: 60px;
     width: auto;
     object-fit: contain;
+    transition: height var(--transition-normal);
+}
+
+.navbar.scrolled .nav-logo-img {
+    height: 50px;
 }
 
 .footer-logo-img {
@@ -225,7 +234,7 @@ img {
    ============================================ */
 .hero {
     position: relative;
-    padding-top: 105px;
+    padding-top: calc(var(--navbar-height, 84px) + var(--hero-clearance, 28px));
     padding-bottom: 35px;
     overflow: hidden;
 }
@@ -296,16 +305,19 @@ img {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    padding: 6px 16px;
+    padding: 7px 18px;
     background: rgba(21, 101, 192, 0.07);
     border: 1px solid rgba(21, 101, 192, 0.18);
     border-radius: 50px;
     color: #0E3A7E;
-    font-size: 0.82rem;
+    font-size: clamp(0.74rem, 1.8vw, 0.84rem);
     font-weight: 700;
     margin-bottom: 14px;
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 2px 8px rgba(21, 101, 192, 0.05);
+    flex-shrink: 0;
+    max-width: 100%;
 }
 
 .hero-badge i {
@@ -1694,9 +1706,19 @@ img {
     .section-header {
         margin-bottom: 48px;
     }
+    :root {
+        --navbar-height: 74px;
+        --hero-clearance: 24px;
+    }
+    .navbar {
+        padding: 10px 0;
+    }
+    .nav-logo-img {
+        height: 54px;
+    }
     .hero {
-        padding-top: 120px;
-        padding-bottom: 50px;
+        padding-top: calc(var(--navbar-height, 74px) + var(--hero-clearance, 24px));
+        padding-bottom: 40px;
     }
     .hero-grid {
         gap: 32px;
@@ -1707,6 +1729,10 @@ img {
    RESPONSIVE - Mobile (max-width: 768px)
    ============================================ */
 @media (max-width: 768px) {
+    :root {
+        --navbar-height: 64px;
+        --hero-clearance: 20px;
+    }
     /* Navbar Mobile */
     .navbar {
         padding: 8px 0;
@@ -1749,7 +1775,7 @@ img {
 
     /* Hero Mobile */
     .hero {
-        padding-top: 84px;
+        padding-top: calc(var(--navbar-height, 64px) + var(--hero-clearance, 20px));
         padding-bottom: 28px;
     }
     .hero-container {
@@ -2047,6 +2073,17 @@ img {
    RESPONSIVE - Small Phone (max-width: 480px)
    ============================================ */
 @media (max-width: 480px) {
+    :root {
+        --navbar-height: 54px;
+        --hero-clearance: 16px;
+    }
+    .navbar {
+        padding: 6px 0;
+    }
+    .hero {
+        padding-top: calc(var(--navbar-height, 54px) + var(--hero-clearance, 16px));
+        padding-bottom: 20px;
+    }
     .hero h1 {
         font-size: 1.5rem;
     }

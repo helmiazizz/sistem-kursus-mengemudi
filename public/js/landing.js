@@ -19,6 +19,20 @@ function initNavbar() {
     const navLinks = document.getElementById('navLinks');
     const links = document.querySelectorAll('.nav-link');
 
+    // Dynamic pixel sync for navbar height across all screens & zoom levels
+    function syncNavbarHeight() {
+        if (navbar) {
+            const h = navbar.offsetHeight;
+            if (h > 0) {
+                document.documentElement.style.setProperty('--navbar-height', `${h}px`);
+            }
+        }
+    }
+    syncNavbarHeight();
+    window.addEventListener('resize', syncNavbarHeight);
+    window.addEventListener('orientationchange', () => setTimeout(syncNavbarHeight, 150));
+    window.addEventListener('load', syncNavbarHeight);
+
     // Scroll effect
     window.addEventListener('scroll', () => {
         if (window.scrollY > 50) {
