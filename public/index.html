@@ -30,12 +30,12 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preload" href="/images/logo-psj.webp?v=3" as="image" type="image/webp">
-    <link rel="preload" href="css/landing.min.css?v=4.0.0" as="style">
+    <link rel="preload" href="css/landing.min.css?v=4.2.0" as="style">
 
     <!-- Stylesheets -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="css/landing.min.css?v=4.0.0">
+    <link rel="stylesheet" href="css/landing.min.css?v=4.2.0">
 </head>
 
 <body>
@@ -81,39 +81,52 @@
                 <!-- Kolom Kiri: Value Proposition & CTA -->
                 <div class="hero-left">
                     <div class="hero-badge">
+                        <span class="badge-pulse"></span>
                         <i class="fas fa-award"></i>
-                        <span>Terpercaya Sejak 2000 &bull; 25+ Tahun Pengalaman</span>
+                        <span>Terpercaya Sejak 2000 &bull; 25+ Thn Pengalaman</span>
                     </div>
-                    <h1>Kuasai Jalan Raya,<br><span class="gradient-text">Raih SIM dengan Percaya Diri</span></h1>
+                    <h1>Kuasai Jalan Raya,<br><span class="gradient-text">Raih SIM Tanpa Ragu</span></h1>
                     <p class="hero-subtitle">
-                        Belajar mengemudi aman, santai, dan bebas panik bersama instruktur bersertifikat. Siap mengantarmu sampai lancar berkendara dan resmi ber-SIM.
+                        Belajar mengemudi aman, santai, dan bebas panik bersama instruktur profesional bersertifikat. Pendampingan sabar sampai mahir berkendara dan siap ujian SIM.
                     </p>
 
                     <!-- Poin Keunggulan Cepat -->
                     <div class="hero-features-list">
                         <div class="hero-feature-item">
-                            <i class="fas fa-shield-alt"></i>
-                            <span>Rem Ganda (Dual Brake) 100% Aman</span>
+                            <div class="feature-check-icon"><i class="fas fa-check"></i></div>
+                            <span><strong>Rem Ganda (Dual Brake)</strong> 100% aman untuk pemula</span>
                         </div>
                         <div class="hero-feature-item">
-                            <i class="fas fa-user-check"></i>
-                            <span>Instruktur Sabar &amp; Ramah Pemula</span>
+                            <div class="feature-check-icon"><i class="fas fa-check"></i></div>
+                            <span><strong>Instruktur Sabar &amp; Ramah</strong> tanpa bentak atau marah</span>
                         </div>
                         <div class="hero-feature-item">
-                            <i class="fas fa-map-marker-alt"></i>
-                            <span>Layanan Antar-Jemput ke Rumah</span>
+                            <div class="feature-check-icon"><i class="fas fa-check"></i></div>
+                            <span><strong>Layanan Antar-Jemput</strong> langsung depan rumah Anda</span>
                         </div>
                     </div>
 
                     <div class="hero-actions">
                         <a href="#daftar" class="btn btn-primary btn-lg">
-                            <i class="fas fa-pencil-alt"></i>
+                            <i class="fas fa-paper-plane"></i>
                             Daftar Kursus Sekarang
                         </a>
                         <a href="#paket" class="btn btn-glass btn-lg">
-                            <i class="fas fa-box"></i>
+                            <i class="fas fa-th-list"></i>
                             Pilihan Paket
                         </a>
+                    </div>
+
+                    <!-- Micro Trust Proof -->
+                    <div class="hero-trust-proof">
+                        <div class="trust-stars">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <span class="trust-text"><strong>4.9 / 5.0</strong> dari 500+ siswa lulus di Tangerang</span>
                     </div>
                 </div>
 
@@ -122,9 +135,20 @@
                     <div class="hero-showcase">
                         <div class="showcase-glow"></div>
                         <div class="showcase-card">
-                            <img src="/images/armada-2.webp" alt="Armada Mobil Latihan PSJ Driving Course" class="hero-car-img" width="580" height="420">
-                            <div class="showcase-overlay-tag">
-                                <i class="fas fa-car"></i> Unit Latihan Resmi PSJ
+                            <div class="showcase-topbar">
+                                <div class="showcase-dot-group">
+                                    <span class="dot red"></span>
+                                    <span class="dot yellow"></span>
+                                    <span class="dot green"></span>
+                                </div>
+                                <span class="showcase-topbar-title"><i class="fas fa-car-side"></i> Armada Resmi PSJ</span>
+                                <span class="showcase-status-badge"><span class="pulse-dot"></span> Siap Pakai</span>
+                            </div>
+                            <div class="showcase-img-wrap">
+                                <img src="/images/armada-2.webp" alt="Armada Mobil Latihan PSJ Driving Course" class="hero-car-img" width="580" height="380" loading="eager">
+                                <div class="showcase-overlay-tag">
+                                    <i class="fas fa-snowflake"></i> Full AC &bull; Bersih &amp; Terawat
+                                </div>
                             </div>
                         </div>
 
@@ -141,15 +165,15 @@
                             <div class="badge-icon blue"><i class="fas fa-cogs"></i></div>
                             <div class="badge-text">
                                 <strong>Manual &amp; Matic</strong>
-                                <span>Armada Prima &amp; Ber-AC</span>
+                                <span>Unit Avanza &amp; Xenia</span>
                             </div>
                         </div>
 
                         <div class="floating-badge badge-bottom-left">
                             <div class="badge-icon orange"><i class="fas fa-map-marker-alt"></i></div>
                             <div class="badge-text">
-                                <strong>Bisa Antar-Jemput</strong>
-                                <span>Langsung Depan Rumah</span>
+                                <strong>Layanan Antar-Jemput</strong>
+                                <span>Area Tangerang &amp; BSD</span>
                             </div>
                         </div>
                     </div>
@@ -160,21 +184,42 @@
             <div class="hero-stats-card">
                 <div class="hero-stats">
                     <div class="stat-item">
-                        <span class="stat-number" data-count="500">0</span>
-                        <span class="stat-suffix">+</span>
-                        <span class="stat-label">Alumni Lulus</span>
+                        <div class="stat-icon-wrapper blue">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-value-row">
+                                <span class="stat-number" data-count="500">0</span>
+                                <span class="stat-suffix">+</span>
+                            </div>
+                            <span class="stat-label">Alumni Lulus</span>
+                        </div>
                     </div>
                     <div class="stat-divider"></div>
                     <div class="stat-item">
-                        <span class="stat-number" data-count="25">0</span>
-                        <span class="stat-suffix">+</span>
-                        <span class="stat-label">Tahun Pengalaman</span>
+                        <div class="stat-icon-wrapper orange">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-value-row">
+                                <span class="stat-number" data-count="25">0</span>
+                                <span class="stat-suffix">+</span>
+                            </div>
+                            <span class="stat-label">Tahun Pengalaman</span>
+                        </div>
                     </div>
                     <div class="stat-divider"></div>
                     <div class="stat-item">
-                        <span class="stat-number" data-count="4.9">0</span>
-                        <span class="stat-suffix">★</span>
-                        <span class="stat-label">Rating Kepuasan</span>
+                        <div class="stat-icon-wrapper gold">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-value-row">
+                                <span class="stat-number" data-count="4.9">0</span>
+                                <span class="stat-suffix">★</span>
+                            </div>
+                            <span class="stat-label">Rating Kepuasan</span>
+                        </div>
                     </div>
                 </div>
             </div>
