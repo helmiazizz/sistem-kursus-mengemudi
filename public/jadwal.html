@@ -1975,6 +1975,10 @@
             if (navOverlay) navOverlay.addEventListener('click', closeDrawer);
             if (navClose) navClose.addEventListener('click', closeDrawer);
 
+            document.querySelectorAll('#navLinks .nav-link, .nav-mobile-cta').forEach(link => {
+                link.addEventListener('click', closeDrawer);
+            });
+
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'Escape' && navLinks && navLinks.classList.contains('active')) {
                     closeDrawer();
