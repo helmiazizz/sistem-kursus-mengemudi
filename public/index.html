@@ -73,47 +73,112 @@
     <!-- ============================================ -->
     <section class="hero" id="hero">
         <div class="hero-bg">
-            <div class="hero-gradient"></div>
+            <div class="hero-mesh"></div>
+            <div class="hero-road-lines"></div>
         </div>
-        <div class="hero-content">
-            <div class="hero-badge">
-                <i class="fas fa-award"></i>
-                <span>Terpercaya Sejak 2000</span>
-            </div>
-            <h1>Belajar Mengemudi<br><span class="gradient-text">Dengan Percaya Diri</span></h1>
-            <p class="hero-subtitle">Kuasai keterampilan mengemudi bersama instruktur profesional dan armada modern.
-                Kami siap mengantarmu menuju kebebasan berkendara.</p>
-            <div class="hero-actions">
-                <a href="#daftar" class="btn btn-primary btn-lg">
-                    <i class="fas fa-pencil-alt"></i>
-                    Daftar Sekarang
-                </a>
-                <a href="#tentang" class="btn btn-glass btn-lg">
-                    <i class="fas fa-info-circle"></i>
-                    Pelajari Lebih
-                </a>
-            </div>
-            <div class="hero-stats">
-                <div class="stat-item">
-                    <span class="stat-number" data-count="500">0</span>
-                    <span class="stat-suffix">+</span>
-                    <span class="stat-label">Alumni Lulus</span>
-                </div>
-                <div class="stat-divider"></div>
-                <div class="stat-item">
-                    <span class="stat-number" data-count="25">0</span>
-                    <span class="stat-suffix">+</span>
-                    <span class="stat-label">Tahun Pengalaman</span>
-                </div>
-                <div class="stat-divider"></div>
-                <div class="stat-item">
-                    <span class="stat-number" data-count="20">0</span>
-                    <span class="stat-suffix">+</span>
-                    <span class="stat-label">Armada Tersedia</span>
-                </div>
-            </div>
-        </div>
+        <div class="hero-container">
+            <div class="hero-grid">
+                <!-- Kolom Kiri: Value Proposition & CTA -->
+                <div class="hero-left">
+                    <div class="hero-badge">
+                        <i class="fas fa-award"></i>
+                        <span>Terpercaya Sejak 2000 &bull; 25+ Tahun Pengalaman</span>
+                    </div>
+                    <h1>Kuasai Jalan Raya,<br><span class="gradient-text">Raih SIM dengan Percaya Diri</span></h1>
+                    <p class="hero-subtitle">
+                        Belajar mengemudi aman, santai, dan bebas panik bersama instruktur bersertifikat. Siap mengantarmu sampai lancar berkendara dan resmi ber-SIM.
+                    </p>
 
+                    <!-- Poin Keunggulan Cepat -->
+                    <div class="hero-features-list">
+                        <div class="hero-feature-item">
+                            <i class="fas fa-shield-alt"></i>
+                            <span>Rem Ganda (Dual Brake) 100% Aman</span>
+                        </div>
+                        <div class="hero-feature-item">
+                            <i class="fas fa-user-check"></i>
+                            <span>Instruktur Sabar &amp; Ramah Pemula</span>
+                        </div>
+                        <div class="hero-feature-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Layanan Antar-Jemput ke Rumah</span>
+                        </div>
+                    </div>
+
+                    <div class="hero-actions">
+                        <a href="#daftar" class="btn btn-primary btn-lg">
+                            <i class="fas fa-pencil-alt"></i>
+                            Daftar Kursus Sekarang
+                        </a>
+                        <a href="#paket" class="btn btn-glass btn-lg">
+                            <i class="fas fa-box"></i>
+                            Pilihan Paket
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Kolom Kanan: Showcase Armada & Floating Badges -->
+                <div class="hero-right">
+                    <div class="hero-showcase">
+                        <div class="showcase-glow"></div>
+                        <div class="showcase-card">
+                            <img src="/images/armada-2.webp" alt="Armada Mobil Latihan PSJ Driving Course" class="hero-car-img" width="580" height="420">
+                            <div class="showcase-overlay-tag">
+                                <i class="fas fa-car"></i> Unit Latihan Resmi PSJ
+                            </div>
+                        </div>
+
+                        <!-- Floating Badges -->
+                        <div class="floating-badge badge-top-left">
+                            <div class="badge-icon green"><i class="fas fa-shield-alt"></i></div>
+                            <div class="badge-text">
+                                <strong>Dual Brake System</strong>
+                                <span>Rem Ganda Instruktur</span>
+                            </div>
+                        </div>
+
+                        <div class="floating-badge badge-mid-right">
+                            <div class="badge-icon blue"><i class="fas fa-cogs"></i></div>
+                            <div class="badge-text">
+                                <strong>Manual &amp; Matic</strong>
+                                <span>Armada Prima &amp; Ber-AC</span>
+                            </div>
+                        </div>
+
+                        <div class="floating-badge badge-bottom-left">
+                            <div class="badge-icon orange"><i class="fas fa-map-marker-alt"></i></div>
+                            <div class="badge-text">
+                                <strong>Bisa Antar-Jemput</strong>
+                                <span>Langsung Depan Rumah</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Bar Card -->
+            <div class="hero-stats-card">
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <span class="stat-number" data-count="500">0</span>
+                        <span class="stat-suffix">+</span>
+                        <span class="stat-label">Alumni Lulus</span>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat-item">
+                        <span class="stat-number" data-count="25">0</span>
+                        <span class="stat-suffix">+</span>
+                        <span class="stat-label">Tahun Pengalaman</span>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat-item">
+                        <span class="stat-number" data-count="4.9">0</span>
+                        <span class="stat-suffix">★</span>
+                        <span class="stat-label">Rating Kepuasan</span>
+                    </div>
+                </div>
+            </div>
+        </div>
     </section>
 
     <!-- ============================================ -->

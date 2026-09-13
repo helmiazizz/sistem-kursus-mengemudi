@@ -99,7 +99,9 @@ function initCounterAnimation() {
 }
 
 function animateCounter(element) {
-    const target = parseInt(element.dataset.count);
+    const rawTarget = element.dataset.count || '0';
+    const isDecimal = rawTarget.includes('.');
+    const target = isDecimal ? parseFloat(rawTarget) : parseInt(rawTarget);
     const duration = 2000;
     const start = performance.now();
 
@@ -108,12 +110,16 @@ function animateCounter(element) {
         const progress = Math.min(elapsed / duration, 1);
         const eased = 1 - Math.pow(1 - progress, 3); // ease-out cubic
 
-        element.textContent = Math.floor(target * eased);
+        if (isDecimal) {
+            element.textContent = (target * eased).toFixed(1);
+        } else {
+            element.textContent = Math.floor(target * eased);
+        }
 
         if (progress < 1) {
             requestAnimationFrame(update);
         } else {
-            element.textContent = target;
+            element.textContent = isDecimal ? target.toFixed(1) : target;
         }
     }
 
