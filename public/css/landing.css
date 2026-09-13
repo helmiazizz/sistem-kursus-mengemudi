@@ -2053,6 +2053,19 @@ img {
     .hero-car-img {
         height: 215px;
     }
+    /* Showcase Overlay Tag: posisikan di kanan atas agar 100% bebas tabrakan dengan badge kanan bawah */
+    .showcase-overlay-tag {
+        bottom: auto;
+        top: 10px;
+        left: auto;
+        right: 10px;
+        padding: 5px 12px;
+        font-size: clamp(0.66rem, 2.2vw, 0.72rem);
+        border-radius: 14px;
+        white-space: nowrap;
+        z-index: 2;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
     .floating-badge {
         padding: 6px 10px;
         border-radius: 12px;
@@ -2070,12 +2083,20 @@ img {
         font-size: 0.62rem;
     }
     .badge-top-left {
-        top: 44px;
+        top: 80px;
         left: 8px;
     }
     .badge-bottom-right {
         bottom: 10px;
         right: 8px;
+    }
+    @keyframes float-1 {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-4px); }
+    }
+    @keyframes float-2 {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(4px); }
     }
     .hero-body-group {
         order: 3;
@@ -2315,30 +2336,37 @@ img {
         font-size: 0.85rem;
     }
     .hero-showcase {
-        max-width: 310px;
+        max-width: 320px;
     }
     .hero-car-img {
-        height: 190px;
+        height: 195px;
+    }
+    .showcase-overlay-tag {
+        top: 8px;
+        right: 8px;
+        padding: 4px 9px;
+        font-size: 0.65rem;
+        gap: 4px;
     }
     .floating-badge {
-        padding: 6px 10px;
-        gap: 6px;
+        padding: 5px 9px;
+        gap: 5px;
     }
     .badge-top-left {
-        top: 32px;
-        left: -4px;
+        top: 74px;
+        left: 6px;
     }
     .badge-bottom-right {
-        bottom: 10px;
-        right: -4px;
+        bottom: 8px;
+        right: 6px;
     }
     .badge-icon {
-        width: 28px;
-        height: 28px;
-        font-size: 0.75rem;
+        width: 26px;
+        height: 26px;
+        font-size: 0.72rem;
     }
     .badge-text strong {
-        font-size: 0.7rem;
+        font-size: 0.68rem;
     }
     .badge-text span {
         display: none;
