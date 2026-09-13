@@ -283,6 +283,15 @@ img {
     text-align: left;
 }
 
+.hero-header-group,
+.hero-body-group {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+    width: 100%;
+}
+
 .hero-badge {
     display: inline-flex;
     align-items: center;
@@ -521,7 +530,7 @@ img {
 .showcase-overlay-tag {
     position: absolute;
     bottom: 12px;
-    right: 12px;
+    left: 12px;
     background: rgba(15, 23, 42, 0.82);
     color: #FFFFFF;
     padding: 5px 12px;
@@ -560,21 +569,15 @@ img {
 }
 
 .badge-top-left {
-    top: -14px;
-    left: -16px;
+    top: 42px;
+    left: -26px;
     animation: float-1 4.5s ease-in-out infinite;
 }
 
-.badge-mid-right {
-    top: 52%;
-    right: -20px;
+.badge-bottom-right {
+    bottom: 20px;
+    right: -24px;
     animation: float-2 5s ease-in-out infinite 0.8s;
-}
-
-.badge-bottom-left {
-    bottom: -14px;
-    left: 14px;
-    animation: float-1 4.8s ease-in-out infinite 1.6s;
 }
 
 .badge-icon {
@@ -1705,6 +1708,12 @@ img {
    ============================================ */
 @media (max-width: 768px) {
     /* Navbar Mobile */
+    .navbar {
+        padding: 8px 0;
+    }
+    .nav-logo-img {
+        height: 48px;
+    }
     .nav-links {
         position: fixed;
         top: 0;
@@ -1740,61 +1749,59 @@ img {
 
     /* Hero Mobile */
     .hero {
-        padding-top: 90px;
+        padding-top: 84px;
         padding-bottom: 28px;
     }
+    .hero-container {
+        padding: 0 16px;
+    }
     .hero-grid {
-        grid-template-columns: 1fr;
-        gap: 24px;
-        margin-bottom: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        margin-bottom: 24px;
     }
     .hero-left {
+        display: contents;
+    }
+    .hero-header-group {
+        order: 1;
+        display: flex;
+        flex-direction: column;
         align-items: center;
         text-align: center;
+        width: 100%;
+    }
+    .hero-badge {
+        font-size: 0.75rem;
+        padding: 5px 12px;
+        margin-bottom: 10px;
     }
     .hero h1 {
-        font-size: 1.75rem;
-        margin-bottom: 12px;
-    }
-    .hero-subtitle {
-        font-size: 0.92rem;
-        margin-bottom: 16px;
+        font-size: 1.7rem;
+        line-height: 1.22;
+        margin-bottom: 6px;
         text-align: center;
-    }
-    .hero-features-list {
-        align-items: flex-start;
-        margin: 0 auto 18px;
-        width: 100%;
-        max-width: 340px;
-    }
-    .hero-feature-item {
-        font-size: 0.85rem;
-    }
-    .hero-actions {
-        flex-direction: column;
-        gap: 10px;
-        align-items: stretch;
-        width: 100%;
-        max-width: 340px;
-        margin: 0 auto 14px;
-    }
-    .hero-actions .btn {
-        width: 100%;
-        justify-content: center;
-        text-align: center;
-    }
-    .hero-trust-proof {
-        justify-content: center;
     }
     .hero-right {
+        order: 2;
         width: 100%;
+        margin: 4px 0 8px 0;
     }
     .hero-showcase {
         max-width: 360px;
         margin: 0 auto;
     }
+    .showcase-topbar {
+        padding: 8px 14px;
+        justify-content: flex-start;
+        gap: 10px;
+    }
+    .showcase-status-badge {
+        display: none;
+    }
     .hero-car-img {
-        height: 220px;
+        height: 215px;
     }
     .floating-badge {
         padding: 6px 10px;
@@ -1813,16 +1820,54 @@ img {
         font-size: 0.62rem;
     }
     .badge-top-left {
-        top: -10px;
-        left: 0px;
+        top: 44px;
+        left: 8px;
     }
-    .badge-mid-right {
-        top: auto;
-        bottom: 20px;
-        right: 0px;
+    .badge-bottom-right {
+        bottom: 10px;
+        right: 8px;
     }
-    .badge-bottom-left {
-        display: none;
+    .hero-body-group {
+        order: 3;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        width: 100%;
+    }
+    .hero-subtitle {
+        font-size: 0.92rem;
+        margin: 0 0 14px 0;
+        text-align: center;
+        max-width: 460px;
+    }
+    .hero-features-list {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        margin: 0 auto 16px;
+        width: 100%;
+        max-width: 340px;
+    }
+    .hero-feature-item {
+        font-size: 0.86rem;
+        text-align: left;
+    }
+    .hero-actions {
+        flex-direction: column;
+        gap: 10px;
+        align-items: stretch;
+        width: 100%;
+        max-width: 340px;
+        margin: 0 auto 14px;
+    }
+    .hero-actions .btn {
+        width: 100%;
+        justify-content: center;
+        text-align: center;
+    }
+    .hero-trust-proof {
+        justify-content: center;
     }
     .hero-stats-card {
         padding: 14px 16px;
@@ -2009,7 +2054,7 @@ img {
         font-size: 0.85rem;
     }
     .hero-showcase {
-        max-width: 300px;
+        max-width: 310px;
     }
     .hero-car-img {
         height: 190px;
@@ -2017,6 +2062,14 @@ img {
     .floating-badge {
         padding: 6px 10px;
         gap: 6px;
+    }
+    .badge-top-left {
+        top: 32px;
+        left: -4px;
+    }
+    .badge-bottom-right {
+        bottom: 10px;
+        right: -4px;
     }
     .badge-icon {
         width: 28px;
