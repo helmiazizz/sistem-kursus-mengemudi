@@ -1,16 +1,22 @@
 {
-  "name": "sistem-mobil",
+  "name": "sistem-kursus-mengemudi",
   "version": "1.0.0",
-  "description": "",
+  "description": "Sistem Informasi & Booking Kursus Mengemudi Mobil PT Panca Sari Jaya (PSJ)",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
     "dev": "node server.js",
     "seed": "node database/seed.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "kursus-mengemudi",
+    "driving-school",
+    "booking-system",
+    "expressjs",
+    "mysql"
+  ],
+  "author": "Helmi Aziz",
+  "license": "MIT",
   "type": "commonjs",
   "dependencies": {
     "bcryptjs": "^3.0.3",

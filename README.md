@@ -90,8 +90,8 @@ sistem-mobil/
 
 ### 2. Clone Repository
 ```bash
-git clone https://github.com/USERNAME_ANDA/NAMA_REPO.git
-cd NAMA_REPO
+git clone https://github.com/helmiiazizz/sistem-kursus-mengemudi.git
+cd sistem-kursus-mengemudi
 ```
 
 ### 3. Install Dependensi
@@ -152,5 +152,7 @@ ADMIN_PHONE=6281xxxxxxxxxx
 ---
 
 ## 📄 Lisensi
+ 
+Didistribusikan di bawah Lisensi MIT. Lihat file [`LICENSE`](LICENSE) untuk informasi lebih lanjut.
 
-Proyek ini dikembangkan untuk keperluan Kerja Praktek & Pengembangan Sistem Manajemen Kursus Mengemudi Mobil PT Panca Sari Jaya.
+Proyek ini dikembangkan oleh **Helmi Aziz** untuk keperluan Kerja Praktek & Pengembangan Sistem Manajemen Kursus Mengemudi Mobil PT Panca Sari Jaya.

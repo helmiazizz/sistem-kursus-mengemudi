@@ -28,3 +28,7 @@ database/check-admin.js
 database/test-login.js
 database/fix-paket.js
 
+# Local helper scripts
+*.ps1
+make_deploy_zip.ps1
+
