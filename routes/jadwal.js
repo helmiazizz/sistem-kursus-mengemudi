@@ -3,6 +3,37 @@ const router = express.Router();
 const db = require('../config/database');
 const { isAuthenticated } = require('./auth');
 
+// Helper: Sinkronisasi dan perbaiki penomoran pertemuan_ke siswa secara kronologis (1, 2, 3...)
+async function renumberJadwalSiswa(siswaId, connection = null) {
+    if (!siswaId) return;
+    const client = connection || db;
+    try {
+        const [siswaRows] = await client.query(
+            'SELECT id, pertemuan_sebelumnya FROM siswa WHERE id = ?',
+            [siswaId]
+        );
+        if (siswaRows.length === 0) return;
+
+        const offset = parseInt(siswaRows[0].pertemuan_sebelumnya) || 0;
+
+        // Ambil semua jadwal siswa diurutkan secara kronologis
+        const [jadwalList] = await client.query(
+            'SELECT id, pertemuan_ke FROM jadwal WHERE siswa_id = ? ORDER BY tanggal ASC, jam_mulai ASC, id ASC',
+            [siswaId]
+        );
+
+        for (let i = 0; i < jadwalList.length; i++) {
+            const expected = (offset > 0 && i >= offset) ? (i - offset + 1) : (i + 1);
+            if (jadwalList[i].pertemuan_ke !== expected) {
+                await client.query('UPDATE jadwal SET pertemuan_ke = ? WHERE id = ?', [expected, jadwalList[i].id]);
+                jadwalList[i].pertemuan_ke = expected;
+            }
+        }
+    } catch (err) {
+        console.error(`Error renumbering jadwal for siswa ${siswaId}:`, err);
+    }
+}
+
 // Get all jadwal
 router.get('/', isAuthenticated, async (req, res) => {
     try {
@@ -25,6 +56,8 @@ router.get('/', isAuthenticated, async (req, res) => {
             params.push(tanggal);
         }
         if (siswa_id) {
+            // Self-heal dan pastikan penomoran urut sebelum di-return
+            await renumberJadwalSiswa(siswa_id);
             conditions.push('j.siswa_id = ?');
             params.push(siswa_id);
         }
@@ -34,7 +67,7 @@ router.get('/', isAuthenticated, async (req, res) => {
         }
 
         if (siswa_id) {
-            query += ' ORDER BY j.pertemuan_ke ASC, j.tanggal ASC, j.jam_mulai ASC';
+            query += ' ORDER BY j.tanggal ASC, j.jam_mulai ASC, j.id ASC';
         } else {
             query += ' ORDER BY j.tanggal DESC, j.jam_mulai ASC';
         }
@@ -91,6 +124,9 @@ router.post('/', isAuthenticated, async (req, res) => {
             [siswa_id, instruktur_id || null, armada_id || null, tanggal, jam_mulai, jam_selesai, pertemuan_ke || 1, transmisi]
         );
 
+        // Pastikan nomor pertemuan otomatis sinkron secara kronologis
+        await renumberJadwalSiswa(siswa_id);
+
         res.json({ success: true, message: 'Jadwal berhasil dibuat', id: result.insertId });
     } catch (error) {
         console.error('Create jadwal error:', error);
@@ -103,10 +139,15 @@ router.put('/:id', isAuthenticated, async (req, res) => {
     try {
         let { siswa_id, instruktur_id, armada_id, tanggal, jam_mulai, jam_selesai, pertemuan_ke, transmisi } = req.body;
 
-        if (!transmisi && siswa_id) {
+        // Ambil data jadwal lama untuk mengetahui siswa_id asal
+        const [oldJadwalRows] = await db.query('SELECT siswa_id FROM jadwal WHERE id = ?', [req.params.id]);
+        const oldSiswaId = oldJadwalRows.length > 0 ? oldJadwalRows[0].siswa_id : null;
+
+        if (!transmisi && (siswa_id || oldSiswaId)) {
+            const targetSiswa = siswa_id || oldSiswaId;
             const [siswaData] = await db.query(
                 `SELECT pk.nama_paket FROM siswa s LEFT JOIN paket_kursus pk ON s.paket_id = pk.id WHERE s.id = ?`,
-                [siswa_id]
+                [targetSiswa]
             );
             if (siswaData.length > 0 && siswaData[0].nama_paket) {
                 transmisi = siswaData[0].nama_paket.toLowerCase().includes('matic') ? 'Matic' : 'Manual';
@@ -136,8 +177,16 @@ router.put('/:id', isAuthenticated, async (req, res) => {
 
         await db.query(
             'UPDATE jadwal SET siswa_id = ?, instruktur_id = ?, armada_id = ?, tanggal = ?, jam_mulai = ?, jam_selesai = ?, pertemuan_ke = ?, transmisi = ? WHERE id = ?',
-            [siswa_id, instruktur_id, armada_id, tanggal, jam_mulai, jam_selesai, pertemuan_ke, transmisi || null, req.params.id]
+            [siswa_id || oldSiswaId, instruktur_id, armada_id, tanggal, jam_mulai, jam_selesai, pertemuan_ke, transmisi || null, req.params.id]
         );
+
+        if (oldSiswaId) {
+            await renumberJadwalSiswa(oldSiswaId);
+        }
+        if (siswa_id && siswa_id !== oldSiswaId) {
+            await renumberJadwalSiswa(siswa_id);
+        }
+
         res.json({ success: true, message: 'Jadwal berhasil diperbarui' });
     } catch (error) {
         console.error('Update jadwal error:', error);
@@ -148,8 +197,16 @@ router.put('/:id', isAuthenticated, async (req, res) => {
 // Delete jadwal
 router.delete('/:id', isAuthenticated, async (req, res) => {
     try {
+        const [targetRows] = await db.query('SELECT siswa_id FROM jadwal WHERE id = ?', [req.params.id]);
+        const targetSiswaId = targetRows.length > 0 ? targetRows[0].siswa_id : null;
+
         await db.query('DELETE FROM absensi WHERE jadwal_id = ?', [req.params.id]);
         await db.query('DELETE FROM jadwal WHERE id = ?', [req.params.id]);
+
+        if (targetSiswaId) {
+            await renumberJadwalSiswa(targetSiswaId);
+        }
+
         res.json({ success: true, message: 'Jadwal berhasil dihapus' });
     } catch (error) {
         console.error('Delete jadwal error:', error);
@@ -184,6 +241,9 @@ router.get('/siswa-jadwal', async (req, res) => {
 
         const siswa = siswaRows[0];
 
+        // Self-heal: pastikan nomor pertemuan selalu urut kronologis (1, 2, 3...)
+        await renumberJadwalSiswa(siswa.id);
+
         // Ambil jadwal siswa lengkap dengan status absensinya
         const [jadwalRows] = await db.query(
             `SELECT j.*, 
@@ -197,7 +257,7 @@ router.get('/siswa-jadwal', async (req, res) => {
              LEFT JOIN instruktur i ON j.instruktur_id = i.id
              LEFT JOIN absensi ab ON j.id = ab.jadwal_id
              WHERE j.siswa_id = ?
-             ORDER BY j.tanggal ASC, j.jam_mulai ASC`,
+             ORDER BY j.tanggal ASC, j.jam_mulai ASC, j.id ASC`,
             [siswa.id]
         );
 
@@ -312,6 +372,9 @@ router.post('/siswa-request', async (req, res) => {
             });
         }
 
+        // Pastikan urutan jadwal siswa sudah konsisten sebelum hitung kuota
+        await renumberJadwalSiswa(siswa.id);
+
         // Hitung pertemuan ke berapa: total SEMUA jadwal yang pernah dibuat (termasuk tidak hadir/izin)
         // agar nomor pertemuan selalu naik dan tidak duplikat meski booking 2x di hari sama
         const [countRows] = await db.query(
@@ -321,7 +384,7 @@ router.post('/siswa-request', async (req, res) => {
 
         const totalJadwalAll = countRows[0].total || 0;
         const offset = parseInt(siswa.pertemuan_sebelumnya) || 0;
-        const pertemuan_ke = Math.max(1, (totalJadwalAll - offset) + 1);
+        const nextPertemuanKe = Math.max(1, (totalJadwalAll - offset) + 1);
 
         // Cek paket siswa (untuk durasi dan batas pertemuan)
         const [paketRows] = await db.query(
@@ -333,7 +396,7 @@ router.post('/siswa-request', async (req, res) => {
         );
 
         if (paketRows.length > 0 && paketRows[0].jumlah_pertemuan > 0) {
-            if (pertemuan_ke > paketRows[0].jumlah_pertemuan) {
+            if (nextPertemuanKe > paketRows[0].jumlah_pertemuan) {
                 return res.status(400).json({
                     success: false,
                     message: `Kuota latihan paket Anda sudah selesai (${paketRows[0].jumlah_pertemuan}x pertemuan). Silakan pilih paket baru di bawah untuk menambah jadwal.`
@@ -383,7 +446,7 @@ router.post('/siswa-request', async (req, res) => {
 
         if (paketRows.length > 0 && paketRows[0].paket_id && paketRows[0].jumlah_pertemuan) {
             const maxPertemuan = paketRows[0].jumlah_pertemuan;
-            if (pertemuan_ke > maxPertemuan) {
+            if (nextPertemuanKe > maxPertemuan) {
                 return res.status(400).json({
                     success: false,
                     message: `Anda sudah mencapai batas ${maxPertemuan} pertemuan sesuai paket ${paketRows[0].nama_paket}. Tidak dapat booking jadwal lagi.`
@@ -448,8 +511,15 @@ router.post('/siswa-request', async (req, res) => {
         // Simpan jadwal (termasuk armada_id)
         const [result] = await db.query(
             'INSERT INTO jadwal (siswa_id, instruktur_id, armada_id, tanggal, jam_mulai, jam_selesai, pertemuan_ke, transmisi) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-            [siswa.id, finalInstrukturId, finalArmadaId, tanggal, jam_mulai, jam_selesai, pertemuan_ke, finalTransmisi]
+            [siswa.id, finalInstrukturId, finalArmadaId, tanggal, jam_mulai, jam_selesai, nextPertemuanKe, finalTransmisi]
         );
+
+        // Sinkronkan penomoran pertemuan siswa secara kronologis
+        await renumberJadwalSiswa(siswa.id);
+
+        // Ambil pertemuan_ke aktual setelah disinkronkan kronologis
+        const [savedRow] = await db.query('SELECT pertemuan_ke FROM jadwal WHERE id = ?', [result.insertId]);
+        const pertemuan_ke = savedRow.length > 0 ? savedRow[0].pertemuan_ke : nextPertemuanKe;
 
         // Kirim konfirmasi WA
         try {
@@ -568,7 +638,7 @@ router.post('/siswa-cancel', async (req, res) => {
         const phone = no_telepon.replace(/[^0-9]/g, '').trim();
         // Verify jadwal belongs to this siswa
         const [rows] = await db.query(
-            `SELECT j.id, j.tanggal, j.jam_mulai, j.jam_selesai, j.pertemuan_ke, j.transmisi, j.instruktur_id, 
+            `SELECT j.id, j.siswa_id, j.tanggal, j.jam_mulai, j.jam_selesai, j.pertemuan_ke, j.transmisi, j.instruktur_id, 
                     s.nama_lengkap, s.alamat,
                     (SELECT COUNT(*) FROM absensi WHERE jadwal_id = j.id) as is_absen 
              FROM jadwal j 
@@ -598,6 +668,11 @@ router.post('/siswa-cancel', async (req, res) => {
         // Delete absensi first, then jadwal
         await db.query('DELETE FROM absensi WHERE jadwal_id = ?', [jadwal_id]);
         await db.query('DELETE FROM jadwal WHERE id = ?', [jadwal_id]);
+
+        // Otomatis re-number sisa jadwal siswa agar berurutan kembali
+        if (rows[0].siswa_id) {
+            await renumberJadwalSiswa(rows[0].siswa_id);
+        }
 
         // Kirim notifikasi WA ke siswa & instruktur bahwa jadwal dibatalkan (cancel)
         try {
@@ -817,6 +892,13 @@ router.post('/siswa-reschedule', async (req, res) => {
         // Hapus absensi lama
         await db.query('DELETE FROM absensi WHERE jadwal_id = ?', [jadwal_id]);
 
+        // Re-number urutan jadwal siswa karena tanggal/jam berubah
+        await renumberJadwalSiswa(rows[0].siswa_id);
+
+        // Ambil nomor pertemuan baru setelah disinkronkan kronologis
+        const [rescheduledRow] = await db.query('SELECT pertemuan_ke FROM jadwal WHERE id = ?', [jadwal_id]);
+        const pertemuanKeAktual = rescheduledRow.length > 0 ? rescheduledRow[0].pertemuan_ke : rows[0].pertemuan_ke;
+
         // Kirim notifikasi WA ke siswa & instruktur bahwa jadwal di-reschedule
         try {
             const token = (process.env.FONNTE_TOKEN && process.env.FONNTE_TOKEN !== 'YOUR_FONNTE_TOKEN_HERE') ? process.env.FONNTE_TOKEN : '';
@@ -842,7 +924,7 @@ Halo *${rows[0].nama_lengkap}* 👋
 
 Jadwal latihan Anda telah berhasil di-reschedule:
 
-🔢 Pertemuan Ke-${rows[0].pertemuan_ke}
+🔢 Pertemuan Ke-${pertemuanKeAktual}
 ⚙️ Transmisi: *${rows[0].transmisi || '-'}*
 
 🗓️ *Jadwal LAMA:*
@@ -884,7 +966,7 @@ Halo *${instrRows[0].nama}* 👋
 Siswa Anda melakukan reschedule jadwal latihan:
 
 👤 Siswa: *${rows[0].nama_lengkap}*
-🔢 Pertemuan Ke-${rows[0].pertemuan_ke}
+🔢 Pertemuan Ke-${pertemuanKeAktual}
 ⚙️ Transmisi: *${rows[0].transmisi || '-'}*
 📍 Alamat Siswa: *${rows[0].alamat || '-'}*
 
@@ -902,7 +984,7 @@ _PSJ Driving Course_`;
                         await fetch('https://api.fonnte.com/send', {
                             method: 'POST',
                             headers: { 'Authorization': token, 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ target: instrPhone, message, typing: false })
+                            body: JSON.stringify({ target: instrPhone, message: message, typing: false })
                         });
                     }
                 }
@@ -911,7 +993,7 @@ _PSJ Driving Course_`;
             console.error('WA reschedule error (non-fatal):', err.message);
         }
 
-        res.json({ success: true, message: 'Jadwal berhasil di-reschedule!' });
+        res.json({ success: true, message: 'Jadwal berhasil di-reschedule!', pertemuan_ke: pertemuanKeAktual });
     } catch (error) {
         console.error('Siswa reschedule error:', error);
         res.status(500).json({ success: false, message: 'Server error' });
@@ -919,3 +1001,4 @@ _PSJ Driving Course_`;
 });
 
 module.exports = router;
+module.exports.renumberJadwalSiswa = renumberJadwalSiswa;

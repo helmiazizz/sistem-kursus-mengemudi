@@ -386,6 +386,20 @@ async function runMigrations() {
             }
         } catch (e) { /* ignore */ }
 
+        // Auto-renumber jadwal siswa agar selalu urut kronologis (1, 2, 3...)
+        try {
+            const { renumberJadwalSiswa } = require('./routes/jadwal');
+            const [siswaJadwal] = await conn.query("SELECT DISTINCT siswa_id FROM jadwal WHERE siswa_id IS NOT NULL");
+            for (const item of siswaJadwal) {
+                await renumberJadwalSiswa(item.siswa_id, conn);
+            }
+            if (siswaJadwal.length > 0) {
+                console.log(`✅ Auto-renumbered schedules for ${siswaJadwal.length} siswa`);
+            }
+        } catch (e) {
+            console.log('⚠️ Renumber migration skipped:', e.message);
+        }
+
         conn.release();
         console.log('✅ Migration ready');
     } catch (error) {
