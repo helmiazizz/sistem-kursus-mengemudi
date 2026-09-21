@@ -36,14 +36,22 @@
     <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
 
     <!-- Main Stylesheet (Critical Path) -->
-    <link rel="stylesheet" href="css/landing.min.css?v=4.4.0">
+    <link rel="stylesheet" href="css/landing.min.css?v=4.4.1">
 
     <!-- Asynchronous Non-Blocking Fonts (Zero Render-Blocking) -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" media="print" onload="this.media='all'">
-    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap"></noscript>
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" media="print" onload="this.media='all'">
-    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"></noscript>
+    <noscript>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    </noscript>
+    <script>
+        // Ensure async stylesheets switch to 'all' immediately once loaded
+        document.querySelectorAll("link[media='print']").forEach(function(l){
+            l.addEventListener('load',function(){l.media='all';});
+            if(l.sheet) l.media='all';
+        });
+    </script>
 </head>
 
 <body>
