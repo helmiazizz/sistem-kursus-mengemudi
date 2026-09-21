@@ -61,7 +61,7 @@
 
     /* Layout Dynamic Spacing Tokens */
     --navbar-height: 84px;
-    --hero-clearance: 28px;
+    --hero-clearance: 32px;
 }
 
 html {
@@ -213,7 +213,8 @@ img {
    ============================================ */
 .hero {
     position: relative;
-    padding-top: calc(var(--navbar-height, 84px) + var(--hero-clearance, 28px));
+    padding-top: 116px;
+    padding-top: max(116px, calc(var(--navbar-height, 84px) + var(--hero-clearance, 32px)));
     padding-bottom: 35px;
     overflow: hidden;
 }
@@ -259,8 +260,8 @@ img {
     display: grid;
     grid-template-columns: 1.15fr 0.85fr;
     align-items: center;
-    gap: 36px;
-    margin-bottom: 28px;
+    gap: clamp(24px, 3vw, 40px);
+    margin-bottom: 24px;
 }
 
 /* Kolom Kiri: Teks & CTA */
@@ -560,14 +561,14 @@ img {
 }
 
 .badge-top-left {
-    top: 42px;
-    left: -26px;
+    top: 36px;
+    left: -22px;
     animation: float-1 4.5s ease-in-out infinite;
 }
 
 .badge-bottom-right {
-    bottom: 20px;
-    right: -24px;
+    bottom: 16px;
+    right: -22px;
     animation: float-2 5s ease-in-out infinite 0.8s;
 }
 
@@ -1692,21 +1693,33 @@ img {
         margin-bottom: 48px;
     }
     :root {
-        --navbar-height: 74px;
-        --hero-clearance: 24px;
+        --navbar-height: 72px;
+        --hero-clearance: 26px;
     }
     .navbar {
         padding: 10px 0;
     }
     .nav-logo-img {
-        height: 54px;
+        height: 52px;
     }
     .hero {
-        padding-top: calc(var(--navbar-height, 74px) + var(--hero-clearance, 24px));
-        padding-bottom: 40px;
+        padding-top: 98px;
+        padding-top: calc(var(--navbar-height, 72px) + var(--hero-clearance, 26px));
+        padding-bottom: 35px;
     }
     .hero-grid {
-        gap: 32px;
+        gap: 28px;
+    }
+    .hero-car-img {
+        height: 250px;
+    }
+    .badge-top-left {
+        left: -10px;
+        top: 30px;
+    }
+    .badge-bottom-right {
+        right: -10px;
+        bottom: 12px;
     }
     .pricing-grid.four-cols {
         grid-template-columns: repeat(2, 1fr) !important;
@@ -1721,8 +1734,8 @@ img {
    ============================================ */
 @media (max-width: 768px) {
     :root {
-        --navbar-height: 58px;
-        --hero-clearance: 20px;
+        --navbar-height: 56px;
+        --hero-clearance: 24px;
     }
     /* Navbar Mobile Header Bar */
     .navbar {
@@ -1961,8 +1974,9 @@ img {
 
     /* Hero Mobile */
     .hero {
-        padding-top: calc(var(--navbar-height, 64px) + var(--hero-clearance, 20px));
-        padding-bottom: 28px;
+        padding-top: 80px;
+        padding-top: calc(var(--navbar-height, 56px) + var(--hero-clearance, 24px));
+        padding-bottom: 24px;
     }
     .hero-container {
         padding: 0 16px;
@@ -1970,8 +1984,8 @@ img {
     .hero-grid {
         display: flex;
         flex-direction: column;
-        gap: 14px;
-        margin-bottom: 24px;
+        gap: 12px;
+        margin-bottom: 20px;
     }
     .hero-left {
         display: contents;
@@ -1985,12 +1999,12 @@ img {
         width: 100%;
     }
     .hero-badge {
-        font-size: 0.75rem;
-        padding: 5px 12px;
-        margin-bottom: 10px;
+        font-size: 0.76rem;
+        padding: 6px 14px;
+        margin-bottom: 8px;
     }
     .hero h1 {
-        font-size: 1.7rem;
+        font-size: clamp(1.45rem, 5.2vw, 1.8rem);
         line-height: 1.22;
         margin-bottom: 6px;
         text-align: center;
@@ -2002,6 +2016,7 @@ img {
     }
     .hero-showcase {
         max-width: 360px;
+        width: 100%;
         margin: 0 auto;
     }
     .showcase-topbar {
@@ -2013,7 +2028,9 @@ img {
         display: none;
     }
     .hero-car-img {
-        height: 215px;
+        height: 205px;
+        width: 100%;
+        object-fit: cover;
     }
     /* Showcase Overlay Tag: posisikan di kanan atas agar 100% bebas tabrakan dengan badge kanan bawah */
     .showcase-overlay-tag {
@@ -2021,16 +2038,16 @@ img {
         top: 10px;
         left: auto;
         right: 10px;
-        padding: 5px 12px;
+        padding: 4px 10px;
         font-size: clamp(0.66rem, 2.2vw, 0.72rem);
-        border-radius: 14px;
+        border-radius: 12px;
         white-space: nowrap;
         z-index: 2;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     }
     .floating-badge {
-        padding: 6px 10px;
-        border-radius: 12px;
+        padding: 5px 10px;
+        border-radius: 10px;
         gap: 6px;
     }
     .badge-icon {
@@ -2045,12 +2062,12 @@ img {
         font-size: 0.62rem;
     }
     .badge-top-left {
-        top: 80px;
-        left: 8px;
+        top: 72px;
+        left: 6px;
     }
     .badge-bottom-right {
-        bottom: 10px;
-        right: 8px;
+        bottom: 8px;
+        right: 6px;
     }
     @keyframes float-1 {
         0%, 100% { transform: translateY(0px); }
@@ -2069,35 +2086,45 @@ img {
         width: 100%;
     }
     .hero-subtitle {
-        font-size: 0.92rem;
-        margin: 0 0 14px 0;
+        font-size: 0.9rem;
+        line-height: 1.55;
+        margin: 0 0 12px 0;
         text-align: center;
-        max-width: 460px;
+        max-width: 440px;
+        color: #475569;
     }
     .hero-features-list {
         display: flex;
         flex-direction: column;
         align-items: flex-start;
-        margin: 0 auto 16px;
+        margin: 0 auto 14px;
         width: 100%;
         max-width: 340px;
+        gap: 8px;
     }
     .hero-feature-item {
         font-size: 0.86rem;
         text-align: left;
     }
     .hero-actions {
+        display: flex;
         flex-direction: column;
         gap: 10px;
         align-items: stretch;
         width: 100%;
         max-width: 340px;
-        margin: 0 auto 14px;
+        margin: 0 auto 12px;
     }
     .hero-actions .btn {
         width: 100%;
         justify-content: center;
         text-align: center;
+        padding: 12px 20px;
+        font-size: 0.92rem;
+    }
+    .hero-actions .btn-glass {
+        padding: 10px 18px;
+        font-size: 0.88rem;
     }
     .hero-trust-proof {
         display: flex;
@@ -2105,14 +2132,14 @@ img {
         align-items: center;
         justify-content: center;
         text-align: center;
-        gap: 5px;
-        margin: 4px auto 18px;
+        gap: 4px;
+        margin: 2px auto 16px;
         width: 100%;
         max-width: 320px;
     }
     .trust-stars {
         justify-content: center;
-        font-size: 0.88rem;
+        font-size: 0.85rem;
         gap: 3px;
     }
     .trust-text {
@@ -2122,8 +2149,8 @@ img {
         text-align: center;
     }
     .hero-stats-card {
-        padding: 16px 12px;
-        border-radius: 16px;
+        padding: 14px 10px;
+        border-radius: 14px;
         width: 100%;
         max-width: 380px;
         margin: 0 auto;
@@ -2346,51 +2373,52 @@ img {
    ============================================ */
 @media (max-width: 480px) {
     :root {
-        --navbar-height: 54px;
-        --hero-clearance: 16px;
+        --navbar-height: 52px;
+        --hero-clearance: 20px;
     }
     .navbar {
         padding: 6px 0;
     }
     .hero {
-        padding-top: calc(var(--navbar-height, 54px) + var(--hero-clearance, 16px));
+        padding-top: 72px;
+        padding-top: calc(var(--navbar-height, 52px) + var(--hero-clearance, 20px));
         padding-bottom: 20px;
     }
     .hero h1 {
-        font-size: 1.5rem;
+        font-size: clamp(1.35rem, 5.5vw, 1.55rem);
     }
     .hero-subtitle {
         font-size: 0.85rem;
     }
     .hero-showcase {
-        max-width: 320px;
+        max-width: 325px;
     }
     .hero-car-img {
-        height: 195px;
+        height: 185px;
     }
     .showcase-overlay-tag {
         top: 8px;
         right: 8px;
-        padding: 4px 9px;
-        font-size: 0.65rem;
+        padding: 3px 8px;
+        font-size: 0.64rem;
         gap: 4px;
     }
     .floating-badge {
-        padding: 5px 9px;
+        padding: 4px 8px;
         gap: 5px;
     }
     .badge-top-left {
-        top: 74px;
-        left: 6px;
+        top: 66px;
+        left: 5px;
     }
     .badge-bottom-right {
         bottom: 8px;
-        right: 6px;
+        right: 5px;
     }
     .badge-icon {
-        width: 26px;
-        height: 26px;
-        font-size: 0.72rem;
+        width: 24px;
+        height: 24px;
+        font-size: 0.68rem;
     }
     .badge-text strong {
         font-size: 0.68rem;
