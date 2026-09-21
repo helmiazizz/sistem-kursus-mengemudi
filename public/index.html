@@ -23,24 +23,30 @@
     <meta property="og:description" content="Kursus mengemudi mobil terpercaya di Tangerang. Belajar setir mobil dengan instruktur berpengalaman, jadwal fleksibel, dan armada modern.">
     <meta property="og:image" content="https://pancasarijaya.com/images/logo-psj.png?v=3">
 
-    <!-- Resource Hints & Preloads for Maximum Mobile Performance -->
+    <!-- Critical LCP Hero Image Preload -->
+    <link rel="preload" href="/images/armada-2.webp" as="image" type="image/webp" fetchpriority="high">
+    <link rel="preload" href="/images/logo-psj.webp?v=3" as="image" type="image/webp">
+
+    <!-- Preconnect to Font CDNs for Fast Handshake -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
     <link rel="dns-prefetch" href="https://fonts.googleapis.com">
     <link rel="dns-prefetch" href="https://fonts.gstatic.com">
     <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preload" href="/images/logo-psj.webp?v=3" as="image" type="image/webp">
-    <link rel="preload" href="css/landing.min.css?v=4.3.0" as="style">
 
-    <!-- Stylesheets -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="css/landing.min.css?v=4.3.0">
+    <!-- Main Stylesheet (Critical Path) -->
+    <link rel="stylesheet" href="css/landing.min.css?v=4.4.0">
+
+    <!-- Asynchronous Non-Blocking Fonts (Zero Render-Blocking) -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap"></noscript>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"></noscript>
 </head>
 
 <body>
-    <!-- Page Transition Overlay -->
-    <div class="page-transition" id="pageTransition"></div>
 
     <!-- ============================================ -->
     <!-- NAVBAR -->
@@ -165,7 +171,7 @@
                                 <span class="showcase-status-badge"><span class="pulse-dot"></span> Siap Pakai</span>
                             </div>
                             <div class="showcase-img-wrap">
-                                <img src="/images/armada-2.webp" alt="Armada Mobil Latihan PSJ Driving Course" class="hero-car-img" width="580" height="380" loading="eager">
+                                <img src="/images/armada-2.webp" alt="Armada Mobil Latihan PSJ Driving Course" class="hero-car-img" width="580" height="290" loading="eager" fetchpriority="high" decoding="async">
                                 <div class="showcase-overlay-tag">
                                     <i class="fas fa-snowflake"></i> Full AC &bull; Bersih &amp; Terawat
                                 </div>
@@ -722,37 +728,6 @@
                 });
             }
         }
-
-        // Smooth page transitions (0.4s fade effect on load and Back button)
-        function triggerFadeIn() {
-            const transition = document.getElementById('pageTransition');
-            if (transition) {
-                transition.classList.add('fade-in');
-                transition.classList.remove('active');
-                setTimeout(() => {
-                    transition.classList.remove('fade-in', 'active');
-                }, 400);
-            }
-        }
-
-        window.addEventListener('pageshow', triggerFadeIn);
-
-        document.addEventListener('DOMContentLoaded', () => {
-            triggerFadeIn();
-
-            // Intercept navigation links for smooth fade-out
-            document.querySelectorAll('a[href]').forEach(link => {
-                link.addEventListener('click', (e) => {
-                    const href = link.getAttribute('href');
-                    if (href && !href.startsWith('#') && !href.startsWith('http') && !href.startsWith('mailto') && !href.startsWith('tel') && !href.startsWith('javascript')) {
-                        e.preventDefault();
-                        const transition = document.getElementById('pageTransition');
-                        if (transition) transition.classList.add('active');
-                        setTimeout(() => { window.location.href = href; }, 350);
-                    }
-                });
-            });
-        });
     </script>
 </body>
 
