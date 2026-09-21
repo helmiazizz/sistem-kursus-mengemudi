@@ -298,6 +298,7 @@ img {
     box-shadow: 0 2px 8px rgba(21, 101, 192, 0.05);
     flex-shrink: 0;
     max-width: 100%;
+    box-sizing: border-box;
 }
 
 .hero-badge i {

@@ -36,7 +36,67 @@
     <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
 
     <!-- Main Stylesheet (Critical Path) -->
-    <link rel="stylesheet" href="css/landing.min.css?v=4.4.2">
+    <link rel="stylesheet" href="css/landing.min.css?v=4.4.3">
+
+    <!-- Inline Critical Layout CSS: Immune to Cache & CDN Delays -->
+    <style>
+        .hero {
+            position: relative;
+            padding-top: 120px !important;
+            padding-bottom: 35px;
+            overflow: hidden;
+        }
+        @media (max-width: 1024px) {
+            .hero {
+                padding-top: 100px !important;
+                padding-bottom: 32px;
+            }
+        }
+        @media (max-width: 768px) {
+            .hero {
+                padding-top: 84px !important;
+                padding-bottom: 24px;
+            }
+            .hero-badge {
+                font-size: 0.76rem !important;
+                padding: 6px 14px !important;
+                margin-bottom: 8px !important;
+                max-width: 100% !important;
+                box-sizing: border-box !important;
+            }
+            .hero h1 {
+                font-size: clamp(1.45rem, 5.2vw, 1.8rem) !important;
+                line-height: 1.22 !important;
+                margin-bottom: 6px !important;
+                text-align: center !important;
+            }
+            .hero-showcase {
+                max-width: 360px !important;
+                width: 100% !important;
+                margin: 0 auto !important;
+            }
+            .hero-car-img {
+                height: 205px !important;
+                width: 100% !important;
+                object-fit: cover !important;
+            }
+        }
+        @media (max-width: 480px) {
+            .hero {
+                padding-top: 76px !important;
+                padding-bottom: 20px;
+            }
+            .hero h1 {
+                font-size: clamp(1.35rem, 5.5vw, 1.55rem) !important;
+            }
+            .hero-showcase {
+                max-width: 325px !important;
+            }
+            .hero-car-img {
+                height: 185px !important;
+            }
+        }
+    </style>
 
     <!-- Asynchronous Non-Blocking Fonts (Zero Render-Blocking) -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" media="print" onload="this.media='all'">
